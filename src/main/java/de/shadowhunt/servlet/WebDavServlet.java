@@ -16,6 +16,12 @@
  */
 package de.shadowhunt.servlet;
 
+import java.io.File;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.CheckForNull;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -23,28 +29,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
+
+import de.shadowhunt.servlet.methods.AbstractWebDavMethod;
+import de.shadowhunt.servlet.methods.DeleteMethod;
+import de.shadowhunt.servlet.methods.GetMethod;
+import de.shadowhunt.servlet.methods.WebDavResponse;
 import de.shadowhunt.servlet.webdav.Resource;
 import de.shadowhunt.servlet.webdav.Store;
 import de.shadowhunt.servlet.webdav.WebDavException;
 import de.shadowhunt.servlet.webdav.internal.FileSystemStore;
-import org.apache.commons.io.FileUtils;
-
-import java.io.IOException;
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
 
 public class WebDavServlet extends HttpServlet {
 
     private final Map<String, AbstractWebDavMethod> dispatcher = new HashMap<>();
-
-    @Override
-    public void init(final ServletConfig config) throws ServletException {
-        super.init(config);
-
-        final Store store = new FileSystemStore(FileUtils.getTempDirectory());
-        dispatcher.put(GetMethod.METHOD, new GetMethod(false, store));
-    }
 
     @Override
     public void destroy() {
@@ -57,6 +55,34 @@ public class WebDavServlet extends HttpServlet {
         return request.getUserPrincipal();
     }
 
+    protected Resource getResource(final HttpServletRequest request) {
+        final String pathInfo = request.getPathInfo();
+        if (pathInfo == null) {
+            return Resource.ROOT;
+        }
+        return Resource.create(pathInfo);
+    }
+
+    @Override
+    public void init(final ServletConfig config) throws ServletException {
+        super.init(config);
+
+        final File root = new File(FileUtils.getTempDirectory(), "webdav");
+        root.deleteOnExit();
+
+        final Store store = new FileSystemStore(root);
+
+        final boolean writeable = Boolean.parseBoolean(config.getInitParameter("writeable"));
+
+        final String listingCss = config.getInitParameter("listingCss");
+        final boolean listing = Boolean.parseBoolean(config.getInitParameter("listing"));
+        dispatcher.put(GetMethod.METHOD, new GetMethod(store, listing, listingCss));
+
+        if (writeable) {
+            dispatcher.put(DeleteMethod.METHOD, new DeleteMethod(store));
+        }
+    }
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         final String method = request.getMethod();
@@ -66,22 +92,13 @@ public class WebDavServlet extends HttpServlet {
             return;
         }
 
-        final Principal principal = getPrincipal(request);
-        if (dispatch.isRequiresPrincipal() && (principal == null)) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED); // TODO
-        }
-
         try {
-            Resource resource = getResource(request);
+            final Principal principal = getPrincipal(request);
+            final Resource resource = getResource(request);
             final WebDavResponse webDavResponse = dispatch.service(resource, principal, request);
             webDavResponse.write(response);
-        } catch(WebDavException e) {
+        } catch (final WebDavException e) {
             response.sendError(e.getHttpStatusCode()); // TODO
         }
-    }
-
-    protected Resource getResource(final HttpServletRequest request) {
-        final String servletPath = request.getServletPath();
-        return null;
     }
 }
