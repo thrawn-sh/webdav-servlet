@@ -36,6 +36,7 @@ public final class Resource implements Comparable<Resource> {
      * @param path value of the {@link Resource}
      *
      * @return the new {@link Resource} instance with the given value
+     *
      * @throws IllegalArgumentException if the given path is not valid
      */
     public static Resource create(final String path) {
