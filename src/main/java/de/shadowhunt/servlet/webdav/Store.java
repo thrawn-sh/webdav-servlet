@@ -17,7 +17,7 @@
 package de.shadowhunt.servlet.webdav;
 
 import java.io.InputStream;
-import java.util.Set;
+import java.util.List;
 
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -103,12 +103,12 @@ public interface Store {
      * @param resource the {@link Resource} of the resource (relative to the repository root)
      * @param depth whether to retrieve only for the given resource, its children or only part of its children depending on the value of {@link Depth}
      *
-     * @return {@link Set} of {@link Entity} for the resource and its child resources (depending on depth parameter)
+     * @return {@link List} of {@link Entity} for the resource and its child resources (depending on depth parameter)
      *
      * @throws NullPointerException if any parameter is {@code null}
      * @throws WebDavException if an error occurs while operating on the repository
      */
-    Set<Entity> list(Resource resource, Depth depth) throws WebDavException;
+    List<Entity> list(Resource resource, Depth depth) throws WebDavException;
 
     /**
      * Mark the expected revision of the resource as locked

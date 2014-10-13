@@ -91,6 +91,14 @@ public final class Resource implements Comparable<Resource> {
         return value.equals(other.value);
     }
 
+    public final String getName() {
+        final int index = value.lastIndexOf('/');
+        if (index < 0) {
+            return value;
+        }
+        return value.substring(index + 1);
+    }
+
     /**
      * Returns the parent {@link Resource} of the {@link Resource}, the parent of the ROOT element is the ROOT itself
      *

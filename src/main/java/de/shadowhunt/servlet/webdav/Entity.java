@@ -16,16 +16,31 @@
  */
 package de.shadowhunt.servlet.webdav;
 
+import java.util.Arrays;
+import java.util.Date;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-
 
 public final class Entity {
+
+    private static final Date DEFAULT_DATE = new Date(0L);
+
+    private Date lastModified = DEFAULT_DATE;
 
     private static final Property[] EMPTY = new Property[0];
 
     private Property[] properties = EMPTY;
+
+    public static enum Type {
+        FOLDER(1), FILE(2);
+
+        public final int priority;
+
+        private Type(final int priority) {
+            this.priority = priority;
+        }
+    }
 
     // NOTE: not part of xml response but determined by a response header
     private String lockOwner = null;
@@ -36,24 +51,12 @@ public final class Entity {
 
     private Resource resource = Resource.ROOT;
 
-    private Type type = Type.FOLDER;
-
     private long size = 0L;
 
-    public long getSize() {
-        return size;
-    }
+    private Type type = Type.FOLDER;
 
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(final Type type) {
-        this.type = type;
+    public Date getLastModified() {
+        return new Date(lastModified.getTime());
     }
 
     /**
@@ -66,10 +69,6 @@ public final class Entity {
         return lockOwner;
     }
 
-    public void setLockOwner(@Nullable final String lockOwner) {
-        this.lockOwner = lockOwner;
-    }
-
     /**
      * Returns a lock-token
      *
@@ -78,10 +77,6 @@ public final class Entity {
     @CheckForNull
     public String getLockToken() {
         return lockToken;
-    }
-
-    public void setLockToken(@Nullable final String lockToken) {
-        this.lockToken = lockToken;
     }
 
     /**
@@ -94,8 +89,8 @@ public final class Entity {
         return md5;
     }
 
-    public void setMd5(@Nullable final String md5) {
-        this.md5 = md5;
+    public String getName() {
+        return resource.getName();
     }
 
     /**
@@ -107,14 +102,6 @@ public final class Entity {
         return Arrays.copyOf(properties, properties.length);
     }
 
-    public void setProperties(@Nullable final Property[] properties) {
-        if ((properties == null) || (properties.length == 0)) {
-            this.properties = EMPTY;
-        } else {
-            this.properties = Arrays.copyOf(properties, properties.length);
-        }
-    }
-
     /**
      * Returns a {@link Resource} of the resource (relative to the root of the repository)
      *
@@ -124,8 +111,12 @@ public final class Entity {
         return resource;
     }
 
-    public void setResource(final Resource resource) {
-        this.resource = resource;
+    public long getSize() {
+        return size;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     /**
@@ -137,7 +128,39 @@ public final class Entity {
         return lockToken != null;
     }
 
-    public static enum Type {
-        FOLDER, FILE;
+    public void setLastModified(final Date lastModified) {
+        this.lastModified = new Date(lastModified.getTime());
+    }
+
+    public void setLockOwner(@Nullable final String lockOwner) {
+        this.lockOwner = lockOwner;
+    }
+
+    public void setLockToken(@Nullable final String lockToken) {
+        this.lockToken = lockToken;
+    }
+
+    public void setMd5(@Nullable final String md5) {
+        this.md5 = md5;
+    }
+
+    public void setProperties(@Nullable final Property[] properties) {
+        if ((properties == null) || (properties.length == 0)) {
+            this.properties = EMPTY;
+        } else {
+            this.properties = Arrays.copyOf(properties, properties.length);
+        }
+    }
+
+    public void setResource(final Resource resource) {
+        this.resource = resource;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public void setType(final Type type) {
+        this.type = type;
     }
 }
