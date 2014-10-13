@@ -71,7 +71,6 @@ class HtmlListingResponse implements WebDavResponse {
         final PrintWriter writer = response.getWriter();
         response.setContentType("application/xhtml+xml");
 
-        final StringBuilder out = new StringBuilder();
         writer.print("<!DOCTYPE html><html><head>");
         final String rootName = root.getName();
         final String rootHtml = StringEscapeUtils.escapeHtml4(rootName);
