@@ -86,7 +86,7 @@ class HtmlListingResponse implements WebDavResponse {
         }
 
         writer.print("</head><body><table><thead><tr><th>Name</th><th>Size</th><th>Modified</th></tr></thead><tbody>");
-        if (Resource.ROOT.equals(root)) {
+        if (Resource.ROOT.equals(root.getResource())) {
             // do not leave WebDav
             writer.print("<tr class=\"folder parent\"><td colspan=\"3\"><a href=\".\">Parent</a></td></tr>");
         } else {
