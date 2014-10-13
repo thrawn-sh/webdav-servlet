@@ -35,7 +35,7 @@ public class GetMethod extends AbstractWebDavMethod {
 
     private final boolean htmlListing;
 
-    public GetMethod(Store store, final boolean htmlListing, final String cssPath) {
+    public GetMethod(final Store store, final boolean htmlListing, final String cssPath) {
         super(METHOD, store);
         this.htmlListing = htmlListing;
         this.cssPath = cssPath;

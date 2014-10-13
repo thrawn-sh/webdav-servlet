@@ -34,7 +34,7 @@ class StreamingResponse implements WebDavResponse {
     }
 
     @Override
-    public void write(HttpServletResponse response) throws ServletException, IOException {
+    public void write(final HttpServletResponse response) throws ServletException, IOException {
         final ServletOutputStream output = response.getOutputStream();
         try {
             IOUtils.copy(input, output);
