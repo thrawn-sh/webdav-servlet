@@ -234,6 +234,30 @@
         <plugins><!-- {{{1 -->
             <!-- keep list ordered by groupId and artifactId -->
             <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>setup/**</exclude>
+                        <exclude>src/test/resources/dump/**</exclude>
+                    </excludes>
+                    <header>com/mycila/maven/plugin/license/templates/GPL-3.txt</header>
+                    <properties>
+                        <owner>${project.organization.name}</owner>
+                        <year>${project.inceptionYear}</year>
+                        <email>dev@shadowhunt.de</email>
+                    </properties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>de.shadowhunt.maven.plugins</groupId>
                 <artifactId>package-info-maven-plugin</artifactId>
                 <configuration>
@@ -448,30 +472,6 @@
                         <phase>validate</phase>
                         <goals>
                             <goal>create</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>setup/**</exclude>
-                        <exclude>src/test/resources/dump/**</exclude>
-                    </excludes>
-                    <header>com/mycila/maven/plugin/license/templates/GPL-3.txt</header>
-                    <properties>
-                        <owner>${project.organization.name}</owner>
-                        <year>${project.inceptionYear}</year>
-                        <email>dev@shadowhunt.de</email>
-                    </properties>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>format</goal>
                         </goals>
                     </execution>
                 </executions>
