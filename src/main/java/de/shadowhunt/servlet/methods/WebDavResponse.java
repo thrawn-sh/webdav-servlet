@@ -14,32 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.servlet;
+package de.shadowhunt.servlet.methods;
 
-import org.apache.commons.io.IOUtils;
+import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
 
-public class StreamingWebDavResponse implements WebDavResponse {
+public interface WebDavResponse {
 
-    private final InputStream input;
-
-
-    public StreamingWebDavResponse(final InputStream input) {
-        this.input = input;
-    }
-
-    @Override
-    public void write(HttpServletResponse response) throws ServletException, IOException {
-        final ServletOutputStream output = response.getOutputStream();
-        try {
-            IOUtils.copy(input, output);
-        } finally {
-            IOUtils.closeQuietly(input);
-        }
-    }
+    void write(final HttpServletResponse response) throws ServletException, IOException;
 }

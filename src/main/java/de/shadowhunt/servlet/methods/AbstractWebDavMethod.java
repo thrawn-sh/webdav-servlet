@@ -14,51 +14,58 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.servlet;
+package de.shadowhunt.servlet.methods;
 
-import de.shadowhunt.servlet.webdav.Resource;
-import de.shadowhunt.servlet.webdav.Store;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 
-public abstract class AbstractWebDavMethod {
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
-    private final boolean requiresPrincipal;
+import de.shadowhunt.servlet.webdav.Entity;
+import de.shadowhunt.servlet.webdav.Resource;
+import de.shadowhunt.servlet.webdav.Store;
+
+public abstract class AbstractWebDavMethod {
 
     private final String method;
 
     protected final Store store;
 
-    protected AbstractWebDavMethod(final String method, final boolean requiresPrincipal, final Store store) {
+    protected AbstractWebDavMethod(final String method, final Store store) {
         this.method = method;
-        this.requiresPrincipal = requiresPrincipal;
         this.store = store;
-    }
-
-    public abstract WebDavResponse service(final Resource resource, final Principal principal, final HttpServletRequest request) throws ServletException, IOException;
-
-    public final boolean isRequiresPrincipal() {
-        return requiresPrincipal;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AbstractWebDavMethod)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AbstractWebDavMethod)) {
+            return false;
+        }
 
         final AbstractWebDavMethod that = (AbstractWebDavMethod) o;
 
-        if (!method.equals(that.method)) return false;
+        if (!method.equals(that.method)) {
+            return false;
+        }
 
         return true;
+    }
+
+    protected final String getAllowedMethods(final Entity entity) {
+        if (entity.getType() == Entity.Type.FOLDER) {
+            return "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, POST, PROPFIND, TRACE, PROPPATCH, UNLOCK";
+        }
+        return "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, POST, PROPFIND, PUT, TRACE, PROPPATCH, UNLOCK";
     }
 
     @Override
     public int hashCode() {
         return method.hashCode();
     }
+
+    public abstract WebDavResponse service(final Resource resource, final Principal principal, final HttpServletRequest request) throws ServletException, IOException;
 }

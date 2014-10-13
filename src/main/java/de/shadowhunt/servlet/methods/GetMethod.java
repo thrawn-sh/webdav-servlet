@@ -14,21 +14,31 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.servlet;
+package de.shadowhunt.servlet.methods;
 
+import java.security.Principal;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import de.shadowhunt.servlet.webdav.Depth;
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Resource;
 import de.shadowhunt.servlet.webdav.Store;
-
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 
 public class GetMethod extends AbstractWebDavMethod {
 
     public static final String METHOD = "GET";
 
-    public GetMethod(boolean requiresPrincipal, Store store) {
-        super(METHOD, requiresPrincipal, store);
+    private final String cssPath;
+
+    private final boolean htmlListing;
+
+    public GetMethod(Store store, final boolean htmlListing, final String cssPath) {
+        super(METHOD, store);
+        this.htmlListing = htmlListing;
+        this.cssPath = cssPath;
     }
 
     @Override
@@ -36,13 +46,14 @@ public class GetMethod extends AbstractWebDavMethod {
         final Entity entity = store.info(resource);
         final Entity.Type type = entity.getType();
         if (type == Entity.Type.FILE) {
-            return new StreamingWebDavResponse(store.download(resource));
+            return new StreamingResponse(store.download(resource));
         }
 
-        if (type == Entity.Type.FOLDER) {
-            // TODO
+        if ((type == Entity.Type.FOLDER) && htmlListing) {
+            final List<Entity> entities = store.list(resource, Depth.IMMEDIATE);
+            return new HtmlListingResponse(entity, entities, cssPath);
         }
 
-        return null; // FIXME
+        return new StatusResponse(HttpServletResponse.SC_FORBIDDEN);
     }
 }

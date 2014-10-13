@@ -14,13 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.servlet;
+package de.shadowhunt.servlet.methods;
+
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-public interface WebDavResponse {
+class StatusResponse implements WebDavResponse {
 
-    void write(final HttpServletResponse response) throws ServletException, IOException;
+    private final int httpStatus;
+
+    public StatusResponse(final int httpStatus) {
+        this.httpStatus = httpStatus;
+    }
+
+    @Override
+    public void write(final HttpServletResponse response) throws ServletException, IOException {
+        response.sendError(httpStatus); // TODO
+    }
 }
