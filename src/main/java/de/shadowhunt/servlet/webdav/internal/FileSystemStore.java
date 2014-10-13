@@ -21,21 +21,29 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.annotation.CheckForNull;
 import javax.servlet.http.HttpServletResponse;
 
-import de.shadowhunt.servlet.webdav.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
+import de.shadowhunt.servlet.webdav.Depth;
+import de.shadowhunt.servlet.webdav.Entity;
+import de.shadowhunt.servlet.webdav.Property;
+import de.shadowhunt.servlet.webdav.Resource;
+import de.shadowhunt.servlet.webdav.Store;
+import de.shadowhunt.servlet.webdav.WebDavException;
+
 public class FileSystemStore implements Store {
 
-    private final File resourceRoot;
-
     private final File metaRoot;
+
+    private final File resourceRoot;
 
     public FileSystemStore(final File root) {
         this.resourceRoot = new File(root, "content");
@@ -47,18 +55,6 @@ public class FileSystemStore implements Store {
         if (!metaRoot.exists() && !metaRoot.mkdirs()) {
             throw new WebDavException("metaRoot path: " + metaRoot + " does not exist and can not be created");
         }
-    }
-
-    private File getFile(final Resource resource, final boolean mustExist) throws WebDavException {
-        final File file = new File(resourceRoot, resource.getValue());
-        if (mustExist && !file.exists()) {
-            throw new WebDavException(HttpServletResponse.SC_NOT_FOUND, "can not locate resource: " + resource);
-        }
-        return file;
-    }
-
-    private File getMetaFile(final Resource resource) throws WebDavException {
-        return new File(metaRoot, resource.getValue());
     }
 
     @Override
@@ -73,6 +69,43 @@ public class FileSystemStore implements Store {
         } finally {
             IOUtils.closeQuietly(content);
             IOUtils.closeQuietly(os);
+        }
+    }
+
+    private Date calculateLastModified(final File file, final Resource resource) {
+        try {
+            return new Date(file.lastModified());
+        } catch (final Exception e) {
+            throw new WebDavException("can not calculate last modified date for " + resource, e);
+        }
+    }
+
+    @CheckForNull
+    private String calculateMd5(final File file, final Resource resource) {
+        if (file.isDirectory()) {
+            return null;
+        }
+
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+            return DigestUtils.md5Hex(fis);
+        } catch (Exception e) {
+            throw new WebDavException("can not calculate md5 hash for " + resource, e);
+        } finally {
+            IOUtils.closeQuietly(fis);
+        }
+    }
+
+    private long calculateSize(final File file, final Resource resource) {
+        if (file.isDirectory()) {
+            return 0L;
+        }
+
+        try {
+            return file.length();
+        } catch (Exception e) {
+            throw new WebDavException("can not calculate size for " + resource, e);
         }
     }
 
@@ -95,6 +128,14 @@ public class FileSystemStore implements Store {
         }
     }
 
+    private Entity.Type determineType(final File file) {
+        if (file.isDirectory()) {
+            return Entity.Type.FOLDER;
+        } else {
+            return Entity.Type.FILE;
+        }
+    }
+
     @Override
     public InputStream download(final Resource resource) throws WebDavException {
         final File file = getFile(resource, true);
@@ -111,9 +152,21 @@ public class FileSystemStore implements Store {
         return file.exists();
     }
 
+    private File getFile(final Resource resource, final boolean mustExist) throws WebDavException {
+        final File file = new File(resourceRoot, resource.getValue());
+        if (mustExist && !file.exists()) {
+            throw new WebDavException(HttpServletResponse.SC_NOT_FOUND, "can not locate resource: " + resource);
+        }
+        return file;
+    }
+
+    private File getMetaFile(final Resource resource) throws WebDavException {
+        return new File(metaRoot, resource.getValue());
+    }
+
     @Override
     public Entity info(final Resource resource) throws WebDavException {
-        final File file = getFile(resource, false);
+        final File file = getFile(resource, true);
 
         final Entity entity = new Entity();
         entity.setResource(resource);
@@ -121,49 +174,19 @@ public class FileSystemStore implements Store {
         entity.setSize(calculateSize(file, resource));
         entity.setType(determineType(file));
 
+        entity.setLastModified(calculateLastModified(file, resource));
+
         return entity;
     }
 
-    private Entity.Type determineType(final File file) {
-        if (file.isDirectory()) {
-            return Entity.Type.FOLDER;
-        } else {
-            return Entity.Type.FILE;
-        }
-    }
-
-    private long calculateSize(final File file, final Resource resource) {
-        if (file.isDirectory()) {
-            return 0L;
-        }
-
-        try {
-            return file.length();
-        } catch(Exception e) {
-            throw new WebDavException("can not calculate size for " + resource);
-        }
-    }
-
-    @CheckForNull
-    private String calculateMd5(final File file, final Resource resource) {
-        if (file.isDirectory()) {
-            return null;
-        }
-
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-            return DigestUtils.md5Hex(fis);
-        } catch (Exception e) {
-            throw new WebDavException("can not calculate md5 hash for " + resource);
-        } finally {
-            IOUtils.closeQuietly(fis);
-        }
-    }
-
     @Override
-    public Set<Entity> list(final Resource resource, final Depth depth) throws WebDavException {
-        return null;
+    public List<Entity> list(final Resource resource, final Depth depth) throws WebDavException {
+        final File file = getFile(resource, true);
+        final List<Entity> entities = new ArrayList<>();
+        for (final String child : file.list()) {
+            entities.add(info(resource.append(Resource.create(child))));
+        }
+        return entities;
     }
 
     @Override
@@ -173,7 +196,7 @@ public class FileSystemStore implements Store {
 
     @Override
     public void mkdir(final Resource resource, final boolean parents) throws WebDavException {
-        File file = getFile(resource, false);
+        final File file = getFile(resource, false);
         if (!file.mkdirs()) {
             throw new WebDavException("can not create folder " + resource);
         }
