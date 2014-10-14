@@ -124,13 +124,12 @@ public interface Store {
     /**
      * Create a folder with all necessary parents folders
      *
-     * @param resource the {@link Resource} of the resource (relative to the repository root)
-     * @param parents whether to create missing parents folders or not
+     * @param resource the {@link de.shadowhunt.servlet.webdav.Resource} of the resource (relative to the repository root)
      *
      * @throws NullPointerException if any parameter is {@code null}
      * @throws WebDavException if an error occurs while operating on the repository
      */
-    void mkdir(Resource resource, boolean parents) throws WebDavException;
+    void mkdir(Resource resource) throws WebDavException;
 
     /**
      * Recursively move a resource (latest revision)

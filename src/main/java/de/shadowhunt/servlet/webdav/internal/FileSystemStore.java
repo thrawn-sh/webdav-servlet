@@ -195,7 +195,7 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void mkdir(final Resource resource, final boolean parents) throws WebDavException {
+    public void mkdir(final Resource resource) throws WebDavException {
         final File file = getFile(resource, false);
         if (!file.mkdirs()) {
             throw new WebDavException("can not create folder " + resource);
