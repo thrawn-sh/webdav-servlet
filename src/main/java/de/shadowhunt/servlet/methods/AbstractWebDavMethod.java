@@ -19,6 +19,7 @@ package de.shadowhunt.servlet.methods;
 import java.io.IOException;
 import java.security.Principal;
 
+import javax.annotation.CheckForNull;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -55,7 +56,10 @@ public abstract class AbstractWebDavMethod {
         return true;
     }
 
-    protected final String getAllowedMethods(final Entity entity) {
+    protected final String getAllowedMethods(@CheckForNull final Entity entity) {
+        if (entity == null) {
+            return "OPTIONS, MKCOL, PUT";
+        }
         if (entity.getType() == Entity.Type.FOLDER) {
             return "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, POST, PROPFIND, TRACE, PROPPATCH, UNLOCK";
         }
