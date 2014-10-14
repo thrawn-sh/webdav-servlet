@@ -32,6 +32,8 @@ public class MkColMethod extends AbstractWebDavMethod {
 
     private static final WebDavResponse FAIL_PARENT_MISSING = new StatusResponse(HttpServletResponse.SC_CONFLICT);
 
+    private static final WebDavResponse INVALID_REQUEST_BODY = new StatusResponse(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+
     public static final String METHOD = "MKCOL";
 
     private static final WebDavResponse SUCCESS = new StatusResponse(HttpServletResponse.SC_CREATED);
@@ -42,6 +44,10 @@ public class MkColMethod extends AbstractWebDavMethod {
 
     @Override
     public WebDavResponse service(final Resource resource, final Principal principal, final HttpServletRequest request) throws ServletException, IOException {
+        if (consume(request.getInputStream())) {
+            return INVALID_REQUEST_BODY;
+        }
+
         final Resource parent = resource.getParent();
         if (!store.exists(parent)) {
             return FAIL_PARENT_MISSING;

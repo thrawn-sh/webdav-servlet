@@ -17,6 +17,7 @@
 package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 
 import javax.annotation.CheckForNull;
@@ -36,6 +37,14 @@ public abstract class AbstractWebDavMethod {
     protected AbstractWebDavMethod(final String method, final Store store) {
         this.method = method;
         this.store = store;
+    }
+
+    protected boolean consume(final InputStream inputStream) throws IOException {
+        final boolean data = (inputStream.read() != -1);
+        if (data) {
+            while (inputStream.read() != -1) ;
+        }
+        return data;
     }
 
     @Override
