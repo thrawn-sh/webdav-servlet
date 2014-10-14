@@ -49,7 +49,7 @@ public class GetMethod extends AbstractWebDavMethod {
             return new StreamingResponse(store.download(resource));
         }
 
-        if ((type == Entity.Type.FOLDER) && htmlListing) {
+        if ((type == Entity.Type.COLLECTION) && htmlListing) {
             final List<Entity> entities = store.list(resource, Depth.IMMEDIATE);
             return new HtmlListingResponse(entity, entities, cssPath);
         }

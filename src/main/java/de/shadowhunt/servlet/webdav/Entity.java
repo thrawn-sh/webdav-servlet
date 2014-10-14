@@ -33,7 +33,7 @@ public final class Entity {
     private Property[] properties = EMPTY;
 
     public static enum Type {
-        FOLDER(1), FILE(2);
+        COLLECTION(1), FILE(2);
 
         public final int priority;
 
@@ -53,7 +53,7 @@ public final class Entity {
 
     private long size = 0L;
 
-    private Type type = Type.FOLDER;
+    private Type type = Type.COLLECTION;
 
     public Date getLastModified() {
         return new Date(lastModified.getTime());

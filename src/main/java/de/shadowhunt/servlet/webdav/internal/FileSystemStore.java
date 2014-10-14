@@ -130,7 +130,7 @@ public class FileSystemStore implements Store {
 
     private Entity.Type determineType(final File file) {
         if (file.isDirectory()) {
-            return Entity.Type.FOLDER;
+            return Entity.Type.COLLECTION;
         } else {
             return Entity.Type.FILE;
         }

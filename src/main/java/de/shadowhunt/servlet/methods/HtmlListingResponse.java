@@ -97,7 +97,7 @@ class HtmlListingResponse implements WebDavResponse {
             final String entityName = entity.getName();
             final String link = URLEncoder.encode(entityName, response.getCharacterEncoding());
             final String entityNameHtml = StringEscapeUtils.escapeHtml4(entityName);
-            if (Entity.Type.FOLDER == entity.getType()) {
+            if (Entity.Type.COLLECTION == entity.getType()) {
                 writer.print("<tr class=\"folder\"><td colspan=\"3\"><a href=\"");
                 writer.print(link);
                 writer.print("\">");

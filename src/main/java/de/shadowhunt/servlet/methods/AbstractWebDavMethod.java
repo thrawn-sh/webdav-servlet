@@ -60,7 +60,7 @@ public abstract class AbstractWebDavMethod {
         if (entity == null) {
             return "OPTIONS, MKCOL, PUT";
         }
-        if (entity.getType() == Entity.Type.FOLDER) {
+        if (entity.getType() == Entity.Type.COLLECTION) {
             return "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, POST, PROPFIND, TRACE, PROPPATCH, UNLOCK";
         }
         return "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, POST, PROPFIND, PUT, TRACE, PROPPATCH, UNLOCK";
