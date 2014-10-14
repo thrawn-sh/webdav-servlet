@@ -33,7 +33,6 @@ import org.apache.commons.io.FileUtils;
 
 import de.shadowhunt.servlet.methods.AbstractWebDavMethod;
 import de.shadowhunt.servlet.methods.DeleteMethod;
-import de.shadowhunt.servlet.methods.DummyMethod;
 import de.shadowhunt.servlet.methods.GetMethod;
 import de.shadowhunt.servlet.methods.MkColMethod;
 import de.shadowhunt.servlet.methods.OptionsMethod;
@@ -85,9 +84,6 @@ public class WebDavServlet extends HttpServlet {
         if (writeable) {
             dispatcher.put(DeleteMethod.METHOD, new DeleteMethod(store));
             dispatcher.put(MkColMethod.METHOD, new MkColMethod(store));
-        } else {
-            dispatcher.put(DeleteMethod.METHOD, new DummyMethod(DeleteMethod.METHOD, store));
-            dispatcher.put(MkColMethod.METHOD, new DummyMethod(MkColMethod.METHOD, store));
         }
     }
 
@@ -96,7 +92,7 @@ public class WebDavServlet extends HttpServlet {
         final String method = request.getMethod();
         final AbstractWebDavMethod dispatch = dispatcher.get(method);
         if (dispatch == null) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST); // TODO
+            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED); // TODO
             return;
         }
 
