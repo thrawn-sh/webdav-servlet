@@ -58,7 +58,7 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void add(final Resource resource, final boolean parents, final InputStream content) throws WebDavException {
+    public void add(final Resource resource, final InputStream content) throws WebDavException {
         final File file = getFile(resource, false);
         OutputStream os = null;
         try {
@@ -110,7 +110,7 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void copy(final Resource srcResource, final Resource targetResource, final boolean parents) throws WebDavException {
+    public void copy(final Resource srcResource, final Resource targetResource) throws WebDavException {
         final File source = getFile(srcResource, true);
         final File target = getFile(targetResource, false);
         try {

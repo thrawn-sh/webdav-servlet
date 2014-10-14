@@ -37,7 +37,7 @@ public interface Store {
      * @throws NullPointerException if any parameter is {@code null}
      * @throws WebDavException if an error occurs while operating on the repository
      */
-    void add(Resource resource, boolean parents, InputStream content) throws WebDavException;
+    void add(Resource resource, InputStream content) throws WebDavException;
 
     /**
      * Recursively copy a resource in the given revision
@@ -49,7 +49,7 @@ public interface Store {
      * @throws NullPointerException if any parameter is {@code null}
      * @throws WebDavException if an error occurs while operating on the repository
      */
-    void copy(Resource srcResource, Resource targetResource, boolean parents) throws WebDavException;
+    void copy(Resource srcResource, Resource targetResource) throws WebDavException;
 
     /**
      * Delete the resource from the repository
