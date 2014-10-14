@@ -49,7 +49,7 @@ public interface Store {
      * @throws NullPointerException if any parameter is {@code null}
      * @throws WebDavException if an error occurs while operating on the repository
      */
-    void copy(Resource srcResource, Resource targetResource) throws WebDavException;
+    void copy(Resource srcResource, Resource targetResource, boolean override) throws WebDavException;
 
     /**
      * Delete the resource from the repository
@@ -141,7 +141,7 @@ public interface Store {
      * @throws NullPointerException if any parameter is {@code null}
      * @throws WebDavException if an error occurs while operating on the repository
      */
-    void move(Resource srcResource, Resource targetResource, boolean parents) throws WebDavException;
+    void move(Resource srcResource, Resource targetResource, boolean override) throws WebDavException;
 
     /**
      * Remove the given properties form the resource

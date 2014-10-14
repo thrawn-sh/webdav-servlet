@@ -110,11 +110,15 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void copy(final Resource srcResource, final Resource targetResource) throws WebDavException {
+    public void copy(final Resource srcResource, final Resource targetResource, final boolean override) throws WebDavException {
         final File source = getFile(srcResource, true);
-        final File target = getFile(targetResource, false);
+        final File target = getFile(targetResource, !override);
         try {
-            FileUtils.copyFile(source, target);
+            if (source.isFile()) {
+                FileUtils.copyFile(source, target);
+            } else {
+                FileUtils.copyDirectory(source, target);
+            }
         } catch (final IOException e) {
             throw new WebDavException("can not copy " + srcResource + " to " + targetResource, e);
         }
@@ -211,11 +215,15 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void move(final Resource srcResource, final Resource targetResource, final boolean parents) throws WebDavException {
+    public void move(final Resource srcResource, final Resource targetResource, final boolean override) throws WebDavException {
         final File source = getFile(srcResource, true);
-        final File target = getFile(targetResource, false);
+        final File target = getFile(targetResource, !override);
         try {
-            FileUtils.moveFile(source, target);
+            if (source.isFile()) {
+                FileUtils.moveFile(source, target);
+            } else {
+                FileUtils.moveDirectory(source, target);
+            }
         } catch (final IOException e) {
             throw new WebDavException("can not move " + srcResource + " to " + targetResource, e);
         }
