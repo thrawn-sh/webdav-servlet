@@ -36,6 +36,7 @@ import de.shadowhunt.servlet.methods.DeleteMethod;
 import de.shadowhunt.servlet.methods.GetMethod;
 import de.shadowhunt.servlet.methods.MkColMethod;
 import de.shadowhunt.servlet.methods.OptionsMethod;
+import de.shadowhunt.servlet.methods.PutMethod;
 import de.shadowhunt.servlet.methods.WebDavResponse;
 import de.shadowhunt.servlet.webdav.Resource;
 import de.shadowhunt.servlet.webdav.Store;
@@ -84,6 +85,7 @@ public class WebDavServlet extends HttpServlet {
         if (writeable) {
             dispatcher.put(DeleteMethod.METHOD, new DeleteMethod(store));
             dispatcher.put(MkColMethod.METHOD, new MkColMethod(store));
+            dispatcher.put(PutMethod.METHOD, new PutMethod(store));
         }
     }
 
