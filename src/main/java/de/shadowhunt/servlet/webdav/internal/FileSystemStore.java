@@ -123,8 +123,16 @@ public class FileSystemStore implements Store {
     @Override
     public void delete(final Resource resource) throws WebDavException {
         final File file = getFile(resource, true);
-        if (!file.delete()) {
-            throw new WebDavException("can not delete " + resource);
+        if (file.isFile()) {
+            if (!file.delete()) {
+                throw new WebDavException("can not delete " + resource);
+            }
+        } else {
+            try {
+                FileUtils.deleteDirectory(file);
+            } catch (IOException e) {
+                throw new WebDavException("can not delete " + resource, e);
+            }
         }
     }
 
