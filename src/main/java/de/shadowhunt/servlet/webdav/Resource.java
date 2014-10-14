@@ -108,8 +108,10 @@ public final class Resource implements Comparable<Resource> {
         if (equals(ROOT)) {
             return ROOT; // parent of root is root
         }
-        final int indexOf = value.lastIndexOf('/');
-        return new Resource(value.substring(0, indexOf));
+
+        final String fullPath = FilenameUtils.getFullPathNoEndSeparator(value);
+        final int indexOf = fullPath.lastIndexOf('/');
+        return new Resource(fullPath.substring(0, indexOf));
     }
 
     /**
@@ -119,18 +121,6 @@ public final class Resource implements Comparable<Resource> {
      */
     public String getValue() {
         return value;
-    }
-
-    /**
-     * Returns a {@link String} representation of the {@link Resource} without the leading slash
-     *
-     * @return the {@link String} representation of the {@link Resource} without the leading slash
-     */
-    public String getValueWithoutLeadingSeparator() {
-        if (equals(ROOT)) {
-            return "";
-        }
-        return value.substring(1);
     }
 
     @Override
