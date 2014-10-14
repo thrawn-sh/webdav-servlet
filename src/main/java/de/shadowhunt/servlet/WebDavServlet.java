@@ -33,7 +33,10 @@ import org.apache.commons.io.FileUtils;
 
 import de.shadowhunt.servlet.methods.AbstractWebDavMethod;
 import de.shadowhunt.servlet.methods.DeleteMethod;
+import de.shadowhunt.servlet.methods.DummyMethod;
 import de.shadowhunt.servlet.methods.GetMethod;
+import de.shadowhunt.servlet.methods.MkColMethod;
+import de.shadowhunt.servlet.methods.OptionsMethod;
 import de.shadowhunt.servlet.methods.WebDavResponse;
 import de.shadowhunt.servlet.webdav.Resource;
 import de.shadowhunt.servlet.webdav.Store;
@@ -68,7 +71,7 @@ public class WebDavServlet extends HttpServlet {
         super.init(config);
 
         final File root = new File(FileUtils.getTempDirectory(), "webdav");
-        root.deleteOnExit();
+        FileUtils.deleteQuietly(root);
 
         final Store store = new FileSystemStore(root);
 
@@ -77,9 +80,14 @@ public class WebDavServlet extends HttpServlet {
         final String listingCss = config.getInitParameter("listingCss");
         final boolean listing = Boolean.parseBoolean(config.getInitParameter("listing"));
         dispatcher.put(GetMethod.METHOD, new GetMethod(store, listing, listingCss));
+        dispatcher.put(OptionsMethod.METHOD, new OptionsMethod(store));
 
         if (writeable) {
             dispatcher.put(DeleteMethod.METHOD, new DeleteMethod(store));
+            dispatcher.put(MkColMethod.METHOD, new MkColMethod(store));
+        } else {
+            dispatcher.put(DeleteMethod.METHOD, new DummyMethod(DeleteMethod.METHOD, store));
+            dispatcher.put(MkColMethod.METHOD, new DummyMethod(MkColMethod.METHOD, store));
         }
     }
 
