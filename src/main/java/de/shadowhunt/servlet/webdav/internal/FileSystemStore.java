@@ -31,7 +31,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import de.shadowhunt.servlet.webdav.Depth;
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Property;
 import de.shadowhunt.servlet.webdav.Resource;
@@ -109,9 +108,9 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void copy(final Resource srcResource, final Resource targetResource, final boolean override) throws WebDavException {
+    public void copy(final Resource srcResource, final Resource targetResource) throws WebDavException {
         final File source = getFile(srcResource, true);
-        final File target = getFile(targetResource, !override);
+        final File target = getFile(targetResource, false);
         try {
             if (source.isFile()) {
                 FileUtils.copyFile(source, target);
@@ -191,13 +190,13 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public List<Entity> list(final Resource resource, final Depth depth) throws WebDavException {
+    public List<Resource> list(final Resource resource) throws WebDavException {
         final File file = getFile(resource, true);
-        final List<Entity> entities = new ArrayList<>();
+        final List<Resource> children = new ArrayList<>();
         for (final String child : file.list()) {
-            entities.add(info(resource.append(Resource.create(child))));
+            children.add(resource.append(Resource.create(child))); // FIXME imperformant
         }
-        return entities;
+        return children;
     }
 
     @Override
@@ -214,9 +213,9 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void move(final Resource srcResource, final Resource targetResource, final boolean override) throws WebDavException {
+    public void move(final Resource srcResource, final Resource targetResource) throws WebDavException {
         final File source = getFile(srcResource, true);
-        final File target = getFile(targetResource, !override);
+        final File target = getFile(targetResource, false);
         try {
             if (source.isFile()) {
                 FileUtils.moveFile(source, target);

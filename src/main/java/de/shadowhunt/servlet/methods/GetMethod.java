@@ -17,12 +17,11 @@
 package de.shadowhunt.servlet.methods;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import de.shadowhunt.servlet.webdav.Depth;
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Resource;
 import de.shadowhunt.servlet.webdav.Store;
@@ -53,10 +52,19 @@ public class GetMethod extends AbstractWebDavMethod {
         }
 
         if ((type == Entity.Type.COLLECTION) && htmlListing) {
-            final List<Entity> entities = store.list(resource, Depth.IMMEDIATE);
+            final List<Entity> entities = getEntities(resource);
             return new HtmlListingResponse(entity, entities, cssPath);
         }
 
         return StatusResponse.FORBIDDEN;
+    }
+
+    private List<Entity> getEntities(final Resource resource) {
+        final List<Resource> children = store.list(resource);
+        final List<Entity> entities = new ArrayList<>();
+        for (final Resource child : children) {
+            entities.add(store.info(child));
+        }
+        return entities;
     }
 }
