@@ -18,12 +18,15 @@ package de.shadowhunt.servlet.webdav.internal;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.CheckForNull;
 
@@ -86,7 +89,11 @@ public class FileSystemStore implements Store {
 
     @Override
     public void createCollection(final Path path) throws WebDavException {
-        final File file = getFile(path, false);
+        createFolder(path, getFile(path, false));
+        createFolder(path, getMetaFile(path));
+    }
+
+    private void createFolder(final Path path, final File file) {
         if (!file.mkdir()) {
             throw new WebDavException("can not create folder " + path);
         }
@@ -109,7 +116,11 @@ public class FileSystemStore implements Store {
 
     @Override
     public void delete(final Path path) throws WebDavException {
-        final File file = getFile(path, true);
+        delete(path, getFile(path, true));
+        delete(path, getMetaFile(path));
+    }
+
+    private void delete(final Path path, final File file) {
         if (file.isFile()) {
             if (!file.delete()) {
                 throw new WebDavException("can not delete " + path);
@@ -162,6 +173,34 @@ public class FileSystemStore implements Store {
     }
 
     @Override
+    public List<Property> getProperties(final Path path) throws WebDavException {
+        final File meta = getMetaFile(path);
+        if (!meta.exists()) {
+            return Collections.emptyList();
+        }
+
+        InputStream is = null;
+        try {
+            final Properties properties = new Properties();
+            is = new FileInputStream(meta);
+            properties.loadFromXML(new FileInputStream(meta));
+
+            final List<Property> result = new ArrayList<>();
+            final Enumeration<?> enumeration = properties.propertyNames();
+            while (enumeration.hasMoreElements()) {
+                final Object element = enumeration.nextElement();
+                final Object value = properties.get(element);
+                result.add(new Property(element.toString(), value.toString()));
+            }
+            return result;
+        } catch (Exception e) {
+            throw new WebDavException("can not load properties for " + path, e);
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    @Override
     public List<Path> list(final Path path) throws WebDavException {
         final File file = getFile(path, true);
         if (file.isFile()) {
@@ -181,13 +220,27 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void propertiesDelete(final Path path, final Property... properties) throws WebDavException {
+    public void setProperties(final Path path, final List<Property> properties) throws WebDavException {
+        final File meta = getMetaFile(path);
+        if (meta.exists() && properties.isEmpty()) {
+            delete(path, meta);
+            return;
+        }
 
-    }
+        final Properties store = new Properties();
+        for (Property property : properties) {
+            store.put(property.getName(), property.getValue());
+        }
 
-    @Override
-    public void propertiesSet(final Path path, final Property... properties) throws WebDavException {
-
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(meta);
+            store.storeToXML(os, "", "UTF-8");
+        } catch (Exception e) {
+            throw new WebDavException("can not save properties for " + path, e);
+        } finally {
+            IOUtils.closeQuietly(os);
+        }
     }
 
     @Override

@@ -119,29 +119,10 @@ public interface Store {
      */
     void lock(Path path, boolean steal) throws WebDavException;
 
-    /**
-     * Remove the given properties form the resource
-     *
-     * @param path the {@link Path} of the resource (relative to the repository root)
-     * @param properties {@link Property} to remove
-     *
-     * @throws IllegalArgumentException if properties contain {@code null} elements
-     * @throws NullPointerException if any parameter is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
-     */
-    void propertiesDelete(Path path, Property... properties) throws WebDavException;
 
-    /**
-     * Set the given properties for the resource (new properties will be added, existing properties will be overridden)
-     *
-     * @param path the {@link Path} of the resource (relative to the repository root)
-     * @param properties {@link Property} to createItem or override
-     *
-     * @throws IllegalArgumentException if properties contain {@code null} elements
-     * @throws NullPointerException if any parameter is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
-     */
-    void propertiesSet(Path path, Property... properties) throws WebDavException;
+    List<Property> getProperties(Path path) throws WebDavException;
+
+    void setProperties(Path path, List<Property> properties) throws WebDavException;
 
     /**
      * Remove the lock on the expected revision of the resource
