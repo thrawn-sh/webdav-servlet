@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 
 final class StatusResponse implements WebDavResponse {
 
+    public static final WebDavResponse BAD_REQUEST = new StatusResponse(HttpServletResponse.SC_BAD_REQUEST);
+
     public static final WebDavResponse CONFLICT = new StatusResponse(HttpServletResponse.SC_CONFLICT);
 
     public static final WebDavResponse CREATED = new StatusResponse(HttpServletResponse.SC_CREATED);

@@ -35,6 +35,7 @@ import de.shadowhunt.servlet.methods.DeleteMethod;
 import de.shadowhunt.servlet.methods.GetMethod;
 import de.shadowhunt.servlet.methods.MkColMethod;
 import de.shadowhunt.servlet.methods.OptionsMethod;
+import de.shadowhunt.servlet.methods.PropfindMethod;
 import de.shadowhunt.servlet.methods.PutMethod;
 import de.shadowhunt.servlet.methods.WebDavResponse;
 import de.shadowhunt.servlet.webdav.Path;
@@ -69,13 +70,13 @@ public class WebDavServlet extends HttpServlet {
 
         final Store store = new FileSystemStore(root);
 
-        final boolean writeable = Boolean.parseBoolean(config.getInitParameter("writeable"));
-
         final String listingCss = config.getInitParameter("listingCss");
         final boolean listing = Boolean.parseBoolean(config.getInitParameter("listing"));
         dispatcher.put(GetMethod.METHOD, new GetMethod(store, listing, listingCss));
         dispatcher.put(OptionsMethod.METHOD, new OptionsMethod(store));
+        dispatcher.put(PropfindMethod.METHOD, new PropfindMethod(store));
 
+        final boolean writeable = Boolean.parseBoolean(config.getInitParameter("writeable"));
         if (writeable) {
             dispatcher.put(DeleteMethod.METHOD, new DeleteMethod(store));
             dispatcher.put(MkColMethod.METHOD, new MkColMethod(store));
