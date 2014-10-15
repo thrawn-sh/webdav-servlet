@@ -33,7 +33,7 @@ public final class Entity {
     private Property[] properties = EMPTY;
 
     public static enum Type {
-        COLLECTION(1), FILE(2);
+        COLLECTION(1), ITEM(2);
 
         public final int priority;
 

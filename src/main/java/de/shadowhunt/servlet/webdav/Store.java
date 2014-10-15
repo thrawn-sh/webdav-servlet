@@ -37,7 +37,7 @@ public interface Store {
      * @throws NullPointerException if any parameter is {@code null}
      * @throws WebDavException if an error occurs while operating on the repository
      */
-    void add(Resource resource, InputStream content) throws WebDavException;
+    void createItem(Resource resource, InputStream content) throws WebDavException;
 
     /**
      * Delete the resource from the repository
@@ -83,7 +83,7 @@ public interface Store {
      * @throws NullPointerException if any parameter is {@code null}
      * @throws WebDavException if an error occurs while operating on the repository
      */
-    Entity info(Resource resource) throws WebDavException;
+    Entity getEntity(Resource resource) throws WebDavException;
 
     /**
      * Retrieve information for the resource in the given revision and its child resources (depending on depth parameter)
@@ -117,7 +117,7 @@ public interface Store {
      * @throws NullPointerException if any parameter is {@code null}
      * @throws WebDavException if an error occurs while operating on the repository
      */
-    void mkdir(Resource resource) throws WebDavException;
+    void createCollection(Resource resource) throws WebDavException;
 
     /**
      * Remove the given properties form the resource
@@ -135,7 +135,7 @@ public interface Store {
      * Set the given properties for the resource (new properties will be added, existing properties will be overridden)
      *
      * @param resource the {@link Resource} of the resource (relative to the repository root)
-     * @param properties {@link Property} to add or override
+     * @param properties {@link Property} to createItem or override
      *
      * @throws IllegalArgumentException if properties contain {@code null} elements
      * @throws NullPointerException if any parameter is {@code null}

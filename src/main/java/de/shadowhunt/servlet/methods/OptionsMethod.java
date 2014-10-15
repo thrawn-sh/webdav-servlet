@@ -38,7 +38,7 @@ public class OptionsMethod extends AbstractWebDavMethod {
     public WebDavResponse service(final Resource resource, final HttpServletRequest request) throws ServletException, IOException {
         Entity entity = null;
         if (store.exists(resource)) {
-            entity = store.info(resource);
+            entity = store.getEntity(resource);
         }
 
         final String allowedMethods = getAllowedMethods(entity);

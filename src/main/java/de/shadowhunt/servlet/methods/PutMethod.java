@@ -34,7 +34,7 @@ public class PutMethod extends AbstractWebDavMethod {
 
     @Override
     public WebDavResponse service(final Resource resource, final HttpServletRequest request) throws ServletException, IOException {
-        store.add(resource, request.getInputStream());
+        store.createItem(resource, request.getInputStream());
         return StatusResponse.CREATED;
     }
 }

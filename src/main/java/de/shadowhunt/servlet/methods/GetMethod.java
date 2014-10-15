@@ -44,9 +44,9 @@ public class GetMethod extends AbstractWebDavMethod {
         if (!store.exists(resource)) {
             return StatusResponse.NOT_FOUND;
         }
-        final Entity entity = store.info(resource);
+        final Entity entity = store.getEntity(resource);
         final Entity.Type type = entity.getType();
-        if (type == Entity.Type.FILE) {
+        if (type == Entity.Type.ITEM) {
             return new StreamingResponse(store.download(resource));
         }
 
@@ -62,7 +62,7 @@ public class GetMethod extends AbstractWebDavMethod {
         final List<Resource> children = store.list(resource);
         final List<Entity> entities = new ArrayList<>();
         for (final Resource child : children) {
-            entities.add(store.info(child));
+            entities.add(store.getEntity(child));
         }
         return entities;
     }

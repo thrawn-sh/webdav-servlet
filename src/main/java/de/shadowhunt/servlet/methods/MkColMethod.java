@@ -44,7 +44,7 @@ public class MkColMethod extends AbstractWebDavMethod {
         }
 
         if (!store.exists(resource)) {
-            store.mkdir(resource);
+            store.createCollection(resource);
             return StatusResponse.CREATED;
         }
         return StatusResponse.METHOD_NOT_ALLOWED;

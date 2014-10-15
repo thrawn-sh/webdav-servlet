@@ -56,7 +56,7 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void add(final Resource resource, final InputStream content) throws WebDavException {
+    public void createItem(final Resource resource, final InputStream content) throws WebDavException {
         final File file = getFile(resource, false);
         OutputStream os = null;
         try {
@@ -127,7 +127,7 @@ public class FileSystemStore implements Store {
         if (file.isDirectory()) {
             return Entity.Type.COLLECTION;
         } else {
-            return Entity.Type.FILE;
+            return Entity.Type.ITEM;
         }
     }
 
@@ -160,7 +160,7 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public Entity info(final Resource resource) throws WebDavException {
+    public Entity getEntity(final Resource resource) throws WebDavException {
         final File file = getFile(resource, true);
 
         final Entity entity = new Entity();
@@ -190,7 +190,7 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void mkdir(final Resource resource) throws WebDavException {
+    public void createCollection(final Resource resource) throws WebDavException {
         final File file = getFile(resource, false);
         if (!file.mkdir()) {
             throw new WebDavException("can not create folder " + resource);
