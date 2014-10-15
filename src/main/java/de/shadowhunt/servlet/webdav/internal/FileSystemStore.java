@@ -43,6 +43,8 @@ import de.shadowhunt.servlet.webdav.WebDavException;
 
 public class FileSystemStore implements Store {
 
+    private static final Path SUFFIX = Path.create("_xml");
+
     private final File metaRoot;
 
     private final File resourceRoot;
@@ -135,6 +137,14 @@ public class FileSystemStore implements Store {
         }
     }
 
+    private Date determineLastModified(final File file, final Path path) {
+        try {
+            return new Date(file.lastModified());
+        } catch (final Exception e) {
+            throw new WebDavException("can not determine last modified date for " + path, e);
+        }
+    }
+
     @Override
     public InputStream download(final Path path) throws WebDavException {
         final File file = getFile(path, true);
@@ -164,14 +174,6 @@ public class FileSystemStore implements Store {
         return Entity.createCollection(path, lastModified);
     }
 
-    private Date determineLastModified(final File file, final Path path) {
-        try {
-            return new Date(file.lastModified());
-        } catch (final Exception e) {
-            throw new WebDavException("can not determine last modified date for " + path, e);
-        }
-    }
-
     private File getFile(final Path path, final boolean mustExist) throws WebDavException {
         final File file = new File(resourceRoot, path.getValue());
         if (mustExist && !file.exists()) {
@@ -186,7 +188,9 @@ public class FileSystemStore implements Store {
 
     @Override
     public List<Property> getProperties(final Path path) throws WebDavException {
-        final File meta = getMetaFile(path);
+        getFile(path, true); // ensure collection/item exists
+
+        final File meta = getMetaFile(path.append(SUFFIX));
         if (!meta.exists()) {
             return Collections.emptyList();
         }
@@ -202,7 +206,9 @@ public class FileSystemStore implements Store {
             while (enumeration.hasMoreElements()) {
                 final Object element = enumeration.nextElement();
                 final Object value = properties.get(element);
-                result.add(new Property(element.toString(), value.toString()));
+                final String fqName = element.toString();
+                final String[] parts = fqName.split(" ");
+                result.add(new Property(parts[0], parts[1], value.toString()));
             }
             return result;
         } catch (Exception e) {
@@ -233,7 +239,9 @@ public class FileSystemStore implements Store {
 
     @Override
     public void setProperties(final Path path, final List<Property> properties) throws WebDavException {
-        final File meta = getMetaFile(path);
+        getFile(path, true); // ensure collection/item exists
+
+        final File meta = getMetaFile(path.append(SUFFIX));
         if (meta.exists() && properties.isEmpty()) {
             delete(path, meta);
             return;
@@ -241,7 +249,7 @@ public class FileSystemStore implements Store {
 
         final Properties store = new Properties();
         for (Property property : properties) {
-            store.put(property.getName(), property.getValue());
+            store.put(property.getNameSpace() + " " + property.getName(), property.getValue());
         }
 
         OutputStream os = null;

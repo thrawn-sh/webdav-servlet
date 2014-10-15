@@ -41,7 +41,9 @@ public final class Property {
 
     private final String name;
 
-    private final String value;
+    private final String nameSpace;
+
+    private String value;
 
     /**
      * Create a new {@link Property} with the given {@link Type}, name and value
@@ -52,10 +54,12 @@ public final class Property {
      *
      * @throws NullPointerException if any parameter is {@code null}
      */
-    public Property(final String name, final String value) {
+    public Property(final String nameSpace, final String name, final String value) {
+        Validate.notNull(nameSpace, "nameSpace must not be null");
         Validate.notNull(name, "name must not be null");
         Validate.notNull(value, "value must not be null");
 
+        this.nameSpace = nameSpace;
         this.name = name;
         this.value = value;
     }
@@ -88,6 +92,10 @@ public final class Property {
      */
     public String getName() {
         return name;
+    }
+
+    public String getNameSpace() {
+        return nameSpace;
     }
 
     /**
