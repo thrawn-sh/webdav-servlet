@@ -21,13 +21,11 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.annotation.Nullable;
 import javax.servlet.ServletException;
@@ -38,7 +36,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
-import de.shadowhunt.servlet.webdav.Property;
 
 class HtmlListingResponse implements WebDavResponse {
 
@@ -58,11 +55,11 @@ class HtmlListingResponse implements WebDavResponse {
 
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
-    private final Map<Entity, List<Property>> entities;
+    private final List<Entity> entities;
 
     private final Entity root;
 
-    public HtmlListingResponse(final Entity root, final Map<Entity, List<Property>> entities, @Nullable final String cssPath) {
+    public HtmlListingResponse(final Entity root, final List<Entity> entities, @Nullable final String cssPath) {
         this.root = root;
         this.entities = entities;
         this.cssPath = cssPath;
@@ -70,8 +67,7 @@ class HtmlListingResponse implements WebDavResponse {
 
     @Override
     public void write(final HttpServletResponse response) throws ServletException, IOException {
-        final Set<Entity> sorted = new TreeSet<>(LISTING_COMPARATOR);
-        sorted.addAll(entities.keySet());
+        Collections.sort(entities, LISTING_COMPARATOR);
 
         final PrintWriter writer = response.getWriter();
         response.setContentType("application/xhtml+xml");
@@ -97,7 +93,7 @@ class HtmlListingResponse implements WebDavResponse {
             writer.print("<tr class=\"folder parent\"><td colspan=\"3\"><a href=\"..\">Parent</a></td></tr>");
         }
 
-        for (final Entity entity : sorted) {
+        for (final Entity entity : entities) {
             final String entityName = entity.getName();
             final String link = URLEncoder.encode(entityName, response.getCharacterEncoding());
             final String entityNameHtml = StringEscapeUtils.escapeHtml4(entityName);
@@ -116,7 +112,7 @@ class HtmlListingResponse implements WebDavResponse {
                 final String size = FileUtils.byteCountToDisplaySize(entity.getSize());
                 writer.print(size);
                 writer.print("</td><td>");
-                final Date lastModified = new Date(); // FIXME
+                final Date lastModified = entity.getLastModified();
                 final String formattedDate = dateFormat.format(lastModified);
                 writer.print(formattedDate);
                 writer.print("</td></tr>");

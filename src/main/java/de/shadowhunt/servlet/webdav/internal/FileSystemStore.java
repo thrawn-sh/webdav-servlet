@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -154,10 +155,21 @@ public class FileSystemStore implements Store {
     public Entity getEntity(final Path path) throws WebDavException {
         final File file = getFile(path, true);
 
+        final Date lastModified = determineLastModified(file, path);
         if (file.isFile()) {
-            return Entity.createItem(path, calculateMd5(file, path), calculateSize(file, path));
+            final String hash = calculateMd5(file, path);
+            final long size = calculateSize(file, path);
+            return Entity.createItem(path, hash, lastModified, size);
         }
-        return Entity.createCollection(path);
+        return Entity.createCollection(path, lastModified);
+    }
+
+    private Date determineLastModified(final File file, final Path path) {
+        try {
+            return new Date(file.lastModified());
+        } catch (final Exception e) {
+            throw new WebDavException("can not determine last modified date for " + path, e);
+        }
     }
 
     private File getFile(final Path path, final boolean mustExist) throws WebDavException {

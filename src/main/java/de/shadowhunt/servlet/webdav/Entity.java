@@ -16,16 +16,18 @@
  */
 package de.shadowhunt.servlet.webdav;
 
+import java.util.Date;
+
 import javax.annotation.CheckForNull;
 
 public final class Entity {
 
-    public static Entity createCollection(final Path path) {
-        return new Entity(path, Type.COLLECTION, null, 0L);
+    public static Entity createCollection(final Path path, final Date lastModified) {
+        return new Entity(path, Type.COLLECTION, null, lastModified, 0L);
     }
 
-    public static Entity createItem(final Path path, final String hash, final long size) {
-        return new Entity(path, Type.ITEM, hash, size);
+    public static Entity createItem(final Path path, final String hash, final Date lastModified, final long size) {
+        return new Entity(path, Type.ITEM, hash, lastModified, size);
     }
 
     public static enum Type {
@@ -40,16 +42,23 @@ public final class Entity {
 
     private final String hash;
 
+    public Date getLastModified() {
+        return new Date(lastModified.getTime());
+    }
+
+    private final Date lastModified;
+
     private final Path path;
 
     private final long size;
 
     private final Type type;
 
-    private Entity(final Path path, final Type type, final String hash, final long size) {
+    private Entity(final Path path, final Type type, final String hash, final Date lastModified, final long size) {
         this.path = path;
         this.type = type;
         this.hash = hash;
+        this.lastModified = new Date(lastModified.getTime());
         this.size = size;
     }
 
