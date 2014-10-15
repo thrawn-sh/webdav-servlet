@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.CheckForNull;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
@@ -167,7 +166,7 @@ public class FileSystemStore implements Store {
     private File getFile(final Resource resource, final boolean mustExist) throws WebDavException {
         final File file = new File(resourceRoot, resource.getValue());
         if (mustExist && !file.exists()) {
-            throw new WebDavException(HttpServletResponse.SC_NOT_FOUND, "can not locate resource: " + resource);
+            throw new WebDavException("can not locate resource: " + resource);
         }
         return file;
     }

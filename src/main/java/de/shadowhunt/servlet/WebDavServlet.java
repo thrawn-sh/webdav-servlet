@@ -94,7 +94,7 @@ public class WebDavServlet extends HttpServlet {
         final String method = request.getMethod();
         final AbstractWebDavMethod dispatch = dispatcher.get(method);
         if (dispatch == null) {
-            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED); // TODO
+            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
             return;
         }
 
@@ -104,7 +104,7 @@ public class WebDavServlet extends HttpServlet {
             final WebDavResponse webDavResponse = dispatch.service(resource, principal, request);
             webDavResponse.write(response);
         } catch (final WebDavException e) {
-            response.sendError(e.getHttpStatusCode()); // TODO
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }
