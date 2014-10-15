@@ -96,7 +96,7 @@ public final class Resource implements Comparable<Resource> {
     }
 
     public Resource getChild(final String name) {
-        if (name.contains("/")) {
+        if (name.indexOf('/') >= 0) {
             throw new IllegalArgumentException("name must not contain path separator: " + name);
         }
         return new Resource(value + "/" + name);
@@ -120,7 +120,7 @@ public final class Resource implements Comparable<Resource> {
             return ROOT; // parent of root is root
         }
 
-        final int indexOf = value.lastIndexOf("/");
+        final int indexOf = value.lastIndexOf('/');
         return new Resource(value.substring(0, indexOf));
     }
 
