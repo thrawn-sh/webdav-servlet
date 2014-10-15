@@ -16,13 +16,15 @@
  */
 package de.shadowhunt.servlet.methods;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
+import de.shadowhunt.servlet.webdav.Property;
 import de.shadowhunt.servlet.webdav.Store;
 
 public class GetMethod extends AbstractWebDavMethod {
@@ -39,13 +41,15 @@ public class GetMethod extends AbstractWebDavMethod {
         this.cssPath = cssPath;
     }
 
-    protected List<Entity> getEntities(final Path path) {
+    protected Map<Entity, List<Property>> getEntities(final Path path) {
         final List<Path> children = store.list(path);
-        final List<Entity> entities = new ArrayList<>();
+        final Map<Entity, List<Property>> result = new LinkedHashMap<>();
         for (final Path child : children) {
-            entities.add(store.getEntity(child));
+            final Entity entity = store.getEntity(child);
+            final List<Property> properties = store.getProperties(child);
+            result.put(entity, properties);
         }
-        return entities;
+        return result;
     }
 
     @Override
@@ -60,7 +64,7 @@ public class GetMethod extends AbstractWebDavMethod {
         }
 
         if ((type == Entity.Type.COLLECTION) && htmlListing) {
-            final List<Entity> entities = getEntities(path);
+            final Map<Entity, List<Property>> entities = getEntities(path);
             return new HtmlListingResponse(entity, entities, cssPath);
         }
 
