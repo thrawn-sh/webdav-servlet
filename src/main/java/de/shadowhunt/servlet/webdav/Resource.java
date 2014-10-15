@@ -49,6 +49,10 @@ public final class Resource implements Comparable<Resource> {
             throw new IllegalArgumentException("invalid path: " + path);
         }
 
+        final int lastCharacterIndex = normalizedPath.length() - 1;
+        if (normalizedPath.charAt(lastCharacterIndex) == '/') {
+            return new Resource(normalizedPath.substring(0, lastCharacterIndex));
+        }
         return new Resource(normalizedPath);
     }
 
@@ -109,14 +113,8 @@ public final class Resource implements Comparable<Resource> {
             return ROOT; // parent of root is root
         }
 
-        final StringBuilder parent = new StringBuilder(value);
-        final int lastCharacterIndex = parent.length() - 1;
-        if (parent.charAt(lastCharacterIndex) == '/') {
-            parent.deleteCharAt(lastCharacterIndex);
-        }
-
-        final int indexOf = parent.lastIndexOf("/");
-        return new Resource(parent.substring(0, indexOf));
+        final int indexOf = value.lastIndexOf("/");
+        return new Resource(value.substring(0, indexOf));
     }
 
     /**
