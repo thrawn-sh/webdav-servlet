@@ -109,9 +109,14 @@ public final class Resource implements Comparable<Resource> {
             return ROOT; // parent of root is root
         }
 
-        final String fullPath = FilenameUtils.getFullPathNoEndSeparator(value);
-        final int indexOf = fullPath.lastIndexOf('/');
-        return new Resource(fullPath.substring(0, indexOf));
+        final StringBuilder parent = new StringBuilder(value);
+        final int lastCharacterIndex = parent.length() - 1;
+        if (parent.charAt(lastCharacterIndex) == '/') {
+            parent.deleteCharAt(lastCharacterIndex);
+        }
+
+        final int indexOf = parent.lastIndexOf("/");
+        return new Resource(parent.substring(0, indexOf));
     }
 
     /**
