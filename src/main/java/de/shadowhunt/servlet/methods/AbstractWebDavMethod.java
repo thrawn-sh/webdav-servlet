@@ -18,7 +18,6 @@ package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Principal;
 
 import javax.annotation.CheckForNull;
 import javax.servlet.ServletException;
@@ -82,5 +81,5 @@ public abstract class AbstractWebDavMethod {
         return method.hashCode();
     }
 
-    public abstract WebDavResponse service(final Resource resource, final Principal principal, final HttpServletRequest request) throws ServletException, IOException;
+    public abstract WebDavResponse service(final Resource resource, final HttpServletRequest request) throws ServletException, IOException;
 }

@@ -16,7 +16,6 @@
  */
 package de.shadowhunt.servlet.methods;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class GetMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponse service(final Resource resource, final Principal principal, final HttpServletRequest request) {
+    public WebDavResponse service(final Resource resource, final HttpServletRequest request) {
         if (!store.exists(resource)) {
             return StatusResponse.NOT_FOUND;
         }

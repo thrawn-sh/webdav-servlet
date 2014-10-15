@@ -18,7 +18,6 @@ package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
 import java.net.URI;
-import java.security.Principal;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +58,7 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponse service(final Resource source, final Principal principal, final HttpServletRequest request) throws ServletException, IOException {
+    public WebDavResponse service(final Resource source, final HttpServletRequest request) throws ServletException, IOException {
         if (!store.exists(source)) {
             return StatusResponse.NOT_FOUND;
         }

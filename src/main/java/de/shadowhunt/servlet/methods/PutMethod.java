@@ -17,7 +17,6 @@
 package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
-import java.security.Principal;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +33,7 @@ public class PutMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponse service(final Resource resource, final Principal principal, final HttpServletRequest request) throws ServletException, IOException {
+    public WebDavResponse service(final Resource resource, final HttpServletRequest request) throws ServletException, IOException {
         store.add(resource, request.getInputStream());
         return StatusResponse.CREATED;
     }

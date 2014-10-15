@@ -18,11 +18,9 @@ package de.shadowhunt.servlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.CheckForNull;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -52,11 +50,6 @@ public class WebDavServlet extends HttpServlet {
     public void destroy() {
         dispatcher.clear();
         super.destroy();
-    }
-
-    @CheckForNull
-    protected Principal getPrincipal(final HttpServletRequest request) {
-        return request.getUserPrincipal();
     }
 
     protected Resource getResource(final HttpServletRequest request) {
@@ -102,9 +95,8 @@ public class WebDavServlet extends HttpServlet {
         }
 
         try {
-            final Principal principal = getPrincipal(request);
             final Resource resource = getResource(request);
-            final WebDavResponse webDavResponse = dispatch.service(resource, principal, request);
+            final WebDavResponse webDavResponse = dispatch.service(resource, request);
             webDavResponse.write(response);
         } catch (final WebDavException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
