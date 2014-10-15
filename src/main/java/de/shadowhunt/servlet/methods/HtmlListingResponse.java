@@ -112,7 +112,7 @@ class HtmlListingResponse implements WebDavResponse {
                 final String size = FileUtils.byteCountToDisplaySize(entity.getSize());
                 writer.print(size);
                 writer.print("</td><td>");
-                final Date lastModified = entity.getLastModified();
+                final Date lastModified = new Date(); // FIXME
                 final String formattedDate = dateFormat.format(lastModified);
                 writer.print(formattedDate);
                 writer.print("</td></tr>");
