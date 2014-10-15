@@ -18,6 +18,7 @@ package de.shadowhunt.servlet.webdav.internal;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -110,15 +111,27 @@ public class FileSystemStore implements Store {
     @Override
     public void copy(final Resource srcResource, final Resource targetResource) throws WebDavException {
         final File source = getFile(srcResource, true);
-        final File target = getFile(targetResource, false);
-        try {
-            if (source.isFile()) {
-                FileUtils.copyFile(source, target);
-            } else {
-                FileUtils.copyDirectory(source, target);
+
+        if (source.isFile()) {
+            final File target = getFile(targetResource, false);
+            if (target.exists()) {
+                throw new WebDavException("target already exists: " + targetResource);
             }
-        } catch (final IOException e) {
-            throw new WebDavException("can not copy " + srcResource + " to " + targetResource, e);
+
+            InputStream inputStream = null;
+            OutputStream outputStream = null;
+            try {
+                inputStream = new FileInputStream(source);
+                outputStream = new FileOutputStream(target);
+                IOUtils.copy(inputStream, outputStream);
+            } catch (final IOException e) {
+                throw new WebDavException("can not copy " + srcResource + " to " + targetResource, e);
+            } finally {
+                IOUtils.closeQuietly(inputStream);
+                IOUtils.closeQuietly(outputStream);
+            }
+        } else {
+            mkdir(targetResource);
         }
     }
 
@@ -209,21 +222,6 @@ public class FileSystemStore implements Store {
         final File file = getFile(resource, false);
         if (!file.mkdir()) {
             throw new WebDavException("can not create folder " + resource);
-        }
-    }
-
-    @Override
-    public void move(final Resource srcResource, final Resource targetResource) throws WebDavException {
-        final File source = getFile(srcResource, true);
-        final File target = getFile(targetResource, false);
-        try {
-            if (source.isFile()) {
-                FileUtils.moveFile(source, target);
-            } else {
-                FileUtils.moveDirectory(source, target);
-            }
-        } catch (final IOException e) {
-            throw new WebDavException("can not move " + srcResource + " to " + targetResource, e);
         }
     }
 
