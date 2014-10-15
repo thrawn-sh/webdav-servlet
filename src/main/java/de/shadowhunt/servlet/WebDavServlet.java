@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 
 import de.shadowhunt.servlet.methods.AbstractWebDavMethod;
+import de.shadowhunt.servlet.methods.CopyMoveMethod;
 import de.shadowhunt.servlet.methods.DeleteMethod;
 import de.shadowhunt.servlet.methods.GetMethod;
 import de.shadowhunt.servlet.methods.MkColMethod;
@@ -86,6 +87,8 @@ public class WebDavServlet extends HttpServlet {
             dispatcher.put(DeleteMethod.METHOD, new DeleteMethod(store));
             dispatcher.put(MkColMethod.METHOD, new MkColMethod(store));
             dispatcher.put(PutMethod.METHOD, new PutMethod(store));
+            dispatcher.put(CopyMoveMethod.COPY_METHOD, new CopyMoveMethod(store, false));
+            dispatcher.put(CopyMoveMethod.MOVE_METHOD, new CopyMoveMethod(store, true));
         }
     }
 
