@@ -40,18 +40,6 @@ public interface Store {
     void add(Resource resource, InputStream content) throws WebDavException;
 
     /**
-     * Recursively copy a resource in the given revision
-     *
-     * @param srcResource the {@link Resource} of the source resource (relative to the repository root)
-     * @param targetResource the {@link Resource} of the target resource (relative to the repository root)
-     * @param parents whether to create missing parents folders or not
-     *
-     * @throws NullPointerException if any parameter is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
-     */
-    void copy(Resource srcResource, Resource targetResource) throws WebDavException;
-
-    /**
      * Delete the resource from the repository
      *
      * @param resource the {@link Resource} of the resource (relative to the repository root)

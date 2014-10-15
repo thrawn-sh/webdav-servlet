@@ -18,7 +18,6 @@ package de.shadowhunt.servlet.webdav.internal;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -105,33 +104,6 @@ public class FileSystemStore implements Store {
             return file.length();
         } catch (Exception e) {
             throw new WebDavException("can not calculate size for " + resource, e);
-        }
-    }
-
-    @Override
-    public void copy(final Resource srcResource, final Resource targetResource) throws WebDavException {
-        final File source = getFile(srcResource, true);
-
-        if (source.isFile()) {
-            final File target = getFile(targetResource, false);
-            if (target.exists()) {
-                throw new WebDavException("target already exists: " + targetResource);
-            }
-
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
-            try {
-                inputStream = new FileInputStream(source);
-                outputStream = new FileOutputStream(target);
-                IOUtils.copy(inputStream, outputStream);
-            } catch (final IOException e) {
-                throw new WebDavException("can not copy " + srcResource + " to " + targetResource, e);
-            } finally {
-                IOUtils.closeQuietly(inputStream);
-                IOUtils.closeQuietly(outputStream);
-            }
-        } else {
-            mkdir(targetResource);
         }
     }
 
