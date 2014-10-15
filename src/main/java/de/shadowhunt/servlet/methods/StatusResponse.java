@@ -21,7 +21,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
-class StatusResponse implements WebDavResponse {
+final class StatusResponse implements WebDavResponse {
 
     public static final WebDavResponse CONFLICT = new StatusResponse(HttpServletResponse.SC_CONFLICT);
 
