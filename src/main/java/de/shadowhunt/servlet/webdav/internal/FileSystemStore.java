@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -177,9 +178,13 @@ public class FileSystemStore implements Store {
     @Override
     public List<Resource> list(final Resource resource) throws WebDavException {
         final File file = getFile(resource, true);
+        if (file.isFile()) {
+            return Collections.emptyList();
+        }
+
         final List<Resource> children = new ArrayList<>();
         for (final String child : file.list()) {
-            children.add(resource.append(Resource.create(child))); // FIXME imperformant
+            children.add(resource.getChild(child));
         }
         return children;
     }
