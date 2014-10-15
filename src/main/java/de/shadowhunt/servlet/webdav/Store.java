@@ -28,6 +28,16 @@ import javax.annotation.concurrent.ThreadSafe;
 public interface Store {
 
     /**
+     * Create a folder with all necessary parents folders
+     *
+     * @param resource the {@link de.shadowhunt.servlet.webdav.Resource} of the resource (relative to the repository root)
+     *
+     * @throws NullPointerException if any parameter is {@code null}
+     * @throws WebDavException if an error occurs while operating on the repository
+     */
+    void createCollection(Resource resource) throws WebDavException;
+
+    /**
      * Upload a new revision of the resource and set properties
      *
      * @param resource the {@link Resource} of the resource (relative to the repository root)
@@ -108,16 +118,6 @@ public interface Store {
      * @throws WebDavException if an error occurs while operating on the repository
      */
     void lock(Resource resource, boolean steal) throws WebDavException;
-
-    /**
-     * Create a folder with all necessary parents folders
-     *
-     * @param resource the {@link de.shadowhunt.servlet.webdav.Resource} of the resource (relative to the repository root)
-     *
-     * @throws NullPointerException if any parameter is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
-     */
-    void createCollection(Resource resource) throws WebDavException;
 
     /**
      * Remove the given properties form the resource

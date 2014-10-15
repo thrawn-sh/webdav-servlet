@@ -35,9 +35,9 @@ final class StatusResponse implements WebDavResponse {
 
     public static final WebDavResponse NO_CONTENT = new StatusResponse(HttpServletResponse.SC_NO_CONTENT);
 
-    public static final WebDavResponse UNSUPPORTED_MEDIA_TYPE = new StatusResponse(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-
     public static final WebDavResponse PRECONDITION_FAILED = new StatusResponse(HttpServletResponse.SC_PRECONDITION_FAILED);
+
+    public static final WebDavResponse UNSUPPORTED_MEDIA_TYPE = new StatusResponse(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 
     private final int httpStatus;
 

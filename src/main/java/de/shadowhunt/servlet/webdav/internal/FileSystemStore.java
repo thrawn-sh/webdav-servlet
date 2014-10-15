@@ -56,21 +56,6 @@ public class FileSystemStore implements Store {
         }
     }
 
-    @Override
-    public void createItem(final Resource resource, final InputStream content) throws WebDavException {
-        final File file = getFile(resource, false);
-        OutputStream os = null;
-        try {
-            os = FileUtils.openOutputStream(file);
-            IOUtils.copy(content, os);
-        } catch (IOException e) {
-            throw new WebDavException("can not write to resource " + resource, e);
-        } finally {
-            IOUtils.closeQuietly(content);
-            IOUtils.closeQuietly(os);
-        }
-    }
-
     private Date calculateLastModified(final File file, final Resource resource) {
         try {
             return new Date(file.lastModified());
@@ -105,6 +90,29 @@ public class FileSystemStore implements Store {
             return file.length();
         } catch (Exception e) {
             throw new WebDavException("can not calculate size for " + resource, e);
+        }
+    }
+
+    @Override
+    public void createCollection(final Resource resource) throws WebDavException {
+        final File file = getFile(resource, false);
+        if (!file.mkdir()) {
+            throw new WebDavException("can not create folder " + resource);
+        }
+    }
+
+    @Override
+    public void createItem(final Resource resource, final InputStream content) throws WebDavException {
+        final File file = getFile(resource, false);
+        OutputStream os = null;
+        try {
+            os = FileUtils.openOutputStream(file);
+            IOUtils.copy(content, os);
+        } catch (IOException e) {
+            throw new WebDavException("can not write to resource " + resource, e);
+        } finally {
+            IOUtils.closeQuietly(content);
+            IOUtils.closeQuietly(os);
         }
     }
 
@@ -148,18 +156,6 @@ public class FileSystemStore implements Store {
         return file.exists();
     }
 
-    private File getFile(final Resource resource, final boolean mustExist) throws WebDavException {
-        final File file = new File(resourceRoot, resource.getValue());
-        if (mustExist && !file.exists()) {
-            throw new WebDavException("can not locate resource: " + resource);
-        }
-        return file;
-    }
-
-    private File getMetaFile(final Resource resource) throws WebDavException {
-        return new File(metaRoot, resource.getValue());
-    }
-
     @Override
     public Entity getEntity(final Resource resource) throws WebDavException {
         final File file = getFile(resource, true);
@@ -173,6 +169,18 @@ public class FileSystemStore implements Store {
         entity.setLastModified(calculateLastModified(file, resource));
 
         return entity;
+    }
+
+    private File getFile(final Resource resource, final boolean mustExist) throws WebDavException {
+        final File file = new File(resourceRoot, resource.getValue());
+        if (mustExist && !file.exists()) {
+            throw new WebDavException("can not locate resource: " + resource);
+        }
+        return file;
+    }
+
+    private File getMetaFile(final Resource resource) throws WebDavException {
+        return new File(metaRoot, resource.getValue());
     }
 
     @Override
@@ -192,14 +200,6 @@ public class FileSystemStore implements Store {
     @Override
     public void lock(final Resource resource, final boolean steal) throws WebDavException {
 
-    }
-
-    @Override
-    public void createCollection(final Resource resource) throws WebDavException {
-        final File file = getFile(resource, false);
-        if (!file.mkdir()) {
-            throw new WebDavException("can not create folder " + resource);
-        }
     }
 
     @Override

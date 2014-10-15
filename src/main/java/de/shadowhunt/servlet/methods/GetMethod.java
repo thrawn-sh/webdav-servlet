@@ -39,6 +39,15 @@ public class GetMethod extends AbstractWebDavMethod {
         this.cssPath = cssPath;
     }
 
+    private List<Entity> getEntities(final Resource resource) {
+        final List<Resource> children = store.list(resource);
+        final List<Entity> entities = new ArrayList<>();
+        for (final Resource child : children) {
+            entities.add(store.getEntity(child));
+        }
+        return entities;
+    }
+
     @Override
     public WebDavResponse service(final Resource resource, final HttpServletRequest request) {
         if (!store.exists(resource)) {
@@ -56,14 +65,5 @@ public class GetMethod extends AbstractWebDavMethod {
         }
 
         return StatusResponse.FORBIDDEN;
-    }
-
-    private List<Entity> getEntities(final Resource resource) {
-        final List<Resource> children = store.list(resource);
-        final List<Entity> entities = new ArrayList<>();
-        for (final Resource child : children) {
-            entities.add(store.getEntity(child));
-        }
-        return entities;
     }
 }
