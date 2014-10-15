@@ -41,12 +41,34 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
         this.deleteSource = deleteSource;
     }
 
+    private void copy(final Resource source, final Resource target, final int depth) {
+        if (depth < 0) {
+            return;
+        }
+
+        final Entity sourceEntity = store.getEntity(source);
+        if (sourceEntity.getType() == Entity.Type.COLLECTION) {
+            store.createCollection(target);
+        } else {
+            store.createItem(target, store.download(source));
+        }
+
+        for (final Resource child : store.list(source)) {
+            copy(child, target.getChild(child.getName()), depth - 1);
+        }
+    }
+
     protected int determineDepth(final HttpServletRequest request) {
         final String depth = request.getHeader("Depth");
         if (StringUtils.isEmpty(depth) || "infinity".equalsIgnoreCase(depth)) {
             return Integer.MAX_VALUE;
         }
         return Integer.parseInt(depth);
+    }
+
+    protected boolean determineOverwrite(final HttpServletRequest request) {
+        final String overwrite = request.getHeader("Overwrite");
+        return "T".equalsIgnoreCase(overwrite);
     }
 
     protected Resource determineTarget(final HttpServletRequest request) {
@@ -64,7 +86,8 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
             return StatusResponse.NOT_FOUND;
         }
 
-        final boolean overwrite = "T".equalsIgnoreCase(request.getHeader("Overwrite"));
+        final boolean overwrite = determineOverwrite(request);
+        final int depth = determineDepth(request);
         final Resource target = determineTarget(request);
         final boolean targetExistsBefore = store.exists(target);
         if (targetExistsBefore) {
@@ -81,12 +104,7 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
             return StatusResponse.CONFLICT;
         }
 
-        final Entity sourceEntity = store.getEntity(source);
-        if (sourceEntity.getType() == Entity.Type.COLLECTION) {
-            store.createCollection(target);
-        } else {
-            store.createItem(target, store.download(source));
-        }
+        copy(source, target, depth);
 
         if (deleteSource) {
             store.delete(source);
