@@ -42,7 +42,9 @@ public abstract class AbstractWebDavMethod {
     protected boolean consume(final InputStream inputStream) throws IOException {
         final boolean data = (inputStream.read() != -1);
         if (data) {
-            while (inputStream.read() != -1) ;
+            while (inputStream.read() != -1) {
+                // just deplete inputStream
+            }
         }
         return data;
     }
