@@ -29,9 +29,9 @@ public class GetMethod extends AbstractWebDavMethod {
 
     public static final String METHOD = "GET";
 
-    private final String cssPath;
+    protected final String cssPath;
 
-    private final boolean htmlListing;
+    protected final boolean htmlListing;
 
     public GetMethod(final Store store, final boolean htmlListing, final String cssPath) {
         super(METHOD, store);
@@ -39,7 +39,7 @@ public class GetMethod extends AbstractWebDavMethod {
         this.cssPath = cssPath;
     }
 
-    private List<Entity> getEntities(final Resource resource) {
+    protected List<Entity> getEntities(final Resource resource) {
         final List<Resource> children = store.list(resource);
         final List<Entity> entities = new ArrayList<>();
         for (final Resource child : children) {

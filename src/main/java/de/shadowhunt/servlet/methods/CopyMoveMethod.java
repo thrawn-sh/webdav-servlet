@@ -34,14 +34,14 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
 
     public static final String MOVE_METHOD = "MOVE";
 
-    private final boolean deleteSource;
+    protected final boolean deleteSource;
 
     public CopyMoveMethod(final Store store, final boolean deleteSource) {
         super((deleteSource) ? MOVE_METHOD : COPY_METHOD, store);
         this.deleteSource = deleteSource;
     }
 
-    private void copy(final Resource source, final Resource target, final int depth) {
+    protected void copy(final Resource source, final Resource target, final int depth) {
         if (depth < 0) {
             return;
         }
