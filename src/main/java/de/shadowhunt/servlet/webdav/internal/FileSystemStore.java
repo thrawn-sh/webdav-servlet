@@ -33,8 +33,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import de.shadowhunt.servlet.webdav.Entity;
+import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Property;
-import de.shadowhunt.servlet.webdav.Resource;
 import de.shadowhunt.servlet.webdav.Store;
 import de.shadowhunt.servlet.webdav.WebDavException;
 
@@ -56,16 +56,16 @@ public class FileSystemStore implements Store {
         }
     }
 
-    private Date calculateLastModified(final File file, final Resource resource) {
+    private Date calculateLastModified(final File file, final Path path) {
         try {
             return new Date(file.lastModified());
         } catch (final Exception e) {
-            throw new WebDavException("can not calculate last modified date for " + resource, e);
+            throw new WebDavException("can not calculate last modified date for " + path, e);
         }
     }
 
     @CheckForNull
-    private String calculateMd5(final File file, final Resource resource) {
+    private String calculateMd5(final File file, final Path path) {
         if (file.isDirectory()) {
             return null;
         }
@@ -75,13 +75,13 @@ public class FileSystemStore implements Store {
             fis = new FileInputStream(file);
             return DigestUtils.md5Hex(fis);
         } catch (Exception e) {
-            throw new WebDavException("can not calculate md5 hash for " + resource, e);
+            throw new WebDavException("can not calculate md5 hash for " + path, e);
         } finally {
             IOUtils.closeQuietly(fis);
         }
     }
 
-    private long calculateSize(final File file, final Resource resource) {
+    private long calculateSize(final File file, final Path path) {
         if (file.isDirectory()) {
             return 0L;
         }
@@ -89,27 +89,27 @@ public class FileSystemStore implements Store {
         try {
             return file.length();
         } catch (Exception e) {
-            throw new WebDavException("can not calculate size for " + resource, e);
+            throw new WebDavException("can not calculate size for " + path, e);
         }
     }
 
     @Override
-    public void createCollection(final Resource resource) throws WebDavException {
-        final File file = getFile(resource, false);
+    public void createCollection(final Path path) throws WebDavException {
+        final File file = getFile(path, false);
         if (!file.mkdir()) {
-            throw new WebDavException("can not create folder " + resource);
+            throw new WebDavException("can not create folder " + path);
         }
     }
 
     @Override
-    public void createItem(final Resource resource, final InputStream content) throws WebDavException {
-        final File file = getFile(resource, false);
+    public void createItem(final Path path, final InputStream content) throws WebDavException {
+        final File file = getFile(path, false);
         OutputStream os = null;
         try {
             os = FileUtils.openOutputStream(file);
             IOUtils.copy(content, os);
         } catch (IOException e) {
-            throw new WebDavException("can not write to resource " + resource, e);
+            throw new WebDavException("can not write to resource " + path, e);
         } finally {
             IOUtils.closeQuietly(content);
             IOUtils.closeQuietly(os);
@@ -117,17 +117,17 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void delete(final Resource resource) throws WebDavException {
-        final File file = getFile(resource, true);
+    public void delete(final Path path) throws WebDavException {
+        final File file = getFile(path, true);
         if (file.isFile()) {
             if (!file.delete()) {
-                throw new WebDavException("can not delete " + resource);
+                throw new WebDavException("can not delete " + path);
             }
         } else {
             try {
                 FileUtils.deleteDirectory(file);
             } catch (IOException e) {
-                throw new WebDavException("can not delete " + resource, e);
+                throw new WebDavException("can not delete " + path, e);
             }
         }
     }
@@ -141,8 +141,8 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public InputStream download(final Resource resource) throws WebDavException {
-        final File file = getFile(resource, true);
+    public InputStream download(final Path path) throws WebDavException {
+        final File file = getFile(path, true);
         try {
             return new FileInputStream(file);
         } catch (IOException e) {
@@ -151,69 +151,69 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public boolean exists(final Resource resource) throws WebDavException {
-        final File file = getFile(resource, false);
+    public boolean exists(final Path path) throws WebDavException {
+        final File file = getFile(path, false);
         return file.exists();
     }
 
     @Override
-    public Entity getEntity(final Resource resource) throws WebDavException {
-        final File file = getFile(resource, true);
+    public Entity getEntity(final Path path) throws WebDavException {
+        final File file = getFile(path, true);
 
         final Entity entity = new Entity();
-        entity.setResource(resource);
-        entity.setMd5(calculateMd5(file, resource));
-        entity.setSize(calculateSize(file, resource));
+        entity.setPath(path);
+        entity.setMd5(calculateMd5(file, path));
+        entity.setSize(calculateSize(file, path));
         entity.setType(determineType(file));
 
-        entity.setLastModified(calculateLastModified(file, resource));
+        entity.setLastModified(calculateLastModified(file, path));
 
         return entity;
     }
 
-    private File getFile(final Resource resource, final boolean mustExist) throws WebDavException {
-        final File file = new File(resourceRoot, resource.getValue());
+    private File getFile(final Path path, final boolean mustExist) throws WebDavException {
+        final File file = new File(resourceRoot, path.getValue());
         if (mustExist && !file.exists()) {
-            throw new WebDavException("can not locate resource: " + resource);
+            throw new WebDavException("can not locate resource: " + path);
         }
         return file;
     }
 
-    private File getMetaFile(final Resource resource) throws WebDavException {
-        return new File(metaRoot, resource.getValue());
+    private File getMetaFile(final Path path) throws WebDavException {
+        return new File(metaRoot, path.getValue());
     }
 
     @Override
-    public List<Resource> list(final Resource resource) throws WebDavException {
-        final File file = getFile(resource, true);
+    public List<Path> list(final Path path) throws WebDavException {
+        final File file = getFile(path, true);
         if (file.isFile()) {
             return Collections.emptyList();
         }
 
-        final List<Resource> children = new ArrayList<>();
+        final List<Path> children = new ArrayList<>();
         for (final String child : file.list()) {
-            children.add(resource.getChild(child));
+            children.add(path.getChild(child));
         }
         return children;
     }
 
     @Override
-    public void lock(final Resource resource, final boolean steal) throws WebDavException {
+    public void lock(final Path path, final boolean steal) throws WebDavException {
 
     }
 
     @Override
-    public void propertiesDelete(final Resource resource, final Property... properties) throws WebDavException {
+    public void propertiesDelete(final Path path, final Property... properties) throws WebDavException {
 
     }
 
     @Override
-    public void propertiesSet(final Resource resource, final Property... properties) throws WebDavException {
+    public void propertiesSet(final Path path, final Property... properties) throws WebDavException {
 
     }
 
     @Override
-    public void unlock(final Resource resource, final boolean force) throws WebDavException {
+    public void unlock(final Path path, final boolean force) throws WebDavException {
 
     }
 }

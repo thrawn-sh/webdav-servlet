@@ -21,25 +21,25 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 /**
- * {@link Resource} defines a resource location in the repository
+ * {@link Path} defines a resource location in the repository
  */
-public final class Resource implements Comparable<Resource> {
+public final class Path implements Comparable<Path> {
 
     /**
-     * Represents the base {@link Resource} in the repository
+     * Represents the base {@link Path} in the repository
      */
-    public static final Resource ROOT = new Resource("");
+    public static final Path ROOT = new Path("");
 
     /**
-     * Create a new {@link Resource} instance for the given value
+     * Create a new {@link Path} instance for the given value
      *
-     * @param path value of the {@link Resource}
+     * @param path value of the {@link Path}
      *
-     * @return the new {@link Resource} instance with the given value
+     * @return the new {@link Path} instance with the given value
      *
      * @throws IllegalArgumentException if the given path is not valid
      */
-    public static Resource create(final String path) {
+    public static Path create(final String path) {
         if (StringUtils.isEmpty(path) || "/".equals(path)) {
             return ROOT;
         }
@@ -51,31 +51,31 @@ public final class Resource implements Comparable<Resource> {
 
         final int lastCharacterIndex = normalizedPath.length() - 1;
         if (normalizedPath.charAt(lastCharacterIndex) == '/') {
-            return new Resource(normalizedPath.substring(0, lastCharacterIndex));
+            return new Path(normalizedPath.substring(0, lastCharacterIndex));
         }
-        return new Resource(normalizedPath);
+        return new Path(normalizedPath);
     }
 
     private final String value;
 
-    private Resource(final String value) {
+    private Path(final String value) {
         this.value = value;
     }
 
     /**
-     * Appends the specified {@link Resource} to the end of this {@link Resource}
+     * Appends the specified {@link Path} to the end of this {@link Path}
      *
-     * @param resource the {@link Resource} that is appended to the end
-     * of this {@link Resource}
+     * @param path the {@link Path} that is appended to the end
+     * of this {@link Path}
      *
-     * @return a {@link Resource} that represents the combination of this {@link Resource} and the specified {@link Resource}
+     * @return a {@link Path} that represents the combination of this {@link Path} and the specified {@link Path}
      */
-    public Resource append(final Resource resource) {
-        return new Resource(value + resource.value);
+    public Path append(final Path path) {
+        return new Path(value + path.value);
     }
 
     @Override
-    public int compareTo(final Resource other) {
+    public int compareTo(final Path other) {
         Validate.notNull(other, "other must not be null");
         return value.compareTo(other.value);
     }
@@ -91,15 +91,15 @@ public final class Resource implements Comparable<Resource> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Resource other = (Resource) obj;
+        final Path other = (Path) obj;
         return value.equals(other.value);
     }
 
-    public Resource getChild(final String name) {
+    public Path getChild(final String name) {
         if (name.indexOf('/') >= 0) {
             throw new IllegalArgumentException("name must not contain path separator: " + name);
         }
-        return new Resource(value + "/" + name);
+        return new Path(value + "/" + name);
     }
 
     public final String getName() {
@@ -111,23 +111,23 @@ public final class Resource implements Comparable<Resource> {
     }
 
     /**
-     * Returns the parent {@link Resource} of the {@link Resource}, the parent of the ROOT element is the ROOT itself
+     * Returns the parent {@link Path} of the {@link Path}, the parent of the ROOT element is the ROOT itself
      *
-     * @return the parent {@link Resource} of the {@link Resource}
+     * @return the parent {@link Path} of the {@link Path}
      */
-    public Resource getParent() {
+    public Path getParent() {
         if (equals(ROOT)) {
             return ROOT; // parent of root is root
         }
 
         final int indexOf = value.lastIndexOf('/');
-        return new Resource(value.substring(0, indexOf));
+        return new Path(value.substring(0, indexOf));
     }
 
     /**
-     * Returns a {@link String} representation of the {@link Resource}
+     * Returns a {@link String} representation of the {@link Path}
      *
-     * @return the {@link String} representation of the {@link Resource}
+     * @return the {@link String} representation of the {@link Path}
      */
     public String getValue() {
         return value;

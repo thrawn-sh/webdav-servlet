@@ -22,7 +22,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import de.shadowhunt.servlet.webdav.Entity;
-import de.shadowhunt.servlet.webdav.Resource;
+import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
 
 public class GetMethod extends AbstractWebDavMethod {
@@ -39,28 +39,28 @@ public class GetMethod extends AbstractWebDavMethod {
         this.cssPath = cssPath;
     }
 
-    protected List<Entity> getEntities(final Resource resource) {
-        final List<Resource> children = store.list(resource);
+    protected List<Entity> getEntities(final Path path) {
+        final List<Path> children = store.list(path);
         final List<Entity> entities = new ArrayList<>();
-        for (final Resource child : children) {
+        for (final Path child : children) {
             entities.add(store.getEntity(child));
         }
         return entities;
     }
 
     @Override
-    public WebDavResponse service(final Resource resource, final HttpServletRequest request) {
-        if (!store.exists(resource)) {
+    public WebDavResponse service(final Path path, final HttpServletRequest request) {
+        if (!store.exists(path)) {
             return StatusResponse.NOT_FOUND;
         }
-        final Entity entity = store.getEntity(resource);
+        final Entity entity = store.getEntity(path);
         final Entity.Type type = entity.getType();
         if (type == Entity.Type.ITEM) {
-            return new StreamingResponse(store.download(resource));
+            return new StreamingResponse(store.download(path));
         }
 
         if ((type == Entity.Type.COLLECTION) && htmlListing) {
-            final List<Entity> entities = getEntities(resource);
+            final List<Entity> entities = getEntities(path);
             return new HtmlListingResponse(entity, entities, cssPath);
         }
 

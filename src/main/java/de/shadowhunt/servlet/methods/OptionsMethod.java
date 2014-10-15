@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import de.shadowhunt.servlet.webdav.Entity;
-import de.shadowhunt.servlet.webdav.Resource;
+import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
 
 public class OptionsMethod extends AbstractWebDavMethod {
@@ -35,10 +35,10 @@ public class OptionsMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponse service(final Resource resource, final HttpServletRequest request) throws ServletException, IOException {
+    public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
         Entity entity = null;
-        if (store.exists(resource)) {
-            entity = store.getEntity(resource);
+        if (store.exists(path)) {
+            entity = store.getEntity(path);
         }
 
         final String allowedMethods = getAllowedMethods(entity);

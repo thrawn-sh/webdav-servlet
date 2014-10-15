@@ -49,7 +49,7 @@ public final class Entity {
 
     private String md5 = null;
 
-    private Resource resource = Resource.ROOT;
+    private Path path = Path.ROOT;
 
     private long size = 0L;
 
@@ -90,7 +90,7 @@ public final class Entity {
     }
 
     public String getName() {
-        return resource.getName();
+        return path.getName();
     }
 
     /**
@@ -103,12 +103,12 @@ public final class Entity {
     }
 
     /**
-     * Returns a {@link Resource} of the resource (relative to the root of the repository)
+     * Returns a {@link Path} of the resource (relative to the root of the repository)
      *
-     * @return the {@link Resource} of the resource (relative to the root of the repository)
+     * @return the {@link Path} of the resource (relative to the root of the repository)
      */
-    public Resource getResource() {
-        return resource;
+    public Path getPath() {
+        return path;
     }
 
     public long getSize() {
@@ -152,8 +152,8 @@ public final class Entity {
         }
     }
 
-    public void setResource(final Resource resource) {
-        this.resource = resource;
+    public void setPath(final Path path) {
+        this.path = path;
     }
 
     public void setSize(long size) {

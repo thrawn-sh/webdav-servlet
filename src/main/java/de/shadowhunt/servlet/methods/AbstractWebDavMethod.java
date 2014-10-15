@@ -24,7 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import de.shadowhunt.servlet.webdav.Entity;
-import de.shadowhunt.servlet.webdav.Resource;
+import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
 
 public abstract class AbstractWebDavMethod {
@@ -81,5 +81,5 @@ public abstract class AbstractWebDavMethod {
         return method.hashCode();
     }
 
-    public abstract WebDavResponse service(final Resource resource, final HttpServletRequest request) throws ServletException, IOException;
+    public abstract WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException;
 }

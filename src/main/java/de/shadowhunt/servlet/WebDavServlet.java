@@ -37,7 +37,7 @@ import de.shadowhunt.servlet.methods.MkColMethod;
 import de.shadowhunt.servlet.methods.OptionsMethod;
 import de.shadowhunt.servlet.methods.PutMethod;
 import de.shadowhunt.servlet.methods.WebDavResponse;
-import de.shadowhunt.servlet.webdav.Resource;
+import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
 import de.shadowhunt.servlet.webdav.WebDavException;
 import de.shadowhunt.servlet.webdav.internal.FileSystemStore;
@@ -52,12 +52,12 @@ public class WebDavServlet extends HttpServlet {
         super.destroy();
     }
 
-    protected Resource getResource(final HttpServletRequest request) {
+    protected Path getResource(final HttpServletRequest request) {
         final String pathInfo = request.getPathInfo();
         if (pathInfo == null) {
-            return Resource.ROOT;
+            return Path.ROOT;
         }
-        return Resource.create(pathInfo);
+        return Path.create(pathInfo);
     }
 
     @Override
@@ -95,8 +95,8 @@ public class WebDavServlet extends HttpServlet {
         }
 
         try {
-            final Resource resource = getResource(request);
-            final WebDavResponse webDavResponse = dispatch.service(resource, request);
+            final Path path = getResource(request);
+            final WebDavResponse webDavResponse = dispatch.service(path, request);
             webDavResponse.write(response);
         } catch (final WebDavException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

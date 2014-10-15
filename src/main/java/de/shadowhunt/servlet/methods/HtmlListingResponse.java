@@ -35,7 +35,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import de.shadowhunt.servlet.webdav.Entity;
-import de.shadowhunt.servlet.webdav.Resource;
+import de.shadowhunt.servlet.webdav.Path;
 
 class HtmlListingResponse implements WebDavResponse {
 
@@ -47,7 +47,7 @@ class HtmlListingResponse implements WebDavResponse {
             if (result != 0) {
                 return result;
             }
-            return e1.getResource().compareTo(e2.getResource());
+            return e1.getPath().compareTo(e2.getPath());
         }
     };
 
@@ -86,7 +86,7 @@ class HtmlListingResponse implements WebDavResponse {
         }
 
         writer.print("</head><body><table><thead><tr><th>Name</th><th>Size</th><th>Modified</th></tr></thead><tbody>");
-        if (Resource.ROOT.equals(root.getResource())) {
+        if (Path.ROOT.equals(root.getPath())) {
             // do not leave WebDav
             writer.print("<tr class=\"folder parent\"><td colspan=\"3\"><a href=\".\">Parent</a></td></tr>");
         } else {

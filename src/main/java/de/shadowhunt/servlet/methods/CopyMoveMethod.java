@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
 import de.shadowhunt.servlet.webdav.Entity;
-import de.shadowhunt.servlet.webdav.Resource;
+import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
 
 public class CopyMoveMethod extends AbstractWebDavMethod {
@@ -41,7 +41,7 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
         this.deleteSource = deleteSource;
     }
 
-    protected void copy(final Resource source, final Resource target, final int depth) {
+    protected void copy(final Path source, final Path target, final int depth) {
         if (depth < 0) {
             return;
         }
@@ -53,7 +53,7 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
             store.createItem(target, store.download(source));
         }
 
-        for (final Resource child : store.list(source)) {
+        for (final Path child : store.list(source)) {
             copy(child, target.getChild(child.getName()), depth - 1);
         }
     }
@@ -71,24 +71,24 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
         return "T".equalsIgnoreCase(overwrite);
     }
 
-    protected Resource determineTarget(final HttpServletRequest request) {
+    protected Path determineTarget(final HttpServletRequest request) {
         final String pathInfo = request.getServletPath();
         final String destination = request.getHeader("Destination");
         final URI destinationUri = URI.create(destination);
         final String destinationPath = destinationUri.getPath();
         final int indexOf = destinationPath.indexOf(pathInfo);
-        return Resource.create(destinationPath.substring(indexOf));
+        return Path.create(destinationPath.substring(indexOf));
     }
 
     @Override
-    public WebDavResponse service(final Resource source, final HttpServletRequest request) throws ServletException, IOException {
+    public WebDavResponse service(final Path source, final HttpServletRequest request) throws ServletException, IOException {
         if (!store.exists(source)) {
             return StatusResponse.NOT_FOUND;
         }
 
         final boolean overwrite = determineOverwrite(request);
         final int depth = determineDepth(request);
-        final Resource target = determineTarget(request);
+        final Path target = determineTarget(request);
         final boolean targetExistsBefore = store.exists(target);
         if (targetExistsBefore) {
             if (overwrite) {
@@ -99,7 +99,7 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
         }
 
         // targetParent collection must exist
-        final Resource targetParent = target.getParent();
+        final Path targetParent = target.getParent();
         if (!store.exists(targetParent)) {
             return StatusResponse.CONFLICT;
         }
