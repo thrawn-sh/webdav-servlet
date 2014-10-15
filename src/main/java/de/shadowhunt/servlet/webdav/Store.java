@@ -95,6 +95,8 @@ public interface Store {
      */
     Entity getEntity(Path path) throws WebDavException;
 
+    List<Property> getProperties(Path path) throws WebDavException;
+
     /**
      * Retrieve information for the resource in the given revision and its child resources (depending on depth parameter)
      *
@@ -118,9 +120,6 @@ public interface Store {
      * @throws WebDavException if an error occurs while operating on the repository
      */
     void lock(Path path, boolean steal) throws WebDavException;
-
-
-    List<Property> getProperties(Path path) throws WebDavException;
 
     void setProperties(Path path, List<Property> properties) throws WebDavException;
 

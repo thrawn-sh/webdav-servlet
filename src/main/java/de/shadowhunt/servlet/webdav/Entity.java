@@ -42,10 +42,6 @@ public final class Entity {
 
     private final String hash;
 
-    public Date getLastModified() {
-        return new Date(lastModified.getTime());
-    }
-
     private final Date lastModified;
 
     private final Path path;
@@ -91,6 +87,10 @@ public final class Entity {
     @CheckForNull
     public String getHash() {
         return hash;
+    }
+
+    public Date getLastModified() {
+        return new Date(lastModified.getTime());
     }
 
     public String getName() {
