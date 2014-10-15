@@ -21,7 +21,6 @@ import java.security.Principal;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import de.shadowhunt.servlet.webdav.Resource;
 import de.shadowhunt.servlet.webdav.Store;
@@ -37,9 +36,12 @@ public class DeleteMethod extends AbstractWebDavMethod {
     @Override
     public WebDavResponse service(final Resource resource, final Principal principal, final HttpServletRequest request) throws ServletException, IOException {
         if (Resource.ROOT.equals(resource)) {
-            return new StatusResponse(HttpServletResponse.SC_FORBIDDEN);
+            return StatusResponse.FORBIDDEN;
+        }
+        if (!store.exists(resource)) {
+            return StatusResponse.NOT_FOUND;
         }
         store.delete(resource);
-        return new StatusResponse(HttpServletResponse.SC_NO_CONTENT);
+        return StatusResponse.NO_CONTENT;
     }
 }

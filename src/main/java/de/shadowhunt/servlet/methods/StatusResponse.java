@@ -23,14 +23,28 @@ import javax.servlet.http.HttpServletResponse;
 
 class StatusResponse implements WebDavResponse {
 
+    public static final WebDavResponse CONFLICT = new StatusResponse(HttpServletResponse.SC_CONFLICT);
+
+    public static final WebDavResponse CREATED = new StatusResponse(HttpServletResponse.SC_CREATED);
+
+    public static final WebDavResponse FORBIDDEN = new StatusResponse(HttpServletResponse.SC_FORBIDDEN);
+
+    public static final WebDavResponse METHOD_NOT_ALLOWED = new StatusResponse(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+
+    public static final WebDavResponse NOT_FOUND = new StatusResponse(HttpServletResponse.SC_NOT_FOUND);
+
+    public static final WebDavResponse NO_CONTENT = new StatusResponse(HttpServletResponse.SC_NO_CONTENT);
+
+    public static final WebDavResponse UNSUPPORTED_MEDIA_TYPE = new StatusResponse(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+
     private final int httpStatus;
 
-    public StatusResponse(final int httpStatus) {
+    private StatusResponse(final int httpStatus) {
         this.httpStatus = httpStatus;
     }
 
     @Override
     public void write(final HttpServletResponse response) throws ServletException, IOException {
-        response.sendError(httpStatus); // TODO
+        response.sendError(httpStatus);
     }
 }

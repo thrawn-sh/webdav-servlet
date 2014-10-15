@@ -43,6 +43,9 @@ public class GetMethod extends AbstractWebDavMethod {
 
     @Override
     public WebDavResponse service(final Resource resource, final Principal principal, final HttpServletRequest request) {
+        if (!store.exists(resource)) {
+            return StatusResponse.NOT_FOUND;
+        }
         final Entity entity = store.info(resource);
         final Entity.Type type = entity.getType();
         if (type == Entity.Type.FILE) {
@@ -54,6 +57,6 @@ public class GetMethod extends AbstractWebDavMethod {
             return new HtmlListingResponse(entity, entities, cssPath);
         }
 
-        return new StatusResponse(HttpServletResponse.SC_FORBIDDEN);
+        return StatusResponse.FORBIDDEN;
     }
 }
