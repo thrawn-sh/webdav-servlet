@@ -30,6 +30,10 @@
         <servlet-name>webdav</servlet-name>
         <servlet-class>de.shadowhunt.servlet.WebDavServlet</servlet-class>
         <init-param>
+            <param-name>infiniteDepthRequests</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
             <param-name>listings</param-name>
             <param-value>true</param-value>
         </init-param>
