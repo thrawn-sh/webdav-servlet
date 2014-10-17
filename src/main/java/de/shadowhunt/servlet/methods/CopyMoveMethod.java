@@ -18,6 +18,7 @@ package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
+import de.shadowhunt.servlet.webdav.Property;
 import de.shadowhunt.servlet.webdav.Store;
 
 public class CopyMoveMethod extends AbstractWebDavMethod {
@@ -52,6 +54,8 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
         } else {
             store.createItem(target, store.download(source));
         }
+        final Map<Property, String> properties = store.getProperties(source);
+        store.setProperties(target, properties);
 
         for (final Path child : store.list(source)) {
             copy(child, target.getChild(child.getName()), depth - 1);
