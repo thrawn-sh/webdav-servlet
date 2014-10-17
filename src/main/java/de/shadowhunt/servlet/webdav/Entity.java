@@ -16,11 +16,57 @@
  */
 package de.shadowhunt.servlet.webdav;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.CheckForNull;
 
 public final class Entity {
+
+    public static final Property CONTENT_LENGTH_PROPERTY;
+
+    public static final Property CONTENT_TYPE_PROPERTY;
+
+    public static final Property CREATION_DATE_PROPERTY;
+
+    public static final Property DISPLAY_NAME_PROPERTY;
+
+    public static final Property ETAG_PROPERTY;
+
+    public static final Property LAST_MODIFIED_PROPERTY;
+
+    public static final Property LOCK_PROPERTY;
+
+    public static final Property RESOURCE_TYPE_PROPERTY;
+
+    static {
+        CREATION_DATE_PROPERTY = new Property(Property.DAV_NAMESPACE, "creationdate");
+        DISPLAY_NAME_PROPERTY = new Property(Property.DAV_NAMESPACE, "displayname");
+        CONTENT_LENGTH_PROPERTY = new Property(Property.DAV_NAMESPACE, "getcontentlength");
+        CONTENT_TYPE_PROPERTY = new Property(Property.DAV_NAMESPACE, "getcontenttype");
+        ETAG_PROPERTY = new Property(Property.DAV_NAMESPACE, "getetag");
+        LAST_MODIFIED_PROPERTY = new Property(Property.DAV_NAMESPACE, "getlastmodified");
+        RESOURCE_TYPE_PROPERTY = new Property(Property.DAV_NAMESPACE, "resourcetype");
+        LOCK_PROPERTY = new Property(Property.DAV_NAMESPACE, "supportedlock");
+
+        final Set<Property> properties = new TreeSet<>();
+        // properties.add(CREATION_DATE_PROPERTY); // not supported
+        properties.add(DISPLAY_NAME_PROPERTY); // getName
+        properties.add(CONTENT_LENGTH_PROPERTY); // getSize
+        // properties.add(CONTENT_TYPE_PROPERTY); // not supported
+        // properties.add(ETAG_PROPERTY); // not supported
+        properties.add(LAST_MODIFIED_PROPERTY); // getLastModified
+        properties.add(RESOURCE_TYPE_PROPERTY); // getType
+        //properties.add(LOCK_PROPERTY); // not supported
+        SUPPORTED_LIVE_PROPERTIES = Collections.unmodifiableSet(properties);
+    }
+
+    public static final Set<Property> SUPPORTED_LIVE_PROPERTIES;
 
     public static Entity createCollection(final Path path, final Date lastModified) {
         return new Entity(path, Type.COLLECTION, null, lastModified, 0L);
@@ -28,6 +74,15 @@ public final class Entity {
 
     public static Entity createItem(final Path path, final String hash, final Date lastModified, final long size) {
         return new Entity(path, Type.ITEM, hash, lastModified, size);
+    }
+
+    public static Map<Property, String> entityToProperties(final Entity entity) {
+        final Map<Property, String> result = new HashMap<>();
+        result.put(DISPLAY_NAME_PROPERTY, entity.getName());
+        result.put(CONTENT_LENGTH_PROPERTY, Long.toString(entity.getSize()));
+        result.put(LAST_MODIFIED_PROPERTY, entity.getLastModified().toString()); // FIXME
+        result.put(RESOURCE_TYPE_PROPERTY, "<" + entity.getType().name().toLowerCase(Locale.US) + "/>");
+        return result;
     }
 
     public static enum Type {
