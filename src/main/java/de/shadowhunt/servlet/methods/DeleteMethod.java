@@ -40,7 +40,15 @@ public class DeleteMethod extends AbstractWebDavMethod {
         if (!store.exists(path)) {
             return StatusResponse.NOT_FOUND;
         }
-        store.delete(path);
+
+        delete(path);
         return StatusResponse.NO_CONTENT;
+    }
+
+    private void delete(final Path path) {
+        for (final Path child : store.list(path)) {
+            delete(child);
+        }
+        store.delete(path);
     }
 }
