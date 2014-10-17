@@ -16,7 +16,10 @@
  */
 package de.shadowhunt.servlet.webdav;
 
+import java.util.Iterator;
+
 import javax.annotation.concurrent.Immutable;
+import javax.xml.namespace.NamespaceContext;
 
 import org.apache.commons.lang3.Validate;
 
@@ -26,9 +29,34 @@ import org.apache.commons.lang3.Validate;
 @Immutable
 public final class Property implements Comparable<Property> {
 
+    public static final String DAV_NAMESPACE = "DAV:";
+
+    public static final String DEFAULT_DAV_PREFIX = "D";
+
     private final String name;
 
     private final String nameSpace;
+
+    public static final NamespaceContext DAV_NS_CONTEXT = new NamespaceContext() {
+
+        @Override
+        public String getNamespaceURI(final String prefix) {
+            if (DEFAULT_DAV_PREFIX.equals(prefix)) {
+                return Property.DAV_NAMESPACE;
+            }
+            throw new IllegalArgumentException(prefix);
+        }
+
+        @Override
+        public String getPrefix(final String namespaceURI) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Iterator getPrefixes(final String namespaceURI) {
+            throw new UnsupportedOperationException();
+        }
+    };
 
     /**
      * Create a new {@link Property} with the given {@link Type}, name and value
@@ -99,5 +127,4 @@ public final class Property implements Comparable<Property> {
     public String toString() {
         return nameSpace + ":" + name;
     }
-
 }
