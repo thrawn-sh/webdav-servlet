@@ -18,6 +18,7 @@ package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -43,9 +44,9 @@ public class PropPatchMethod extends AbstractWebDavMethod {
     static {
         final XPathFactory factory = XPathFactory.newInstance();
         final XPath xpath = factory.newXPath();
-
+        xpath.setNamespaceContext(Property.DAV_NS_CONTEXT);
         try {
-            EXPRESSION = xpath.compile("//*[local-name()='propertyupdate']/*[local-name()='set|remove']/*[local-name()='prop']/node()");
+            EXPRESSION = xpath.compile("//D:prop/*");
         } catch (final XPathExpressionException e) {
             throw new InstantiationError(e.getMessage());
         }
@@ -62,14 +63,14 @@ public class PropPatchMethod extends AbstractWebDavMethod {
     private Property createProperty(final Node node) {
         final String nameSpace = node.getNamespaceURI();
         if (StringUtils.isEmpty(nameSpace)) {
-            return new Property("DAV", node.getNodeName());
+            return new Property(Property.DAV_NAMESPACE, node.getNodeName());
         }
         return new Property(nameSpace, node.getNodeName());
     }
 
     private boolean isSet(final Node node) {
         final Node parent = node.getParentNode().getParentNode(); // <set|remove><prop>node()
-        return "set".equals(parent.getNodeName());
+        return "set".equals(parent.getLocalName());
     }
 
     @Override
@@ -83,7 +84,8 @@ public class PropPatchMethod extends AbstractWebDavMethod {
             return StatusResponse.BAD_REQUEST;
         }
 
-        final Map<Property, String> properties = store.getProperties(path);
+        final Map<Property, String> properties = new TreeMap<>();
+        properties.putAll(store.getProperties(path));
         try {
             final NodeList nodes = (NodeList) EXPRESSION.evaluate(document, XPathConstants.NODESET);
             final int length = nodes.getLength();
@@ -91,7 +93,7 @@ public class PropPatchMethod extends AbstractWebDavMethod {
                 final Node node = nodes.item(i);
                 final Property property = createProperty(node);
 
-                if (isSet(node) && "DAV".equals(property.getNameSpace())) {
+                if (isSet(node) && !Property.DAV_NAMESPACE.equals(property.getNameSpace())) {
                     final String content = StringEscapeUtils.unescapeXml(node.getTextContent());
                     properties.put(property, content);
                 } else {
