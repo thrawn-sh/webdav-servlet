@@ -49,6 +49,7 @@ final class StatusResponse implements WebDavResponse {
 
     @Override
     public void write(final HttpServletResponse response) throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
         response.sendError(httpStatus);
     }
 }

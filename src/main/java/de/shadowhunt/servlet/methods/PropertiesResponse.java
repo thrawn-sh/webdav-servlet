@@ -18,25 +18,71 @@ package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import de.shadowhunt.servlet.webdav.Entity;
+import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Property;
 
 public class PropertiesResponse implements WebDavResponse {
 
     private final String baseUri;
 
-    private final Map<Entity, Map<Property, String>> entries;
+    private final Map<Path, Map<Property, String>> entries;
 
-    public PropertiesResponse(final String baseUri, final Map<Entity, Map<Property, String>> entries) {
+    private final Set<Property> requested;
+
+    public PropertiesResponse(final String baseUri, final Set<Property> requested, final Map<Path, Map<Property, String>> entries) {
         this.baseUri = baseUri;
+        this.requested = requested;
         this.entries = entries;
+    }
+
+    private void announceNameSpacePrefixes(final PrintWriter writer, final Map<String, String> nameSpaceMapping) {
+        for (final Map<Property, String> properties : entries.values()) {
+            announceNameSpacePrefixes0(writer, properties.keySet(), nameSpaceMapping);
+        }
+        announceNameSpacePrefixes0(writer, requested, nameSpaceMapping);
+    }
+
+    private void announceNameSpacePrefixes0(final PrintWriter writer, Set<Property> properties, final Map<String, String> nameSpaceMapping) {
+        for (final Property property : properties) {
+            final String nameSpace = property.getNameSpace();
+            if (nameSpaceMapping.containsKey(nameSpace)) {
+                continue;
+            }
+
+            final String prefix = "ns" + nameSpaceMapping.size();
+            nameSpaceMapping.put(nameSpace, prefix + ":");
+
+            writer.print(" xmlns:");
+            writer.print(prefix);
+            writer.print("=\"");
+            writer.print(nameSpace);
+            writer.print("\"");
+        }
+    }
+
+    private String collectMissingProperties(final Map<String, String> nameSpaceMapping, final Set<Property> available) {
+        final StringBuilder sb = new StringBuilder();
+        for (final Property property : requested) {
+            if (available.contains(property)) {
+                continue;
+            }
+            sb.append('<');
+            final String nameSpace = property.getNameSpace();
+            sb.append(nameSpaceMapping.get(nameSpace));
+            sb.append(property.getName());
+            sb.append("/>");
+        }
+        return sb.toString();
     }
 
     @Override
@@ -45,54 +91,65 @@ public class PropertiesResponse implements WebDavResponse {
         response.setContentType("text/xml");
         response.setStatus(207); // FIXME constant
 
+        final Map<String, String> nameSpaceMapping = new HashMap<>();
+        nameSpaceMapping.put(Property.DAV_NAMESPACE, "");
+
         writer.print("<?xml version=\"1.0\" encoding=\"");
         writer.print(response.getCharacterEncoding());
         writer.print("\"?>");
-        writer.print("<multistatus xmlns=\"DAV:\">");
-        writer.print("<response>");
-        for (Map.Entry<Entity, Map<Property, String>> entry : entries.entrySet()) {
-            final Entity entity = entry.getKey();
+        writer.print("<multistatus xmlns=\"");
+        writer.print(Property.DAV_NAMESPACE);
+        writer.print("\"");
+        announceNameSpacePrefixes(writer, nameSpaceMapping);
+        writer.write('>'); // multistatus
 
-            writer.print("<href>");
-            writer.print(baseUri);
-            writer.print(StringEscapeUtils.escapeXml10(entity.getPath().toString()));
+        for (Map.Entry<Path, Map<Property, String>> entry : entries.entrySet()) {
+            writer.print("<response><href>");
+            writer.print(StringEscapeUtils.escapeXml10(baseUri));
+            writer.print(StringEscapeUtils.escapeXml10(entry.getKey().toString()));
             writer.print("</href>");
-            writer.print("<propstat>");
-            writer.print("<prop>");
 
-            // live properties
-            writer.print("<getcontentlength>");
-            writer.print(entity.getSize());
-            writer.print("</getcontentlength>");
-
-            writer.print("<displayname>");
-            writer.print(StringEscapeUtils.escapeXml10(entity.getName()));
-            writer.print("</displayname>");
-
-            if (entity.getType() == Entity.Type.COLLECTION) {
-                writer.print("<resourcetype><collection/></resourcetype>");
+            final Map<Property, String> map = entry.getValue();
+            final String available = collectAvailableProperties(nameSpaceMapping, map);
+            if (StringUtils.isNotEmpty(available)) {
+                writer.print("<propstat><prop>");
+                writer.print(available);
+                writer.print("</prop><status>HTTP/1.1 200 OK</status></propstat>");
             }
 
-            // dead properties
-            final Map<Property, String> properties = entry.getValue();
-            for (final Map.Entry<Property, String> propertyEntry : properties.entrySet()) {
-                final Property property = propertyEntry.getKey();
-
-                final String name = property.getName();
-                writer.print("<");
-                writer.print(name);
-                writer.print(">");
-                writer.print(StringEscapeUtils.escapeXml10(propertyEntry.getValue()));
-                writer.print("</");
-                writer.print(name);
-                writer.print(">");
+            final String missing = collectMissingProperties(nameSpaceMapping, map.keySet());
+            if (StringUtils.isNotEmpty(missing)) {
+                writer.print("<propstat><prop>");
+                writer.print(missing);
+                writer.print("</prop><status>HTTP/1.1 404 Not Found</status></propstat>");
             }
-            writer.print("</prop>");
-            writer.print("<status>HTTP/1.1 200 OK</status>");
-            writer.print("</propstat>");
+            writer.print("</response>");
         }
-        writer.print("</response>");
         writer.print("</multistatus>");
-        writer.flush();
+    }
+
+    private String collectAvailableProperties(final Map<String, String> nameSpaceMapping, final Map<Property, String> properties) {
+        StringBuilder sb = new StringBuilder();
+        for (final Map.Entry<Property, String> propertyEntry : properties.entrySet()) {
+            final Property property = propertyEntry.getKey();
+            if (!requested.contains(property)) {
+                continue;
+            }
+
+            final String nameSpace = property.getNameSpace();
+            final String name = nameSpaceMapping.get(nameSpace) + property.getName();
+            sb.append("<");
+            sb.append(name);
+            sb.append(">");
+            if (Property.DAV_NAMESPACE.equals(nameSpace)) {
+                sb.append(propertyEntry.getValue());
+            } else {
+                sb.append(StringEscapeUtils.escapeXml10(propertyEntry.getValue()));
+            }
+            sb.append("</");
+            sb.append(name);
+            sb.append(">");
+        }
+        return sb.toString();
     }
 }

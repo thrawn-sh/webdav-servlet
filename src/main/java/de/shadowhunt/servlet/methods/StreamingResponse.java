@@ -35,6 +35,8 @@ class StreamingResponse implements WebDavResponse {
 
     @Override
     public void write(final HttpServletResponse response) throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
+
         final ServletOutputStream output = response.getOutputStream();
         try {
             IOUtils.copy(input, output);

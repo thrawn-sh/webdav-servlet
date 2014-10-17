@@ -69,14 +69,13 @@ class HtmlListingResponse implements WebDavResponse {
     public void write(final HttpServletResponse response) throws ServletException, IOException {
         Collections.sort(entities, LISTING_COMPARATOR);
 
-        final PrintWriter writer = response.getWriter();
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("application/xhtml+xml");
 
+        final PrintWriter writer = response.getWriter();
         writer.print("<!DOCTYPE html><html><head>");
-        final String rootName = root.getName();
-        final String rootHtml = StringEscapeUtils.escapeHtml4(rootName);
         writer.print("<title>Content of folder ");
-        writer.print(rootHtml);
+        writer.print(StringEscapeUtils.escapeHtml4(root.getPath().toString()));
         writer.print("</title>");
 
         if (cssPath != null) {
