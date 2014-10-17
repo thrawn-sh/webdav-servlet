@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
 
@@ -34,6 +35,13 @@ public class PutMethod extends AbstractWebDavMethod {
 
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
+        if (store.exists(path)) {
+            final Entity entity = store.getEntity(path);
+            if (entity.getType() == Entity.Type.COLLECTION) {
+                return StatusResponse.METHOD_NOT_ALLOWED;
+            }
+        }
+        
         store.createItem(path, request.getInputStream());
         return StatusResponse.CREATED;
     }
