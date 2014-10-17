@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Property;
 
-public class PropertiesResponse implements WebDavResponse {
+class PropertiesResponse implements WebDavResponse {
 
     private final String baseUri;
 
@@ -87,16 +87,15 @@ public class PropertiesResponse implements WebDavResponse {
 
     @Override
     public void write(final HttpServletResponse response) throws ServletException, IOException {
-        final PrintWriter writer = response.getWriter();
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("text/xml");
         response.setStatus(207); // FIXME constant
 
         final Map<String, String> nameSpaceMapping = new HashMap<>();
         nameSpaceMapping.put(Property.DAV_NAMESPACE, "");
 
-        writer.print("<?xml version=\"1.0\" encoding=\"");
-        writer.print(response.getCharacterEncoding());
-        writer.print("\"?>");
+        final PrintWriter writer = response.getWriter();
+        writer.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         writer.print("<multistatus xmlns=\"");
         writer.print(Property.DAV_NAMESPACE);
         writer.print("\"");

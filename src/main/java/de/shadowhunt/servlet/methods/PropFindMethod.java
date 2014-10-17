@@ -102,22 +102,6 @@ public class PropFindMethod extends AbstractWebDavMethod {
         }
     }
 
-    private String determineBaseUri(final HttpServletRequest request) {
-        final StringBuilder builder = new StringBuilder();
-
-//        final String scheme = request.getScheme();
-//        builder.append(scheme);
-//        builder.append("://");
-//        builder.append(request.getServerName());
-//        final int port = request.getServerPort();
-//        if (("http".equals(scheme) && (port != 80)) || ("https".equals(scheme) && (port != 443))) {
-//            builder.append(':');
-//            builder.append(port);
-//        }
-        builder.append(request.getServletPath());
-        return builder.toString();
-    }
-
     protected int determineDepth(final HttpServletRequest request) {
         final String depth = request.getHeader("Depth");
         if (StringUtils.isEmpty(depth) || "infinity".equalsIgnoreCase(depth)) {

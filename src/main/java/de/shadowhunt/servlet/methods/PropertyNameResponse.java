@@ -71,9 +71,7 @@ class PropertyNameResponse implements WebDavResponse {
         nameSpaceMapping.put(Property.DAV_NAMESPACE, "");
 
         final PrintWriter writer = response.getWriter();
-        writer.print("<?xml version=\"1.0\" encoding=\"");
-        writer.print(response.getCharacterEncoding());
-        writer.print("\"?>");
+        writer.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         writer.print("<multistatus xmlns=\"");
         writer.print(Property.DAV_NAMESPACE);
         writer.print("\"");
