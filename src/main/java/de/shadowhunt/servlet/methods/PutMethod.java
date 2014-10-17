@@ -41,7 +41,7 @@ public class PutMethod extends AbstractWebDavMethod {
                 return StatusResponse.METHOD_NOT_ALLOWED;
             }
         }
-        
+
         store.createItem(path, request.getInputStream());
         return StatusResponse.CREATED;
     }
