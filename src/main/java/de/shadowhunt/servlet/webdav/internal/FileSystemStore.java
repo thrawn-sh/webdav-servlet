@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.CheckForNull;
@@ -187,12 +189,12 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public List<Property> getProperties(final Path path) throws WebDavException {
+    public Map<Property, String> getProperties(final Path path) throws WebDavException {
         getFile(path, true); // ensure collection/item exists
 
         final File meta = getMetaFile(path.append(SUFFIX));
         if (!meta.exists()) {
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
 
         InputStream is = null;
@@ -201,14 +203,14 @@ public class FileSystemStore implements Store {
             is = new FileInputStream(meta);
             properties.loadFromXML(new FileInputStream(meta));
 
-            final List<Property> result = new ArrayList<>();
+            final Map<Property, String> result = new HashMap<>();
             final Enumeration<?> enumeration = properties.propertyNames();
             while (enumeration.hasMoreElements()) {
                 final Object element = enumeration.nextElement();
                 final Object value = properties.get(element);
                 final String fqName = element.toString();
                 final String[] parts = fqName.split(" ");
-                result.add(new Property(parts[0], parts[1], value.toString()));
+                result.put(new Property(parts[0], parts[1]), value.toString());
             }
             return result;
         } catch (Exception e) {
@@ -238,7 +240,7 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void setProperties(final Path path, final List<Property> properties) throws WebDavException {
+    public void setProperties(final Path path, final Map<Property, String> properties) throws WebDavException {
         getFile(path, true); // ensure collection/item exists
 
         final File meta = getMetaFile(path.append(SUFFIX));
@@ -248,8 +250,9 @@ public class FileSystemStore implements Store {
         }
 
         final Properties store = new Properties();
-        for (Property property : properties) {
-            store.put(property.getNameSpace() + " " + property.getName(), property.getValue());
+        for (Map.Entry<Property, String> entry : properties.entrySet()) {
+            final Property key = entry.getKey();
+            store.put(key.getNameSpace() + " " + key.getName(), entry.getValue());
         }
 
         OutputStream os = null;

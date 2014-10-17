@@ -18,6 +18,7 @@ package de.shadowhunt.servlet.webdav;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -95,7 +96,7 @@ public interface Store {
      */
     Entity getEntity(Path path) throws WebDavException;
 
-    List<Property> getProperties(Path path) throws WebDavException;
+    Map<Property, String> getProperties(Path path) throws WebDavException;
 
     /**
      * Retrieve information for the resource in the given revision and its child resources (depending on depth parameter)
@@ -121,7 +122,7 @@ public interface Store {
      */
     void lock(Path path, boolean steal) throws WebDavException;
 
-    void setProperties(Path path, List<Property> properties) throws WebDavException;
+    void setProperties(Path path, Map<Property, String> properties) throws WebDavException;
 
     /**
      * Remove the lock on the expected revision of the resource

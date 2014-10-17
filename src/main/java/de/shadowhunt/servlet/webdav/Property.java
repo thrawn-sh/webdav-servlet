@@ -16,8 +16,6 @@
  */
 package de.shadowhunt.servlet.webdav;
 
-import java.util.Comparator;
-
 import javax.annotation.concurrent.Immutable;
 
 import org.apache.commons.lang3.Validate;
@@ -26,24 +24,11 @@ import org.apache.commons.lang3.Validate;
  * {@link Property} represents a resource property
  */
 @Immutable
-public final class Property {
-
-    /**
-     * {@link Comparator} that compares {@link Property} by their type and name
-     */
-    public static final Comparator<Property> NAME_COMPARATOR = new Comparator<Property>() {
-
-        @Override
-        public int compare(final Property rp1, final Property rp2) {
-            return rp1.getName().compareTo(rp2.getName());
-        }
-    };
+public final class Property implements Comparable<Property> {
 
     private final String name;
 
     private final String nameSpace;
-
-    private String value;
 
     /**
      * Create a new {@link Property} with the given {@link Type}, name and value
@@ -54,14 +39,22 @@ public final class Property {
      *
      * @throws NullPointerException if any parameter is {@code null}
      */
-    public Property(final String nameSpace, final String name, final String value) {
+    public Property(final String nameSpace, final String name) {
         Validate.notNull(nameSpace, "nameSpace must not be null");
         Validate.notNull(name, "name must not be null");
-        Validate.notNull(value, "value must not be null");
 
         this.nameSpace = nameSpace;
         this.name = name;
-        this.value = value;
+    }
+
+    @Override
+    public int compareTo(final Property o) {
+        int result = nameSpace.compareTo(o.nameSpace);
+        if (result != 0) {
+            return result;
+        }
+
+        return name.compareTo(o.name);
     }
 
     @Override
@@ -76,9 +69,6 @@ public final class Property {
         final Property that = (Property) o;
 
         if (!name.equals(that.name)) {
-            return false;
-        }
-        if (!value.equals(that.value)) {
             return false;
         }
 
@@ -98,30 +88,16 @@ public final class Property {
         return nameSpace;
     }
 
-    /**
-     * Returns the value of the {@link Property}
-     *
-     * @return the value of the {@link Property}
-     */
-    public String getValue() {
-        return value;
-    }
-
     @Override
     public int hashCode() {
         int result = name.hashCode();
-        result = 31 * result + value.hashCode();
+        result = 31 * result + nameSpace.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Property [name=");
-        builder.append(name);
-        builder.append(", value=");
-        builder.append(value);
-        builder.append(']');
-        return builder.toString();
+        return nameSpace + ":" + name;
     }
+
 }
