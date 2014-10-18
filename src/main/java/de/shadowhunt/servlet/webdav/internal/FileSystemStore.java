@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.annotation.CheckForNull;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -43,7 +45,9 @@ import de.shadowhunt.servlet.webdav.WebDavException;
 
 public class FileSystemStore implements Store {
 
-    private static final Path SUFFIX = Path.create("_xml");
+    private static final Path PROPERTIES_SUFFIX = Path.create("_xml");
+
+    private static final Path LOCK_SUFFIX = Path.create("_lock");
 
     private final File metaRoot;
 
@@ -161,12 +165,27 @@ public class FileSystemStore implements Store {
         final File file = getFile(path, true);
 
         final Date lastModified = determineLastModified(file, path);
+        final String lock = determineLock(path);
         if (file.isFile()) {
             final String hash = calculateMd5(file, path);
             final long size = calculateSize(file, path);
-            return Entity.createItem(path, hash, lastModified, size);
+            return Entity.createItem(path, hash, lastModified, size, lock);
         }
-        return Entity.createCollection(path, lastModified);
+        return Entity.createCollection(path, lastModified, lock);
+    }
+
+    @CheckForNull
+    private String determineLock(final Path path) {
+        final File lock = getMetaFile(path.append(LOCK_SUFFIX));
+        if (!lock.exists()) {
+            return null;
+        }
+
+        try {
+            return FileUtils.readFileToString(lock);
+        } catch (IOException e) {
+            throw new WebDavException("can not read lock for " + path, e);
+        }
     }
 
     private File getFile(final Path path, final boolean mustExist) throws WebDavException {
@@ -185,7 +204,7 @@ public class FileSystemStore implements Store {
     public Map<Property, String> getProperties(final Path path) throws WebDavException {
         getFile(path, true); // ensure collection/item exists
 
-        final File meta = getMetaFile(path.append(SUFFIX));
+        final File meta = getMetaFile(path.append(PROPERTIES_SUFFIX));
         if (!meta.exists()) {
             return Collections.emptyMap();
         }
@@ -228,15 +247,20 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void lock(final Path path, final boolean steal) throws WebDavException {
-
+    public void lock(final Path path, final String id) throws WebDavException {
+        final File lock = getMetaFile(path.append(LOCK_SUFFIX));
+        try {
+            FileUtils.write(lock, id);
+        } catch (Exception e) {
+            throw new WebDavException("can not write lock for " + path, e);
+        }
     }
 
     @Override
     public void setProperties(final Path path, final Map<Property, String> properties) throws WebDavException {
         getFile(path, true); // ensure collection/item exists
 
-        final File meta = getMetaFile(path.append(SUFFIX));
+        final File meta = getMetaFile(path.append(PROPERTIES_SUFFIX));
         if (meta.exists() && properties.isEmpty()) {
             delete(path, meta);
             return;
@@ -260,7 +284,10 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void unlock(final Path path, final boolean force) throws WebDavException {
-
+    public void unlock(final Path path) throws WebDavException {
+        final File lock = getMetaFile(path.append(LOCK_SUFFIX));
+        if (!lock.delete()) {
+            throw new WebDavException("can not remove lock for " + path);
+        }
     }
 }

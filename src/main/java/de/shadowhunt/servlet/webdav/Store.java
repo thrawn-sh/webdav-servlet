@@ -120,7 +120,7 @@ public interface Store {
      * @throws NullPointerException if resource is {@code null}
      * @throws WebDavException if an error occurs while operating on the repository
      */
-    void lock(Path path, boolean steal) throws WebDavException;
+    void lock(Path path, final String id) throws WebDavException;
 
     void setProperties(Path path, Map<Property, String> properties) throws WebDavException;
 
@@ -133,5 +133,5 @@ public interface Store {
      * @throws NullPointerException if resource is {@code null}
      * @throws WebDavException if an error occurs while operating on the repository
      */
-    void unlock(Path path, boolean force) throws WebDavException;
+    void unlock(Path path) throws WebDavException;
 }
