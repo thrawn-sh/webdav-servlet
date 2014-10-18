@@ -70,7 +70,7 @@ class HtmlListingResponse implements WebDavResponse {
         Collections.sort(entities, LISTING_COMPARATOR);
 
         response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/xhtml+xml");
+        response.setContentType("text/html");
 
         final PrintWriter writer = response.getWriter();
         writer.print("<!DOCTYPE html><html><head>");
@@ -84,7 +84,7 @@ class HtmlListingResponse implements WebDavResponse {
             writer.print("\"/>");
         }
 
-        writer.print("</head><body><table><thead><tr><th>Name</th><th>Size</th><th>Modified</th></tr></thead><tbody>");
+        writer.print("</head><body><table><thead><tr><th class=\"name\">Name</th><th class=\"size\">Size</th><th class=\"modified\">Modified</th></tr></thead><tbody>");
         if (Path.ROOT.equals(root.getPath())) {
             // do not leave WebDav
             writer.print("<tr class=\"folder parent\"><td colspan=\"3\"><a href=\".\">Parent</a></td></tr>");
@@ -97,20 +97,20 @@ class HtmlListingResponse implements WebDavResponse {
             final String link = URLEncoder.encode(entityName, response.getCharacterEncoding());
             final String entityNameHtml = StringEscapeUtils.escapeHtml4(entityName);
             if (Entity.Type.COLLECTION == entity.getType()) {
-                writer.print("<tr class=\"folder\"><td colspan=\"3\"><a href=\"");
+                writer.print("<tr class=\"folder\"><td colspan=\"3\"><a href=\"./");
                 writer.print(link);
-                writer.print("\">");
+                writer.print("/\">");
                 writer.print(entityNameHtml);
                 writer.print("</a></td></tr>");
             } else {
-                writer.print("<tr class=\"file\"><td><a href=\"");
+                writer.print("<tr class=\"file\"><td class=\"name\"><a href=\"./");
                 writer.print(link);
                 writer.print("\">");
                 writer.print(entityNameHtml);
-                writer.print("</a></td><td>");
+                writer.print("</a></td><td class=\"size\">");
                 final String size = FileUtils.byteCountToDisplaySize(entity.getSize());
                 writer.print(size);
-                writer.print("</td><td>");
+                writer.print("</td><td class=\"modified\">");
                 final Date lastModified = entity.getLastModified();
                 final String formattedDate = dateFormat.format(lastModified);
                 writer.print(formattedDate);

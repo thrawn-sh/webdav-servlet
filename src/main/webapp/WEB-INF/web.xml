@@ -38,12 +38,16 @@
             <param-value>true</param-value>
         </init-param>
         <init-param>
+            <param-name>listingCss</param-name>
+            <param-value>/style.css</param-value>
+        </init-param>
+        <init-param>
             <param-name>writeable</param-name>
             <param-value>true</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>webdav</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/webdav/*</url-pattern>
     </servlet-mapping>
 </web-app>
