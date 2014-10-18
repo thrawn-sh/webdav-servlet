@@ -32,6 +32,13 @@ public class DeleteMethod extends AbstractWebDavMethod {
         super(METHOD, store);
     }
 
+    private void delete(final Path path) {
+        for (final Path child : store.list(path)) {
+            delete(child);
+        }
+        store.delete(path);
+    }
+
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
         if (Path.ROOT.equals(path)) {
@@ -43,12 +50,5 @@ public class DeleteMethod extends AbstractWebDavMethod {
 
         delete(path);
         return StatusResponse.NO_CONTENT;
-    }
-
-    private void delete(final Path path) {
-        for (final Path child : store.list(path)) {
-            delete(child);
-        }
-        store.delete(path);
     }
 }

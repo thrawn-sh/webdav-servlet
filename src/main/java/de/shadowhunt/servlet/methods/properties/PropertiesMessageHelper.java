@@ -29,10 +29,6 @@ import org.xml.sax.SAXParseException;
 
 public final class PropertiesMessageHelper {
 
-    private PropertiesMessageHelper() {
-        // prevent instantiation
-    }
-
     private static final ErrorHandler QUIET_ERROR_HANDLER = new ErrorHandler() {
 
         @Override
@@ -62,5 +58,9 @@ public final class PropertiesMessageHelper {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private PropertiesMessageHelper() {
+        // prevent instantiation
     }
 }

@@ -31,12 +31,6 @@ public final class Property implements Comparable<Property> {
 
     public static final String DAV_NAMESPACE = "DAV:";
 
-    public static final String DEFAULT_DAV_PREFIX = "D";
-
-    private final String name;
-
-    private final String nameSpace;
-
     public static final NamespaceContext DAV_NS_CONTEXT = new NamespaceContext() {
 
         @Override
@@ -57,6 +51,12 @@ public final class Property implements Comparable<Property> {
             throw new UnsupportedOperationException();
         }
     };
+
+    public static final String DEFAULT_DAV_PREFIX = "D";
+
+    private final String name;
+
+    private final String nameSpace;
 
     /**
      * Create a new {@link Property} with the given {@link Type}, name and value

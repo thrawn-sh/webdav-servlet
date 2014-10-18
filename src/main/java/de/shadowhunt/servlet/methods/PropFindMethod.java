@@ -86,11 +86,6 @@ public class PropFindMethod extends AbstractWebDavMethod {
         }
     }
 
-    private Map<Property, String> merge(final Map<Property, String> live, final Map<Property, String> dead) {
-        live.putAll(dead);
-        return live;
-    }
-
     private void collectPropertyNames(final Path path, final int depth, final Map<Path, Set<Property>> map) {
         if (depth < 0) {
             return;
@@ -143,6 +138,11 @@ public class PropFindMethod extends AbstractWebDavMethod {
         } catch (XPathExpressionException e) {
             return false;
         }
+    }
+
+    private Map<Property, String> merge(final Map<Property, String> live, final Map<Property, String> dead) {
+        live.putAll(dead);
+        return live;
     }
 
     @Override

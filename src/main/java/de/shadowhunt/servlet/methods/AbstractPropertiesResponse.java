@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.shadowhunt.servlet.webdav.Property;
 
-public abstract class AbstractPropertiesResponse implements  WebDavResponse {
+public abstract class AbstractPropertiesResponse implements WebDavResponse {
 
     protected final String baseUri;
 

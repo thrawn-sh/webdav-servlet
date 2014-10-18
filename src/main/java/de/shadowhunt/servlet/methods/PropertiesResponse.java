@@ -50,6 +50,31 @@ class PropertiesResponse extends AbstractPropertiesResponse {
         announceNameSpacePrefixes0(writer, requested, nameSpaceMapping);
     }
 
+    private String collectAvailableProperties(final Map<String, String> nameSpaceMapping, final Map<Property, String> properties) {
+        final StringBuilder sb = new StringBuilder();
+        for (final Map.Entry<Property, String> propertyEntry : properties.entrySet()) {
+            final Property property = propertyEntry.getKey();
+            if (!requested.contains(property)) {
+                continue;
+            }
+
+            final String nameSpace = property.getNameSpace();
+            final String name = nameSpaceMapping.get(nameSpace) + property.getName();
+            sb.append('<');
+            sb.append(name);
+            sb.append('>');
+            if (Property.DAV_NAMESPACE.equals(nameSpace)) {
+                sb.append(propertyEntry.getValue());
+            } else {
+                sb.append(StringEscapeUtils.escapeXml10(propertyEntry.getValue()));
+            }
+            sb.append("</");
+            sb.append(name);
+            sb.append('>');
+        }
+        return sb.toString();
+    }
+
     private String collectMissingProperties(final Map<String, String> nameSpaceMapping, final Set<Property> available) {
         final StringBuilder sb = new StringBuilder();
         for (final Property property : requested) {
@@ -105,30 +130,5 @@ class PropertiesResponse extends AbstractPropertiesResponse {
             writer.print("</D:response>");
         }
         writer.print("</D:multistatus>");
-    }
-
-    private String collectAvailableProperties(final Map<String, String> nameSpaceMapping, final Map<Property, String> properties) {
-        final StringBuilder sb = new StringBuilder();
-        for (final Map.Entry<Property, String> propertyEntry : properties.entrySet()) {
-            final Property property = propertyEntry.getKey();
-            if (!requested.contains(property)) {
-                continue;
-            }
-
-            final String nameSpace = property.getNameSpace();
-            final String name = nameSpaceMapping.get(nameSpace) + property.getName();
-            sb.append('<');
-            sb.append(name);
-            sb.append('>');
-            if (Property.DAV_NAMESPACE.equals(nameSpace)) {
-                sb.append(propertyEntry.getValue());
-            } else {
-                sb.append(StringEscapeUtils.escapeXml10(propertyEntry.getValue()));
-            }
-            sb.append("</");
-            sb.append(name);
-            sb.append('>');
-        }
-        return sb.toString();
     }
 }
