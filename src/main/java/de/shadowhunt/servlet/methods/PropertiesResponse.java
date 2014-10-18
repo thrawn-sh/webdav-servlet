@@ -82,7 +82,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
         announceNameSpacePrefixes(writer, nameSpaceMapping);
         writer.write('>'); // multistatus
 
-        for (Map.Entry<Path, Map<Property, String>> entry : entries.entrySet()) {
+        for (final Map.Entry<Path, Map<Property, String>> entry : entries.entrySet()) {
             writer.print("<D:response><D:href>");
             writer.print(StringEscapeUtils.escapeXml10(baseUri));
             writer.print(StringEscapeUtils.escapeXml10(entry.getKey().toString()));
@@ -108,7 +108,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
     }
 
     private String collectAvailableProperties(final Map<String, String> nameSpaceMapping, final Map<Property, String> properties) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         for (final Map.Entry<Property, String> propertyEntry : properties.entrySet()) {
             final Property property = propertyEntry.getKey();
             if (!requested.contains(property)) {
@@ -117,9 +117,9 @@ class PropertiesResponse extends AbstractPropertiesResponse {
 
             final String nameSpace = property.getNameSpace();
             final String name = nameSpaceMapping.get(nameSpace) + property.getName();
-            sb.append("<");
+            sb.append('<');
             sb.append(name);
-            sb.append(">");
+            sb.append('>');
             if (Property.DAV_NAMESPACE.equals(nameSpace)) {
                 sb.append(propertyEntry.getValue());
             } else {
@@ -127,7 +127,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
             }
             sb.append("</");
             sb.append(name);
-            sb.append(">");
+            sb.append('>');
         }
         return sb.toString();
     }

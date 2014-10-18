@@ -59,7 +59,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
             PROPERTIES_EXPRESSION = xpath.compile("/D:propfind/D:prop/*");
             NAME_EXPRESSION = xpath.compile("/D:propfind/D:propname");
         } catch (final XPathExpressionException e) {
-            throw new InstantiationError(e.getMessage());
+            throw new ExceptionInInitializerError(e);
         }
     }
 

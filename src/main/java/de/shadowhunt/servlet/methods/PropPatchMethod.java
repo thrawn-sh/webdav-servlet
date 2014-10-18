@@ -48,7 +48,7 @@ public class PropPatchMethod extends AbstractWebDavMethod {
         try {
             EXPRESSION = xpath.compile("//D:prop/*");
         } catch (final XPathExpressionException e) {
-            throw new InstantiationError(e.getMessage());
+            throw new ExceptionInInitializerError(e);
         }
     }
 

@@ -77,7 +77,7 @@ public final class Property implements Comparable<Property> {
 
     @Override
     public int compareTo(final Property o) {
-        int result = nameSpace.compareTo(o.nameSpace);
+        final int result = nameSpace.compareTo(o.nameSpace);
         if (result != 0) {
             return result;
         }

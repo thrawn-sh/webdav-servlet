@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.annotation.CheckForNull;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -63,12 +61,7 @@ public class FileSystemStore implements Store {
         }
     }
 
-    @CheckForNull
     private String calculateMd5(final File file, final Path path) {
-        if (file.isDirectory()) {
-            return null;
-        }
-
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(file);
@@ -250,7 +243,7 @@ public class FileSystemStore implements Store {
         }
 
         final Properties store = new Properties();
-        for (Map.Entry<Property, String> entry : properties.entrySet()) {
+        for (final Map.Entry<Property, String> entry : properties.entrySet()) {
             final Property key = entry.getKey();
             store.put(key.getNameSpace() + " " + key.getName(), entry.getValue());
         }
