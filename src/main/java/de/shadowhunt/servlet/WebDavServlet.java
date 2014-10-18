@@ -33,6 +33,7 @@ import de.shadowhunt.servlet.methods.AbstractWebDavMethod;
 import de.shadowhunt.servlet.methods.CopyMoveMethod;
 import de.shadowhunt.servlet.methods.DeleteMethod;
 import de.shadowhunt.servlet.methods.GetMethod;
+import de.shadowhunt.servlet.methods.LockMethod;
 import de.shadowhunt.servlet.methods.MkColMethod;
 import de.shadowhunt.servlet.methods.OptionsMethod;
 import de.shadowhunt.servlet.methods.PropFindMethod;
@@ -84,6 +85,7 @@ public class WebDavServlet extends HttpServlet {
             dispatcher.put(CopyMoveMethod.COPY_METHOD, new CopyMoveMethod(store, false));
             dispatcher.put(CopyMoveMethod.MOVE_METHOD, new CopyMoveMethod(store, true));
             dispatcher.put(PropPatchMethod.METHOD, new PropPatchMethod(store));
+            dispatcher.put(LockMethod.METHOD, new LockMethod(store));
         }
     }
 

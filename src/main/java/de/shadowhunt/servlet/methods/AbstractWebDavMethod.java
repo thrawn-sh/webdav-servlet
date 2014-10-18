@@ -86,6 +86,7 @@ public abstract class AbstractWebDavMethod {
             operations.add(CopyMoveMethod.MOVE_METHOD);
             operations.add(DeleteMethod.METHOD);
             operations.add(GetMethod.METHOD);
+            operations.add(LockMethod.METHOD);
             operations.add(OptionsMethod.METHOD);
             operations.add(PropFindMethod.METHOD);
             operations.add(PropPatchMethod.METHOD);
@@ -98,8 +99,9 @@ public abstract class AbstractWebDavMethod {
             operations.add(CopyMoveMethod.MOVE_METHOD);
             operations.add(DeleteMethod.METHOD);
             operations.add(GetMethod.METHOD);
-            operations.add(OptionsMethod.METHOD);
+            operations.add(LockMethod.METHOD);
             operations.add(MkColMethod.METHOD);
+            operations.add(OptionsMethod.METHOD);
             operations.add(PropFindMethod.METHOD);
             operations.add(PropPatchMethod.METHOD);
             COLLECTION = StringUtils.join(operations, ", ");
