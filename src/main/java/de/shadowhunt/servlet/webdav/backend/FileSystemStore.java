@@ -38,6 +38,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import de.shadowhunt.servlet.webdav.Entity;
+import de.shadowhunt.servlet.webdav.Lock;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Property;
 import de.shadowhunt.servlet.webdav.Store;
@@ -45,9 +46,9 @@ import de.shadowhunt.servlet.webdav.WebDavException;
 
 public class FileSystemStore implements Store {
 
-    private static final Path PROPERTIES_SUFFIX = Path.create("_xml");
-
     private static final Path LOCK_SUFFIX = Path.create("_lock");
+
+    private static final Path PROPERTIES_SUFFIX = Path.create("_xml");
 
     private final File metaRoot;
 
@@ -144,6 +145,20 @@ public class FileSystemStore implements Store {
         }
     }
 
+    @CheckForNull
+    private Lock determineLock(final Path path) {
+        final File lock = getMetaFile(path.append(LOCK_SUFFIX));
+        if (!lock.exists()) {
+            return null;
+        }
+
+        try {
+            return new Lock(FileUtils.readFileToString(lock), Lock.Type.EXCLUSIVE, "");
+        } catch (IOException e) {
+            throw new WebDavException("can not read lock for " + path, e);
+        }
+    }
+
     @Override
     public InputStream download(final Path path) throws WebDavException {
         final File file = getFile(path, true);
@@ -165,27 +180,13 @@ public class FileSystemStore implements Store {
         final File file = getFile(path, true);
 
         final Date lastModified = determineLastModified(file, path);
-        final String lock = determineLock(path);
+        final Lock lock = determineLock(path);
         if (file.isFile()) {
             final String hash = calculateMd5(file, path);
             final long size = calculateSize(file, path);
             return Entity.createItem(path, hash, lastModified, size, lock);
         }
         return Entity.createCollection(path, lastModified, lock);
-    }
-
-    @CheckForNull
-    private String determineLock(final Path path) {
-        final File lock = getMetaFile(path.append(LOCK_SUFFIX));
-        if (!lock.exists()) {
-            return null;
-        }
-
-        try {
-            return FileUtils.readFileToString(lock);
-        } catch (IOException e) {
-            throw new WebDavException("can not read lock for " + path, e);
-        }
     }
 
     private File getFile(final Path path, final boolean mustExist) throws WebDavException {

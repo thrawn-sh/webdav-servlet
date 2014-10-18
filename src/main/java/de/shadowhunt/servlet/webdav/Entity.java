@@ -26,8 +26,6 @@ import java.util.TreeSet;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
-
 public final class Entity {
 
     public static final Property CONTENT_LENGTH_PROPERTY;
@@ -70,12 +68,12 @@ public final class Entity {
 
     public static final Set<Property> SUPPORTED_LIVE_PROPERTIES;
 
-    public static Entity createCollection(final Path path, final Date lastModified, @Nullable final String lockToken) {
-        return new Entity(path, Type.COLLECTION, null, lastModified, 0L, lockToken);
+    public static Entity createCollection(final Path path, final Date lastModified, @Nullable final Lock lock) {
+        return new Entity(path, Type.COLLECTION, null, lastModified, 0L, lock);
     }
 
-    public static Entity createItem(final Path path, final String hash, final Date lastModified, final long size, @Nullable final String lockToken) {
-        return new Entity(path, Type.ITEM, hash, lastModified, size, lockToken);
+    public static Entity createItem(final Path path, final String hash, final Date lastModified, final long size, @Nullable final Lock lock) {
+        return new Entity(path, Type.ITEM, hash, lastModified, size, lock);
     }
 
     public static Map<Property, String> entityToProperties(final Entity entity) {
@@ -88,6 +86,7 @@ public final class Entity {
             result.put(RESOURCE_TYPE_PROPERTY, "<D:collection/>");
         }
         return result;
+
     }
 
     public static enum Type {
@@ -104,7 +103,7 @@ public final class Entity {
 
     private final Date lastModified;
 
-    private final String lockToken;
+    private final Lock lock;
 
     private final Path path;
 
@@ -112,13 +111,13 @@ public final class Entity {
 
     private final Type type;
 
-    private Entity(final Path path, final Type type, final String hash, final Date lastModified, final long size, @Nullable final String lockToken) {
+    private Entity(final Path path, final Type type, final String hash, final Date lastModified, final long size, @Nullable final Lock lock) {
         this.path = path;
         this.type = type;
         this.hash = hash;
         this.lastModified = new Date(lastModified.getTime());
         this.size = size;
-        this.lockToken = lockToken;
+        this.lock = lock;
     }
 
     @Override
@@ -156,9 +155,8 @@ public final class Entity {
         return new Date(lastModified.getTime());
     }
 
-    @CheckForNull
-    public String getLockToken() {
-        return lockToken;
+    public Lock getLock() {
+        return lock;
     }
 
     public String getName() {
@@ -190,7 +188,7 @@ public final class Entity {
     }
 
     public boolean isLocked() {
-        return StringUtils.isNoneEmpty(lockToken);
+        return (lock != null);
     }
 
     @Override
