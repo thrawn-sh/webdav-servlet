@@ -70,7 +70,7 @@ public abstract class AbstractWebDavMethod {
         return true;
     }
 
-    private static final String NON_EXISITING, ITEM, COLLECTION;
+    private static final String NON_EXISTING, ITEM, COLLECTION;
 
     static {
         { // non existing
@@ -78,7 +78,7 @@ public abstract class AbstractWebDavMethod {
             operations.add(OptionsMethod.METHOD);
             operations.add(MkColMethod.METHOD);
             operations.add(PutMethod.METHOD);
-            NON_EXISITING = StringUtils.join(operations, ", ");
+            NON_EXISTING = StringUtils.join(operations, ", ");
         }
         { // items
             final Set<String> operations = new TreeSet<>();
@@ -108,7 +108,7 @@ public abstract class AbstractWebDavMethod {
 
     protected final String getAllowedMethods(@CheckForNull final Entity entity) {
         if (entity == null) {
-            return NON_EXISITING;
+            return NON_EXISTING;
         }
         if (entity.getType() == Entity.Type.COLLECTION) {
             return COLLECTION;
