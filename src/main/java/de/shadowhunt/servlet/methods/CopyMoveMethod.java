@@ -81,7 +81,7 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
         final URI destinationUri = URI.create(destination);
         final String destinationPath = destinationUri.getPath();
         final int indexOf = destinationPath.indexOf(pathInfo);
-        return Path.create(destinationPath.substring(indexOf));
+        return Path.create(destinationPath.substring(indexOf + pathInfo.length()));
     }
 
     @Override
