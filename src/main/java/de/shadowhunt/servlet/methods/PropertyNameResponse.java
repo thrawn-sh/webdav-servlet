@@ -18,6 +18,7 @@ package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -30,34 +31,18 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Property;
 
-class PropertyNameResponse implements WebDavResponse {
-
-    private final String baseUri;
+class PropertyNameResponse extends AbstractPropertiesResponse {
 
     private final Map<Path, Set<Property>> entries;
 
     public PropertyNameResponse(final String baseUri, final Map<Path, Set<Property>> entries) {
-        this.baseUri = baseUri;
+        super(baseUri);
         this.entries = entries;
     }
 
-    private void announceNameSpacePrefixes(final PrintWriter writer, final Map<String, String> nameSpaceMapping) {
-        for (final Set<Property> properties : entries.values()) {
-            for (final Property property : properties) {
-                final String nameSpace = property.getNameSpace();
-                if (nameSpaceMapping.containsKey(nameSpace)) {
-                    continue;
-                }
-
-                final String prefix = "ns" + nameSpaceMapping.size();
-                nameSpaceMapping.put(nameSpace, prefix + ":");
-
-                writer.print(" xmlns:");
-                writer.print(prefix);
-                writer.print("=\"");
-                writer.print(nameSpace);
-                writer.print("\"");
-            }
+    private void announceNameSpacePrefixes(final PrintWriter writer, final Collection<Set<Property>> values, final Map<String, String> nameSpaceMapping) {
+        for (final Collection<Property> properties : values) {
+            announceNameSpacePrefixes0(writer, properties, nameSpaceMapping);
         }
     }
 
@@ -68,27 +53,24 @@ class PropertyNameResponse implements WebDavResponse {
         response.setStatus(207); // FIXME constant
 
         final Map<String, String> nameSpaceMapping = new HashMap<>();
-        nameSpaceMapping.put(Property.DAV_NAMESPACE, "");
+        nameSpaceMapping.put(Property.DAV_NAMESPACE, Property.DEFAULT_DAV_PREFIX + ":");
 
         final PrintWriter writer = response.getWriter();
-        writer.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        writer.print("<multistatus xmlns=\"");
+        writer.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?><D:multistatus xmlns:D=\"");
         writer.print(Property.DAV_NAMESPACE);
         writer.print("\"");
-        announceNameSpacePrefixes(writer, nameSpaceMapping);
+        announceNameSpacePrefixes(writer, entries.values(), nameSpaceMapping);
         writer.write('>'); // multistatus
 
         for (final Map.Entry<Path, Set<Property>> entry : entries.entrySet()) {
-            writer.print("<response>");
+            writer.print("<D:response>");
             final Path path = entry.getKey();
             final Set<Property> properties = entry.getValue();
 
-            writer.print("<href>");
+            writer.print("<D:href>");
             writer.print(baseUri);
             writer.print(StringEscapeUtils.escapeXml10(path.toString()));
-            writer.print("</href>");
-            writer.print("<propstat>");
-            writer.print("<prop>");
+            writer.print("</D:href><D:propstat><D:prop>");
 
             for (final Property property : properties) {
                 writer.print("<");
@@ -97,11 +79,8 @@ class PropertyNameResponse implements WebDavResponse {
                 writer.print("/>");
             }
 
-            writer.print("</prop>");
-            writer.print("<status>HTTP/1.1 200 OK</status>");
-            writer.print("</propstat>");
-            writer.print("</response>");
+            writer.print("</D:prop><D:status>HTTP/1.1 200 OK</D:status></D:propstat></D:response>");
         }
-        writer.print("</multistatus>");
+        writer.print("</D:multistatus>");
     }
 }

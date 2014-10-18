@@ -60,16 +60,12 @@ public class PropPatchMethod extends AbstractWebDavMethod {
         super(METHOD, store);
     }
 
-    private Property createProperty(final Node node) {
-        final String nameSpace = node.getNamespaceURI();
-        if (StringUtils.isEmpty(nameSpace)) {
-            return new Property(Property.DAV_NAMESPACE, node.getNodeName());
-        }
-        return new Property(nameSpace, node.getNodeName());
+    private boolean isLiveProperty(final Property property) {
+        return Property.DAV_NAMESPACE.equals(property.getNameSpace());
     }
 
-    private boolean isSet(final Node node) {
-        final Node parent = node.getParentNode().getParentNode(); // <set|remove><prop>node()
+    private boolean isSaveOrUpdate(final Node node) {
+        final Node parent = node.getParentNode().getParentNode(); // ... (<D:set>|<D:remove>)<prop> ...
         return "set".equals(parent.getLocalName());
     }
 
@@ -91,16 +87,17 @@ public class PropPatchMethod extends AbstractWebDavMethod {
             final int length = nodes.getLength();
             for (int i = 0; i < length; i++) {
                 final Node node = nodes.item(i);
-                final Property property = createProperty(node);
+                final Property property = new Property(StringUtils.trimToEmpty(node.getNamespaceURI()), node.getLocalName());
 
-                if (isSet(node) && !Property.DAV_NAMESPACE.equals(property.getNameSpace())) {
+                // DAV namespace is only for live property (can not be handled by client) => ignore silently
+                if (isSaveOrUpdate(node) && !isLiveProperty(property)) {
                     final String content = StringEscapeUtils.unescapeXml(node.getTextContent());
                     properties.put(property, content);
                 } else {
                     properties.remove(property);
                 }
             }
-        } catch (final XPathExpressionException e) {
+        } catch (final Exception e) {
             return StatusResponse.BAD_REQUEST;
         }
 

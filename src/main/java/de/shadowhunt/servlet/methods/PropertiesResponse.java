@@ -31,16 +31,14 @@ import org.apache.commons.lang3.StringUtils;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Property;
 
-class PropertiesResponse implements WebDavResponse {
-
-    private final String baseUri;
+class PropertiesResponse extends AbstractPropertiesResponse {
 
     private final Map<Path, Map<Property, String>> entries;
 
     private final Set<Property> requested;
 
     public PropertiesResponse(final String baseUri, final Set<Property> requested, final Map<Path, Map<Property, String>> entries) {
-        this.baseUri = baseUri;
+        super(baseUri);
         this.requested = requested;
         this.entries = entries;
     }
@@ -50,24 +48,6 @@ class PropertiesResponse implements WebDavResponse {
             announceNameSpacePrefixes0(writer, properties.keySet(), nameSpaceMapping);
         }
         announceNameSpacePrefixes0(writer, requested, nameSpaceMapping);
-    }
-
-    private void announceNameSpacePrefixes0(final PrintWriter writer, Set<Property> properties, final Map<String, String> nameSpaceMapping) {
-        for (final Property property : properties) {
-            final String nameSpace = property.getNameSpace();
-            if (nameSpaceMapping.containsKey(nameSpace)) {
-                continue;
-            }
-
-            final String prefix = "ns" + nameSpaceMapping.size();
-            nameSpaceMapping.put(nameSpace, prefix + ":");
-
-            writer.print(" xmlns:");
-            writer.print(prefix);
-            writer.print("=\"");
-            writer.print(nameSpace);
-            writer.print("\"");
-        }
     }
 
     private String collectMissingProperties(final Map<String, String> nameSpaceMapping, final Set<Property> available) {
@@ -92,39 +72,39 @@ class PropertiesResponse implements WebDavResponse {
         response.setStatus(207); // FIXME constant
 
         final Map<String, String> nameSpaceMapping = new HashMap<>();
-        nameSpaceMapping.put(Property.DAV_NAMESPACE, "");
+        nameSpaceMapping.put(Property.DAV_NAMESPACE, Property.DEFAULT_DAV_PREFIX + ":");
 
         final PrintWriter writer = response.getWriter();
         writer.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        writer.print("<multistatus xmlns=\"");
+        writer.print("<D:multistatus xmlns:D=\"");
         writer.print(Property.DAV_NAMESPACE);
         writer.print("\"");
         announceNameSpacePrefixes(writer, nameSpaceMapping);
         writer.write('>'); // multistatus
 
         for (Map.Entry<Path, Map<Property, String>> entry : entries.entrySet()) {
-            writer.print("<response><href>");
+            writer.print("<D:response><D:href>");
             writer.print(StringEscapeUtils.escapeXml10(baseUri));
             writer.print(StringEscapeUtils.escapeXml10(entry.getKey().toString()));
-            writer.print("</href>");
+            writer.print("</D:href>");
 
             final Map<Property, String> map = entry.getValue();
             final String available = collectAvailableProperties(nameSpaceMapping, map);
             if (StringUtils.isNotEmpty(available)) {
-                writer.print("<propstat><prop>");
+                writer.print("<D:propstat><D:prop>");
                 writer.print(available);
-                writer.print("</prop><status>HTTP/1.1 200 OK</status></propstat>");
+                writer.print("</D:prop><D:status>HTTP/1.1 200 OK</D:status></D:propstat>");
             }
 
             final String missing = collectMissingProperties(nameSpaceMapping, map.keySet());
             if (StringUtils.isNotEmpty(missing)) {
-                writer.print("<propstat><prop>");
+                writer.print("<D:propstat><D:prop>");
                 writer.print(missing);
-                writer.print("</prop><status>HTTP/1.1 404 Not Found</status></propstat>");
+                writer.print("</D:prop><D:status>HTTP/1.1 404 Not Found</D:status></D:propstat>");
             }
-            writer.print("</response>");
+            writer.print("</D:response>");
         }
-        writer.print("</multistatus>");
+        writer.print("</D:multistatus>");
     }
 
     private String collectAvailableProperties(final Map<String, String> nameSpaceMapping, final Map<Property, String> properties) {

@@ -19,7 +19,6 @@ package de.shadowhunt.servlet.webdav;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -81,7 +80,9 @@ public final class Entity {
         result.put(DISPLAY_NAME_PROPERTY, entity.getName());
         result.put(CONTENT_LENGTH_PROPERTY, Long.toString(entity.getSize()));
         result.put(LAST_MODIFIED_PROPERTY, entity.getLastModified().toString()); // FIXME
-        result.put(RESOURCE_TYPE_PROPERTY, "<" + entity.getType().name().toLowerCase(Locale.US) + "/>");
+        if (entity.getType() == Type.COLLECTION) {
+            result.put(RESOURCE_TYPE_PROPERTY, "<D:collection/>");
+        }
         return result;
     }
 

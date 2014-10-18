@@ -128,21 +128,12 @@ public class PropFindMethod extends AbstractWebDavMethod {
             final Set<Property> properties = new TreeSet<>();
             for (int i = 0; i < length; i++) {
                 final Node node = nodes.item(i);
-                final Property property = createProperty(node);
-                properties.add(property);
+                properties.add(new Property(StringUtils.trimToEmpty(node.getNamespaceURI()), node.getLocalName()));
             }
             return properties;
-        } catch (XPathExpressionException e) {
+        } catch (Exception e) {
             return null;
         }
-    }
-
-    private Property createProperty(final Node node) {
-        final String nameSpace = node.getNamespaceURI();
-        if (StringUtils.isEmpty(nameSpace)) {
-            return new Property(Property.DAV_NAMESPACE, node.getNodeName());
-        }
-        return new Property(nameSpace, node.getNodeName());
     }
 
     private boolean listPropertyNames(final Document document) {
