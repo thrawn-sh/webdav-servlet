@@ -18,10 +18,14 @@ package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.CheckForNull;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
 
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
@@ -66,14 +70,50 @@ public abstract class AbstractWebDavMethod {
         return true;
     }
 
+    private static final String NON_EXISITING, ITEM, COLLECTION;
+
+    static {
+        { // non existing
+            final Set<String> operations = new TreeSet<>();
+            operations.add(OptionsMethod.METHOD);
+            operations.add(MkColMethod.METHOD);
+            operations.add(PutMethod.METHOD);
+            NON_EXISITING = StringUtils.join(operations, ", ");
+        }
+        { // items
+            final Set<String> operations = new TreeSet<>();
+            operations.add(CopyMoveMethod.COPY_METHOD);
+            operations.add(CopyMoveMethod.MOVE_METHOD);
+            operations.add(DeleteMethod.METHOD);
+            operations.add(GetMethod.METHOD);
+            operations.add(OptionsMethod.METHOD);
+            operations.add(PropFindMethod.METHOD);
+            operations.add(PropPatchMethod.METHOD);
+            operations.add(PutMethod.METHOD);
+            ITEM = StringUtils.join(operations, ", ");
+        }
+        { // collections
+            final Set<String> operations = new TreeSet<>();
+            operations.add(CopyMoveMethod.COPY_METHOD);
+            operations.add(CopyMoveMethod.MOVE_METHOD);
+            operations.add(DeleteMethod.METHOD);
+            operations.add(GetMethod.METHOD);
+            operations.add(OptionsMethod.METHOD);
+            operations.add(MkColMethod.METHOD);
+            operations.add(PropFindMethod.METHOD);
+            operations.add(PropPatchMethod.METHOD);
+            COLLECTION = StringUtils.join(operations, ", ");
+        }
+    }
+
     protected final String getAllowedMethods(@CheckForNull final Entity entity) {
         if (entity == null) {
-            return "OPTIONS, MKCOL, PUT";
+            return NON_EXISITING;
         }
         if (entity.getType() == Entity.Type.COLLECTION) {
-            return "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, POST, PROPFIND, TRACE, PROPPATCH, UNLOCK";
+            return COLLECTION;
         }
-        return "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, POST, PROPFIND, PUT, TRACE, PROPPATCH, UNLOCK";
+        return ITEM;
     }
 
     @Override
