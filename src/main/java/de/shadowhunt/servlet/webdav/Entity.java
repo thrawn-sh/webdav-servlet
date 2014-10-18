@@ -58,7 +58,7 @@ public final class Entity {
         properties.add(DISPLAY_NAME_PROPERTY); // getName
         properties.add(CONTENT_LENGTH_PROPERTY); // getSize
         // properties.add(CONTENT_TYPE_PROPERTY); // not supported
-        // properties.add(ETAG_PROPERTY); // not supported
+        properties.add(ETAG_PROPERTY); // getHash
         properties.add(LAST_MODIFIED_PROPERTY); // getLastModified
         properties.add(RESOURCE_TYPE_PROPERTY); // getType
         //properties.add(LOCK_PROPERTY); // not supported
@@ -79,6 +79,7 @@ public final class Entity {
         final Map<Property, String> result = new HashMap<>();
         result.put(DISPLAY_NAME_PROPERTY, entity.getName());
         result.put(CONTENT_LENGTH_PROPERTY, Long.toString(entity.getSize()));
+        result.put(ETAG_PROPERTY, entity.getHash());
         result.put(LAST_MODIFIED_PROPERTY, entity.getLastModified().toString()); // FIXME
         if (entity.getType() == Type.COLLECTION) {
             result.put(RESOURCE_TYPE_PROPERTY, "<D:collection/>");
