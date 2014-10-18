@@ -30,18 +30,22 @@
         <servlet-name>webdav</servlet-name>
         <servlet-class>de.shadowhunt.servlet.WebDavServlet</servlet-class>
         <init-param>
+            <description>Allowing PROPFIND with DEPTH infinity can result in high loads (default: false)</description>
             <param-name>infiniteDepthRequests</param-name>
             <param-value>true</param-value>
         </init-param>
         <init-param>
+            <description>Show listings of collctions in the browser (default: false)</description>
             <param-name>listing</param-name>
             <param-value>true</param-value>
         </init-param>
         <init-param>
+            <description>When listings of collctions for the browser are created include this css (default: none)</description>
             <param-name>listingCss</param-name>
             <param-value>/style.css</param-value>
         </init-param>
         <init-param>
+            <description>Allow writing operations on the webdav store (default: false)</description>
             <param-name>writeable</param-name>
             <param-value>true</param-value>
         </init-param>
