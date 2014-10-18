@@ -50,4 +50,44 @@
         <servlet-name>webdav</servlet-name>
         <url-pattern>/webdav/*</url-pattern>
     </servlet-mapping>
+
+    <security-constraint>
+        <display-name>WebDav read-only operations</display-name>
+        <web-resource-collection>
+            <web-resource-name>WebDav Servlet</web-resource-name>
+            <url-pattern>/webdav/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>OPTIONS</http-method>
+            <http-method>PROPFIND</http-method>
+
+        </web-resource-collection>
+        <!--auth-constraint>
+            <role-name>WEBDAV_RO</role-name>
+        </auth-constraint-->
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <display-name>WebDav write operations</display-name>
+        <web-resource-collection>
+            <web-resource-name>WebDav Servlet</web-resource-name>
+            <url-pattern>/webdav/*</url-pattern>
+            <http-method>COPY</http-method>
+            <http-method>DELETE</http-method>
+            <http-method>LOCK</http-method>
+            <http-method>MKCOL</http-method>
+            <http-method>MOVE</http-method>
+            <http-method>PROPPATCH</http-method>
+            <http-method>PUT</http-method>
+            <http-method>UNLOCK</http-method>
+        </web-resource-collection>
+        <!--auth-constraint>
+            <role-name>WEBDAV_RW</role-name>
+        </auth-constraint-->
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
 </web-app>
