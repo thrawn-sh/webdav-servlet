@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.servlet.webdav.internal;
+package de.shadowhunt.servlet.webdav.backend;
 
 import java.io.File;
 import java.io.FileInputStream;

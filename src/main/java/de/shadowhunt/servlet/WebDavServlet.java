@@ -42,7 +42,7 @@ import de.shadowhunt.servlet.methods.WebDavResponse;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
 import de.shadowhunt.servlet.webdav.WebDavException;
-import de.shadowhunt.servlet.webdav.internal.FileSystemStore;
+import de.shadowhunt.servlet.webdav.backend.FileSystemStore;
 
 public class WebDavServlet extends HttpServlet {
 
