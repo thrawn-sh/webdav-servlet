@@ -34,7 +34,7 @@
             <param-value>true</param-value>
         </init-param>
         <init-param>
-            <param-name>listings</param-name>
+            <param-name>listing</param-name>
             <param-value>true</param-value>
         </init-param>
         <init-param>
