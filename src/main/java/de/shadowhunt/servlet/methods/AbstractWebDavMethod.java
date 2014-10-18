@@ -33,44 +33,11 @@ import de.shadowhunt.servlet.webdav.Store;
 
 public abstract class AbstractWebDavMethod {
 
+    private static final String NON_EXISTING, ITEM, COLLECTION;
+
     private final String method;
 
     protected final Store store;
-
-    protected AbstractWebDavMethod(final String method, final Store store) {
-        this.method = method;
-        this.store = store;
-    }
-
-    protected boolean consume(final InputStream inputStream) throws IOException {
-        final boolean data = (inputStream.read() != -1);
-        if (data) {
-            while (inputStream.read() != -1) {
-                // just deplete inputStream
-            }
-        }
-        return data;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AbstractWebDavMethod)) {
-            return false;
-        }
-
-        final AbstractWebDavMethod that = (AbstractWebDavMethod) o;
-
-        if (!method.equals(that.method)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private static final String NON_EXISTING, ITEM, COLLECTION;
 
     static {
         { // non existing
@@ -106,6 +73,39 @@ public abstract class AbstractWebDavMethod {
             operations.add(PropPatchMethod.METHOD);
             COLLECTION = StringUtils.join(operations, ", ");
         }
+    }
+
+    protected AbstractWebDavMethod(final String method, final Store store) {
+        this.method = method;
+        this.store = store;
+    }
+
+    protected boolean consume(final InputStream inputStream) throws IOException {
+        final boolean data = (inputStream.read() != -1);
+        if (data) {
+            while (inputStream.read() != -1) {
+                // just deplete inputStream
+            }
+        }
+        return data;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AbstractWebDavMethod)) {
+            return false;
+        }
+
+        final AbstractWebDavMethod that = (AbstractWebDavMethod) o;
+
+        if (!method.equals(that.method)) {
+            return false;
+        }
+
+        return true;
     }
 
     protected final String getAllowedMethods(@CheckForNull final Entity entity) {
