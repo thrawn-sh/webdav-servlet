@@ -67,8 +67,6 @@ public class WebDavServlet extends HttpServlet {
         super.init(config);
 
         final File root = new File(FileUtils.getTempDirectory(), "webdav");
-        FileUtils.deleteQuietly(root);
-
         final Store store = new FileSystemStore(root);
 
         final String listingCss = config.getInitParameter("listingCss");
