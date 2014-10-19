@@ -23,12 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.CheckForNull;
@@ -40,8 +39,9 @@ import org.apache.commons.io.IOUtils;
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Lock;
 import de.shadowhunt.servlet.webdav.Path;
-import de.shadowhunt.servlet.webdav.Property;
+import de.shadowhunt.servlet.webdav.PropertyIdentifier;
 import de.shadowhunt.servlet.webdav.Store;
+import de.shadowhunt.servlet.webdav.StringProperty;
 import de.shadowhunt.servlet.webdav.WebDavException;
 
 public class FileSystemStore implements Store {
@@ -153,7 +153,7 @@ public class FileSystemStore implements Store {
         }
 
         try {
-            return new Lock(FileUtils.readFileToString(lock), Lock.Type.EXCLUSIVE, "");
+            return new Lock(FileUtils.readFileToString(lock), Lock.Scope.EXCLUSIVE, "");
         } catch (IOException e) {
             throw new WebDavException("can not read lock for " + path, e);
         }
@@ -202,12 +202,12 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public Map<Property, String> getProperties(final Path path) throws WebDavException {
+    public Collection<StringProperty> getProperties(final Path path) throws WebDavException {
         getFile(path, true); // ensure collection/item exists
 
         final File meta = getMetaFile(path.append(PROPERTIES_SUFFIX));
         if (!meta.exists()) {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
 
         InputStream is = null;
@@ -216,14 +216,13 @@ public class FileSystemStore implements Store {
             is = new FileInputStream(meta);
             properties.loadFromXML(new FileInputStream(meta));
 
-            final Map<Property, String> result = new HashMap<>();
+            final Collection<StringProperty> result = new ArrayList<>();
             final Enumeration<?> enumeration = properties.propertyNames();
             while (enumeration.hasMoreElements()) {
                 final Object element = enumeration.nextElement();
                 final Object value = properties.get(element);
-                final String fqName = element.toString();
-                final String[] parts = fqName.split(" ");
-                result.put(new Property(parts[0], parts[1]), value.toString());
+                final PropertyIdentifier identifier = createPropertyIdentifier(element.toString());
+                result.add(new StringProperty(identifier, value.toString()));
             }
             return result;
         } catch (Exception e) {
@@ -231,6 +230,11 @@ public class FileSystemStore implements Store {
         } finally {
             IOUtils.closeQuietly(is);
         }
+    }
+
+    private PropertyIdentifier createPropertyIdentifier(final String elementName) {
+        final String[] parts = elementName.split(" ");
+        return new PropertyIdentifier(parts[0], parts[1]);
     }
 
     @Override
@@ -248,17 +252,17 @@ public class FileSystemStore implements Store {
     }
 
     @Override
-    public void lock(final Path path, final String id) throws WebDavException {
-        final File lock = getMetaFile(path.append(LOCK_SUFFIX));
+    public void lock(final Path path, final Lock lock) throws WebDavException {
+        final File lockFile = getMetaFile(path.append(LOCK_SUFFIX));
         try {
-            FileUtils.write(lock, id);
+            FileUtils.write(lockFile, lock.getToken());
         } catch (Exception e) {
             throw new WebDavException("can not write lock for " + path, e);
         }
     }
 
     @Override
-    public void setProperties(final Path path, final Map<Property, String> properties) throws WebDavException {
+    public void setProperties(final Path path, final Collection<StringProperty> properties) throws WebDavException {
         getFile(path, true); // ensure collection/item exists
 
         final File meta = getMetaFile(path.append(PROPERTIES_SUFFIX));
@@ -268,9 +272,9 @@ public class FileSystemStore implements Store {
         }
 
         final Properties store = new Properties();
-        for (final Map.Entry<Property, String> entry : properties.entrySet()) {
-            final Property key = entry.getKey();
-            store.put(key.getNameSpace() + " " + key.getName(), entry.getValue());
+        for (final StringProperty property : properties) {
+            final PropertyIdentifier identifier = property.getIdentifier();
+            store.put(identifier.getNameSpace() + " " + identifier.getName(), property.getValue());
         }
 
         OutputStream os = null;

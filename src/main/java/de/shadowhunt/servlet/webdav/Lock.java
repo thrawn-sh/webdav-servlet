@@ -21,20 +21,20 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 public final class Lock {
 
-    public static enum Type {
+    public static enum Scope {
         EXCLUSIVE, SHARED;
     }
 
     private final String owner;
 
+    private final Scope scope;
+
     private final String token;
 
-    private final Type type;
-
-    public Lock(final String token, final Type type, final String owner) {
+    public Lock(final String token, final Scope scope, final String owner) {
         this.owner = owner;
         this.token = token;
-        this.type = type;
+        this.scope = scope;
     }
 
     @Override
@@ -59,12 +59,12 @@ public final class Lock {
         return owner;
     }
 
-    public String getToken() {
-        return token;
+    public Scope getScope() {
+        return scope;
     }
 
-    public Type getType() {
-        return type;
+    public String getToken() {
+        return token;
     }
 
     @Override
@@ -77,7 +77,7 @@ public final class Lock {
         final StringBuilder sb = new StringBuilder("Lock{");
         sb.append("owner=").append(owner);
         sb.append(", token=").append(token);
-        sb.append(", type=").append(type);
+        sb.append(", scope=").append(scope);
         sb.append('}');
         return sb.toString();
     }

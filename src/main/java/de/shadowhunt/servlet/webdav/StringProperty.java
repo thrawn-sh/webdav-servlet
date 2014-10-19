@@ -19,40 +19,27 @@ package de.shadowhunt.servlet.webdav;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-public abstract class Property {
+public class StringProperty extends Property {
 
-    protected final PropertyIdentifier identifier;
+    private String value;
 
-    protected Property(final PropertyIdentifier identifier) {
-        this.identifier = identifier;
+    public StringProperty(final PropertyIdentifier identifier, final String value) {
+        super(identifier);
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(final String value) {
+        this.value = value;
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Property)) {
-            return false;
-        }
-
-        final Property property = (Property) o;
-
-        if (!identifier.equals(property.identifier)) {
-            return false;
-        }
-
-        return true;
+    public void write(final XMLStreamWriter writer) throws XMLStreamException {
+        writer.writeStartElement(identifier.getNameSpace(), identifier.getName());
+        writer.writeCharacters(value);
+        writer.writeEndElement();
     }
-
-    public PropertyIdentifier getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public int hashCode() {
-        return identifier.hashCode();
-    }
-
-    public abstract void write(final XMLStreamWriter writer) throws XMLStreamException;
 }

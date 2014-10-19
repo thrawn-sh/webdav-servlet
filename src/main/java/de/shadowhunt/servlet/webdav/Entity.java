@@ -16,57 +16,59 @@
  */
 package de.shadowhunt.servlet.webdav;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 public final class Entity {
 
-    public static final Property CONTENT_LENGTH_PROPERTY;
+    public static final PropertyIdentifier CONTENT_LENGTH_PROPERTY_IDENTIFIER;
 
-    public static final Property CONTENT_TYPE_PROPERTY;
+    public static final PropertyIdentifier CONTENT_TYPE_PROPERTY_IDENTIFIER;
 
-    public static final Property CREATION_DATE_PROPERTY;
+    public static final PropertyIdentifier CREATION_DATE_PROPERTY_IDENTIFIER;
 
-    public static final Property DISPLAY_NAME_PROPERTY;
+    public static final PropertyIdentifier DISPLAY_NAME_PROPERTY_IDENTIFIER;
 
-    public static final Property ETAG_PROPERTY;
+    public static final PropertyIdentifier ETAG_PROPERTY_IDENTIFIER;
 
-    public static final Property LAST_MODIFIED_PROPERTY;
+    public static final PropertyIdentifier LAST_MODIFIED_PROPERTY_IDENTIFIER;
 
-    public static final Property LOCK_PROPERTY;
+    public static final PropertyIdentifier LOCK_PROPERTY_IDENTIFIER;
 
-    public static final Property RESOURCE_TYPE_PROPERTY;
+    public static final PropertyIdentifier RESOURCE_TYPE_PROPERTY_IDENTIFIER;
 
     static {
-        CREATION_DATE_PROPERTY = new Property(Property.DAV_NAMESPACE, "creationdate");
-        DISPLAY_NAME_PROPERTY = new Property(Property.DAV_NAMESPACE, "displayname");
-        CONTENT_LENGTH_PROPERTY = new Property(Property.DAV_NAMESPACE, "getcontentlength");
-        CONTENT_TYPE_PROPERTY = new Property(Property.DAV_NAMESPACE, "getcontenttype");
-        ETAG_PROPERTY = new Property(Property.DAV_NAMESPACE, "getetag");
-        LAST_MODIFIED_PROPERTY = new Property(Property.DAV_NAMESPACE, "getlastmodified");
-        RESOURCE_TYPE_PROPERTY = new Property(Property.DAV_NAMESPACE, "resourcetype");
-        LOCK_PROPERTY = new Property(Property.DAV_NAMESPACE, "supportedlock");
+        CREATION_DATE_PROPERTY_IDENTIFIER = new PropertyIdentifier(PropertyIdentifier.DAV_NAMESPACE, "creationdate");
+        DISPLAY_NAME_PROPERTY_IDENTIFIER = new PropertyIdentifier(PropertyIdentifier.DAV_NAMESPACE, "displayname");
+        CONTENT_LENGTH_PROPERTY_IDENTIFIER = new PropertyIdentifier(PropertyIdentifier.DAV_NAMESPACE, "getcontentlength");
+        CONTENT_TYPE_PROPERTY_IDENTIFIER = new PropertyIdentifier(PropertyIdentifier.DAV_NAMESPACE, "getcontenttype");
+        ETAG_PROPERTY_IDENTIFIER = new PropertyIdentifier(PropertyIdentifier.DAV_NAMESPACE, "getetag");
+        LAST_MODIFIED_PROPERTY_IDENTIFIER = new PropertyIdentifier(PropertyIdentifier.DAV_NAMESPACE, "getlastmodified");
+        RESOURCE_TYPE_PROPERTY_IDENTIFIER = new PropertyIdentifier(PropertyIdentifier.DAV_NAMESPACE, "resourcetype");
+        LOCK_PROPERTY_IDENTIFIER = new PropertyIdentifier(PropertyIdentifier.DAV_NAMESPACE, "supportedlock");
 
-        final Set<Property> properties = new TreeSet<>();
+        final Set<PropertyIdentifier> properties = new TreeSet<>();
         // properties.add(CREATION_DATE_PROPERTY); // not supported
-        properties.add(DISPLAY_NAME_PROPERTY); // getName
-        properties.add(CONTENT_LENGTH_PROPERTY); // getSize
+        properties.add(DISPLAY_NAME_PROPERTY_IDENTIFIER); // getName
+        properties.add(CONTENT_LENGTH_PROPERTY_IDENTIFIER); // getSize
         // properties.add(CONTENT_TYPE_PROPERTY); // not supported
-        properties.add(ETAG_PROPERTY); // getHash
-        properties.add(LAST_MODIFIED_PROPERTY); // getLastModified
-        properties.add(RESOURCE_TYPE_PROPERTY); // getType
-        //properties.add(LOCK_PROPERTY); // not supported
+        properties.add(ETAG_PROPERTY_IDENTIFIER); // getHash
+        properties.add(LAST_MODIFIED_PROPERTY_IDENTIFIER); // getLastModified
+        properties.add(RESOURCE_TYPE_PROPERTY_IDENTIFIER); // getScope
+        properties.add(LOCK_PROPERTY_IDENTIFIER); // getLock
         SUPPORTED_LIVE_PROPERTIES = Collections.unmodifiableSet(properties);
     }
 
-    public static final Set<Property> SUPPORTED_LIVE_PROPERTIES;
+    public static final Set<PropertyIdentifier> SUPPORTED_LIVE_PROPERTIES;
 
     public static Entity createCollection(final Path path, final Date lastModified, @Nullable final Lock lock) {
         return new Entity(path, Type.COLLECTION, null, lastModified, 0L, lock);
@@ -76,14 +78,28 @@ public final class Entity {
         return new Entity(path, Type.ITEM, hash, lastModified, size, lock);
     }
 
-    public static Map<Property, String> entityToProperties(final Entity entity) {
-        final Map<Property, String> result = new HashMap<>();
-        result.put(DISPLAY_NAME_PROPERTY, entity.getName());
-        result.put(CONTENT_LENGTH_PROPERTY, Long.toString(entity.getSize()));
-        result.put(ETAG_PROPERTY, entity.getHash());
-        result.put(LAST_MODIFIED_PROPERTY, entity.getLastModified().toString()); // FIXME
+    public static Collection<Property> entityToProperties(final Entity entity) {
+        final Collection<Property> result = new ArrayList<>();
+        result.add(new StringProperty(DISPLAY_NAME_PROPERTY_IDENTIFIER, entity.getName()));
+        result.add(new StringProperty(CONTENT_LENGTH_PROPERTY_IDENTIFIER, Long.toString(entity.getSize())));
+        result.add(new StringProperty(LAST_MODIFIED_PROPERTY_IDENTIFIER, entity.getLastModified().toString())); // FIXME
         if (entity.getType() == Type.COLLECTION) {
-            result.put(RESOURCE_TYPE_PROPERTY, "<D:collection/>");
+            result.add(new Property(RESOURCE_TYPE_PROPERTY_IDENTIFIER) {
+
+                @Override
+                public void write(final XMLStreamWriter writer) throws XMLStreamException {
+                    writer.writeStartElement(identifier.getNameSpace(), identifier.getName());
+                    writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, "collection");
+                    writer.writeEndElement();
+                }
+            });
+        } else {
+            result.add(new StringProperty(ETAG_PROPERTY_IDENTIFIER, entity.getHash()));
+        }
+
+        final Lock lock = entity.getLock();
+        if (lock != null) {
+
         }
         return result;
 
