@@ -19,7 +19,6 @@ package de.shadowhunt.servlet.webdav;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.concurrent.ThreadSafe;
 
