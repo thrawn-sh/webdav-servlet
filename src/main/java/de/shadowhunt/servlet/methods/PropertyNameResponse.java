@@ -110,7 +110,7 @@ class PropertyNameResponse extends AbstractPropertiesResponse {
     }
 
     private void writeNameSpaceDeclarations(final XMLStreamWriter writer, final Map<String, String> prefixes) throws XMLStreamException {
-        for (Map.Entry<String, String> entry : prefixes.entrySet()) {
+        for (final Map.Entry<String, String> entry : prefixes.entrySet()) {
             final String nameSpace = entry.getKey();
             final String prefix = entry.getValue();
             writer.writeNamespace(prefix, nameSpace);

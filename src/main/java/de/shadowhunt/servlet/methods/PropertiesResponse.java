@@ -66,7 +66,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
         prefixes.put(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.DEFAULT_DAV_PREFIX);
 
         for (final Collection<Property> properties : entries.values()) {
-            for (Property property : properties) {
+            for (final Property property : properties) {
                 announce(writer, property.getIdentifier(), prefixes);
             }
         }
@@ -79,7 +79,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
     private Collection<Property> getAvailable(final Collection<Property> properties) {
         final Collection<Property> available = new ArrayList<>();
 
-        for (Property property : properties) {
+        for (final Property property : properties) {
             final PropertyIdentifier identifier = property.getIdentifier();
             if (requested.contains(identifier)) {
                 available.add(property);
@@ -91,7 +91,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
     private Collection<PropertyIdentifier> getMissing(final Collection<Property> available) {
         final Collection<PropertyIdentifier> missing = new HashSet<>(requested);
 
-        for (Property property : available) {
+        for (final Property property : available) {
             final PropertyIdentifier identifier = property.getIdentifier();
             missing.remove(identifier);
         }
@@ -137,7 +137,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
         if (!properties.isEmpty()) {
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "propstat");
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "prop");
-            for (Property property : properties) {
+            for (final Property property : properties) {
                 property.write(writer);
             }
             writer.writeEndElement();
@@ -152,7 +152,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
         if (!identifiers.isEmpty()) {
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "propstat");
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "prop");
-            for (PropertyIdentifier identifier : identifiers) {
+            for (final PropertyIdentifier identifier : identifiers) {
                 writer.writeEmptyElement(identifier.getNameSpace(), identifier.getName());
             }
             writer.writeEndElement();
@@ -164,7 +164,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
     }
 
     private void writeNameSpaceDeclarations(final XMLStreamWriter writer, final Map<String, String> prefixes) throws XMLStreamException {
-        for (Map.Entry<String, String> entry : prefixes.entrySet()) {
+        for (final Map.Entry<String, String> entry : prefixes.entrySet()) {
             final String nameSpace = entry.getKey();
             final String prefix = entry.getValue();
             writer.writeNamespace(prefix, nameSpace);
