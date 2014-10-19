@@ -47,7 +47,7 @@ public class PutMethod extends AbstractWebDavMethod {
         }
 
         store.createItem(path, request.getInputStream());
-        Entity entity = store.getEntity(path); // use newly created entity
+        final Entity entity = store.getEntity(path); // use newly created entity
         return BasicResponse.createCreated(entity);
     }
 }

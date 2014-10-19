@@ -17,11 +17,9 @@
 package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -42,19 +40,13 @@ class PropertyNameResponse extends AbstractPropertiesResponse {
         this.entries = entries;
     }
 
-    private void announceNameSpacePrefixes(final PrintWriter writer, final Collection<Set<PropertyIdentifier>> values, final Map<String, String> nameSpaceMapping) {
-        for (final Collection<PropertyIdentifier> properties : values) {
-            announceNameSpacePrefixes0(writer, properties, nameSpaceMapping);
-        }
-    }
-
     private Map<String, String> announceNameSpacePrefixes(final XMLStreamWriter writer) throws XMLStreamException {
         final Map<String, String> prefixes = new HashMap<>();
         writer.setPrefix(PropertyIdentifier.DEFAULT_DAV_PREFIX, PropertyIdentifier.DAV_NAMESPACE);
         prefixes.put(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.DEFAULT_DAV_PREFIX);
 
         for (final Collection<PropertyIdentifier> identifiers : entries.values()) {
-            for (PropertyIdentifier identifier : identifiers) {
+            for (final PropertyIdentifier identifier : identifiers) {
                 final String nameSpace = identifier.getNameSpace();
                 if (prefixes.containsKey(nameSpace)) {
                     continue;

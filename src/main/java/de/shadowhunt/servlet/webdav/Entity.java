@@ -93,7 +93,10 @@ public final class Entity {
                     writer.writeEndElement();
                 }
             });
-        } else {
+        }
+
+        final String hash = entity.getHash();
+        if (hash != null) {
             result.add(new StringProperty(ETAG_PROPERTY_IDENTIFIER, entity.getHash()));
         }
 

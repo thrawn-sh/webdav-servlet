@@ -54,7 +54,7 @@ class LockResponse extends BasicResponse {
         writer.write('>'); // multistatus
         writer.print("<lockdiscovery><activelock>");
         writer.print("<lockscope><exclusive/></lockscope>"); // FIXME
-        String owner = lock.getOwner();
+        final String owner = lock.getOwner();
         if (owner != null) {
             writer.print("<owner>");
             writer.print(StringEscapeUtils.escapeXml10(owner));
