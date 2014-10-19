@@ -16,7 +16,11 @@
  */
 package de.shadowhunt.servlet.webdav;
 
+import java.util.Locale;
+
 import javax.annotation.concurrent.Immutable;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 @Immutable
 public final class Lock {
@@ -80,5 +84,24 @@ public final class Lock {
         sb.append(", scope=").append(scope);
         sb.append('}');
         return sb.toString();
+    }
+
+    public Property toProperty() {
+        return new Property(Entity.LOCK_IDENTIFIER) {
+
+            @Override
+            public void write(final XMLStreamWriter writer) throws XMLStreamException {
+                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, Entity.LOCK_IDENTIFIER.getName());
+                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "lockentry");
+                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "lockscope");
+                writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, getScope().name().toLowerCase(Locale.US));
+                writer.writeEndElement();
+                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktype");
+                writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, "write"); // FIXME
+                writer.writeEndElement();
+                writer.writeEndElement();
+                writer.writeEndElement();
+            }
+        };
     }
 }
