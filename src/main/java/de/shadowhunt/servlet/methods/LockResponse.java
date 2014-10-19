@@ -17,14 +17,15 @@
 package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Lock;
@@ -38,32 +39,59 @@ class LockResponse extends BasicResponse {
 
     @Override
     protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+        final Lock lock = entity.getLock();
+
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/xml");
-
-        final Lock lock = entity.getLock();
         response.addHeader("Lock-Token", "<" + lock.getToken() + ">");
+        // response.setStatus(207); // FIXME
 
-        final Map<String, String> nameSpaceMapping = new HashMap<>();
-        nameSpaceMapping.put(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.DEFAULT_DAV_PREFIX + ":");
+        try {
+            final XMLOutputFactory factory = XMLOutputFactory.newFactory();
 
-        final PrintWriter writer = response.getWriter();
-        writer.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?><prop xmlns=\"");
-        writer.print(PropertyIdentifier.DAV_NAMESPACE);
-        writer.print("\"");
-        writer.write('>'); // multistatus
-        writer.print("<lockdiscovery><activelock>");
-        writer.print("<lockscope><exclusive/></lockscope>"); // FIXME
-        final String owner = lock.getOwner();
-        if (owner != null) {
-            writer.print("<owner>");
-            writer.print(StringEscapeUtils.escapeXml10(owner));
-            writer.print("</owner>");
+            final XMLStreamWriter writer = factory.createXMLStreamWriter(response.getOutputStream(), "UTF-8");
+            writer.writeStartDocument("UTF-8", "1.0");
+            writer.setPrefix(PropertyIdentifier.DEFAULT_DAV_PREFIX, PropertyIdentifier.DAV_NAMESPACE);
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "prop");
+            writer.writeNamespace(PropertyIdentifier.DEFAULT_DAV_PREFIX, PropertyIdentifier.DAV_NAMESPACE);
+
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "lockdiscovery");
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "activelock");
+
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "lockscope");
+            writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, lock.getScope().name().toLowerCase(Locale.US));
+            writer.writeEndElement();
+
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktype");
+            writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, "write");
+            writer.writeEndElement();
+
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "timeout");
+            writer.writeCharacters("Seconds-3600");
+            writer.writeEndElement();
+
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "depth");
+            writer.writeCharacters("0");
+            writer.writeEndElement();
+
+            final String owner = lock.getOwner();
+            if (StringUtils.isNotEmpty(owner)) {
+                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "owner");
+                writer.writeCharacters(owner);
+                writer.writeEndElement();
+            }
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktoken");
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "href");
+            writer.writeCharacters(lock.getToken());
+            writer.writeEndElement(); // href
+            writer.writeEndElement(); // locktoken
+            writer.writeEndElement(); // activelock
+            writer.writeEndElement(); // lockdiscovery
+            writer.writeEndElement(); // prop
+            writer.writeCharacters("\r\n"); // required by some clients
+            writer.close();
+        } catch (final XMLStreamException e) {
+            throw new ServletException("can not write response", e);
         }
-        writer.print("<locktoken><href>");
-        writer.print(lock.getToken());
-        writer.print("</href></locktoken>");
-        writer.print("</activelock></lockdiscovery>");
-        writer.print("</prop>");
     }
 }
