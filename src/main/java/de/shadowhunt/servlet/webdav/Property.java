@@ -28,7 +28,7 @@ public abstract class Property {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -45,12 +45,12 @@ public abstract class Property {
         return true;
     }
 
-    public PropertyIdentifier getIdentifier() {
+    public final PropertyIdentifier getIdentifier() {
         return identifier;
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return identifier.hashCode();
     }
 

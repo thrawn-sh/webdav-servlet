@@ -17,11 +17,13 @@
 package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Collection;
+import java.util.HashSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -37,8 +39,10 @@ import org.w3c.dom.NodeList;
 import de.shadowhunt.servlet.methods.properties.PropertiesMessageHelper;
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
+import de.shadowhunt.servlet.webdav.Property;
 import de.shadowhunt.servlet.webdav.PropertyIdentifier;
 import de.shadowhunt.servlet.webdav.Store;
+import de.shadowhunt.servlet.webdav.StringProperty;
 
 public class PropPatchMethod extends AbstractWebDavMethod {
 
@@ -86,21 +90,32 @@ public class PropPatchMethod extends AbstractWebDavMethod {
             return BasicResponse.createBadRequest(entity);
         }
 
-        final Map<PropertyIdentifier, String> properties = new TreeMap<>();
-        properties.putAll(store.getProperties(path));
+        final Collection<StringProperty> properties = new HashSet<>();
+        properties.addAll(store.getProperties(path));
         try {
             final NodeList nodes = (NodeList) EXPRESSION.evaluate(document, XPathConstants.NODESET);
             final int length = nodes.getLength();
             for (int i = 0; i < length; i++) {
                 final Node node = nodes.item(i);
-                final PropertyIdentifier propertyIdentifier = new PropertyIdentifier(StringUtils.trimToEmpty(node.getNamespaceURI()), node.getLocalName());
+                final String nameSpace = StringUtils.trimToEmpty(node.getNamespaceURI());
+                final String name = node.getLocalName();
+                final PropertyIdentifier propertyIdentifier = new PropertyIdentifier(nameSpace, name);
 
                 // DAV namespace is only for live property (can not be handled by client) => ignore silently
                 if (isSaveOrUpdate(node) && !isLiveProperty(propertyIdentifier)) {
                     final String content = StringEscapeUtils.unescapeXml(node.getTextContent());
-                    properties.put(propertyIdentifier, content);
+                    boolean add = properties.add(new StringProperty(propertyIdentifier, content));
+                    if (add) {
+                        add = !add;
+                    }
                 } else {
-                    properties.remove(propertyIdentifier);
+                    properties.remove(new Property(propertyIdentifier) {
+
+                        @Override
+                        public void write(final XMLStreamWriter writer) throws XMLStreamException {
+                            // nothing to do
+                        }
+                    });
                 }
             }
         } catch (final Exception e) {

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,20 +30,34 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
+import de.shadowhunt.servlet.webdav.Property;
 import de.shadowhunt.servlet.webdav.PropertyIdentifier;
 
 class PropertiesResponse extends AbstractPropertiesResponse {
 
-    private final Map<Path, Map<PropertyIdentifier, String>> entries;
+    private final Map<Path, Collection<Property>> entries;
 
     private final Set<PropertyIdentifier> requested;
 
-    public PropertiesResponse(final Entity entity, final String baseUri, final Set<PropertyIdentifier> requested, final Map<Path, Map<PropertyIdentifier, String>> entries) {
+    public PropertiesResponse(final Entity entity, final String baseUri, final Set<PropertyIdentifier> requested, final Map<Path, Collection<Property>> entries) {
         super(entity, baseUri);
         this.requested = requested;
         this.entries = entries;
+    }
+
+    private void announce(final XMLStreamWriter writer, final PropertyIdentifier identifier, final Map<String, String> prefixes) throws XMLStreamException {
+        final String nameSpace = identifier.getNameSpace();
+        if (prefixes.containsKey(nameSpace) || StringUtils.isEmpty(nameSpace)) {
+            return;
+        }
+
+        final String prefix = "ns" + prefixes.size();
+        writer.setPrefix(prefix, nameSpace);
+        prefixes.put(nameSpace, prefix);
     }
 
     private Map<String, String> announceNameSpacePrefixes(final XMLStreamWriter writer) throws XMLStreamException {
@@ -50,54 +65,37 @@ class PropertiesResponse extends AbstractPropertiesResponse {
         writer.setPrefix(PropertyIdentifier.DEFAULT_DAV_PREFIX, PropertyIdentifier.DAV_NAMESPACE);
         prefixes.put(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.DEFAULT_DAV_PREFIX);
 
-        for (final Map<PropertyIdentifier, String> properties : entries.values()) {
-            announceNameSpacePrefixes0(writer, properties.keySet(), prefixes);
+        for (final Collection<Property> properties : entries.values()) {
+            for (Property property : properties) {
+                announce(writer, property.getIdentifier(), prefixes);
+            }
         }
-        announceNameSpacePrefixes0(writer, requested, prefixes);
+        for (final PropertyIdentifier identifier : requested) {
+            announce(writer, identifier, prefixes);
+        }
         return prefixes;
     }
 
-    private void announceNameSpacePrefixes0(final XMLStreamWriter writer, final Collection<PropertyIdentifier> properties, final Map<String, String> prefixes) throws XMLStreamException {
-        for (final PropertyIdentifier propertyIdentifier : properties) {
-            final String nameSpace = propertyIdentifier.getNameSpace();
-            if (prefixes.containsKey(nameSpace)) {
-                continue;
-            }
+    private Collection<Property> getAvailable(final Collection<Property> properties) {
+        final Collection<Property> available = new ArrayList<>();
 
-            final String prefix = "ns" + prefixes.size();
-            writer.setPrefix(prefix, nameSpace);
-            prefixes.put(nameSpace, prefix);
+        for (Property property : properties) {
+            final PropertyIdentifier identifier = property.getIdentifier();
+            if (requested.contains(identifier)) {
+                available.add(property);
+            }
         }
+        return available;
     }
 
-    private Collection<PropertyIdentifier>[] bar(final Map<PropertyIdentifier, String> properties) {
-        final Collection<PropertyIdentifier> missing = new ArrayList<>();
-        final Collection<PropertyIdentifier> available = new ArrayList<>();
+    private Collection<PropertyIdentifier> getMissing(final Collection<Property> available) {
+        final Collection<PropertyIdentifier> missing = new HashSet<>(requested);
 
-        final Set<PropertyIdentifier> propertyIdentifierSet = properties.keySet();
-        for (PropertyIdentifier propertyIdentifier : requested) {
-            if (propertyIdentifierSet.contains(propertyIdentifier)) {
-                available.add(propertyIdentifier);
-            } else {
-                missing.add(propertyIdentifier);
-            }
+        for (Property property : available) {
+            final PropertyIdentifier identifier = property.getIdentifier();
+            missing.remove(identifier);
         }
-        return new Collection[] { available, missing};
-    }
-
-    private void foo(final XMLStreamWriter writer, final Collection<PropertyIdentifier> properties, final String status) throws XMLStreamException {
-        if (!properties.isEmpty()) {
-            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "propstat");
-            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "prop");
-            for (PropertyIdentifier propertyIdentifier : properties) {
-                writer.writeEmptyElement(propertyIdentifier.getNameSpace(), propertyIdentifier.getName());
-            }
-            writer.writeEndElement();
-            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "status");
-            writer.writeCharacters(status);
-            writer.writeEndElement();
-            writer.writeEndElement();
-        }
+        return missing;
     }
 
     @Override
@@ -114,24 +112,54 @@ class PropertiesResponse extends AbstractPropertiesResponse {
             final Map<String, String> prefixes = announceNameSpacePrefixes(writer);
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "multistatus");
             writeNameSpaceDeclarations(writer, prefixes);
-            for (final Map.Entry<Path, Map<PropertyIdentifier, String>> entry : entries.entrySet()) {
+            for (final Map.Entry<Path, Collection<Property>> entry : entries.entrySet()) {
                 writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "response");
                 writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "href");
                 final Path path = entry.getKey();
                 writer.writeCharacters(baseUri + path.toString());
                 writer.writeEndElement();
-                final Map<PropertyIdentifier, String> properties = entry.getValue();
-                final Collection<PropertyIdentifier>[] groups = bar(properties);
-                foo(writer, groups[0], "HTTP/1.1 200 OK");
-                foo(writer, groups[1], "HTTP/1.1 404 Not Found");
+                final Collection<Property> available = getAvailable(entry.getValue());
+                writeAvailable(writer, available);
+                final Collection<PropertyIdentifier> missing = getMissing(available);
+                writeMissing(writer, missing);
                 writer.writeEndElement();
             }
             writer.writeEndElement();
             writer.writeEndDocument();
-            writer.writeCharacters("\r\n");
+            writer.writeCharacters("\r\n"); // required by some clients
             writer.close();
         } catch (final XMLStreamException e) {
             throw new ServletException("can not write response", e);
+        }
+    }
+
+    private void writeAvailable(final XMLStreamWriter writer, final Collection<Property> properties) throws XMLStreamException {
+        if (!properties.isEmpty()) {
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "propstat");
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "prop");
+            for (Property property : properties) {
+                property.write(writer);
+            }
+            writer.writeEndElement();
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "status");
+            writer.writeCharacters("HTTP/1.1 200 OK");
+            writer.writeEndElement();
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeMissing(final XMLStreamWriter writer, final Collection<PropertyIdentifier> identifiers) throws XMLStreamException {
+        if (!identifiers.isEmpty()) {
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "propstat");
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "prop");
+            for (PropertyIdentifier identifier : identifiers) {
+                writer.writeEmptyElement(identifier.getNameSpace(), identifier.getName());
+            }
+            writer.writeEndElement();
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "status");
+            writer.writeCharacters("HTTP/1.1 404 Not Found");
+            writer.writeEndElement();
+            writer.writeEndElement();
         }
     }
 

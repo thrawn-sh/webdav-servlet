@@ -207,7 +207,7 @@ public class FileSystemStore implements Store {
 
         final File meta = getMetaFile(path.append(PROPERTIES_SUFFIX));
         if (!meta.exists()) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
         InputStream is = null;

@@ -89,7 +89,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
         }
     }
 
-    private void collectPropertyNames(final Path path, final int depth, final Map<Path, Set<PropertyIdentifier>> map) {
+    private void collectPropertyNames(final Path path, final int depth, final Map<Path, Collection<PropertyIdentifier>> map) {
         if (depth < 0) {
             return;
         }
@@ -108,12 +108,12 @@ public class PropFindMethod extends AbstractWebDavMethod {
         return Integer.parseInt(depth);
     }
 
-    private Set<PropertyIdentifier> getPropertyIdentifiers(final Path path) {
-        final Set<PropertyIdentifier> result = new TreeSet<>();
+    private Collection<PropertyIdentifier> getPropertyIdentifiers(final Path path) {
+        final Collection<PropertyIdentifier> result = new TreeSet<>();
         // add live properties
         result.addAll(Entity.SUPPORTED_LIVE_PROPERTIES);
 
-        for (Property property : store.getProperties(path)) {
+        for (final Property property : store.getProperties(path)) {
             result.add(property.getIdentifier());
         }
 
@@ -145,7 +145,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
         }
     }
 
-    private Collection<Property> merge(final Collection<? extends Property> live, final Collection<Property> dead) {
+    private Collection<Property> merge(final Collection<Property> live, final Collection<StringProperty> dead) {
         live.addAll(dead);
         return live;
     }
@@ -169,7 +169,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
         }
 
         if (listPropertyNames(document)) {
-            final Map<Path, Set<PropertyIdentifier>> result = new LinkedHashMap<>();
+            final Map<Path, Collection<PropertyIdentifier>> result = new LinkedHashMap<>();
             collectPropertyNames(path, depth, result);
             return new PropertyNameResponse(entity, request.getServletPath(), result);
         }
@@ -179,7 +179,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
             return BasicResponse.createBadRequest(entity);
         }
 
-        final Map<Path, Map<PropertyIdentifier, String>> result = new LinkedHashMap<>();
+        final Map<Path, Collection<Property>> result = new LinkedHashMap<>();
         collectProperties(path, depth, result);
         return new PropertiesResponse(entity, request.getServletPath(), requested, result);
     }
