@@ -23,8 +23,6 @@ import java.util.Collection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
-
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;

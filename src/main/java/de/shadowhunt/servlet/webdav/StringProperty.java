@@ -40,18 +40,14 @@ public class StringProperty extends Property {
 
     @Override
     public void write(final XMLStreamWriter writer) throws XMLStreamException {
-        try {
-            final String nameSpace = identifier.getNameSpace();
-            final String name = identifier.getName();
-            if (StringUtils.isEmpty(nameSpace)) {
-                writer.writeStartElement(name);
-            } else {
-                writer.writeStartElement(nameSpace, name);
-            }
-            writer.writeCharacters(value);
-            writer.writeEndElement();
-        } catch (XMLStreamException e) {
-            throw e;
+        final String nameSpace = identifier.getNameSpace();
+        final String name = identifier.getName();
+        if (StringUtils.isEmpty(nameSpace)) {
+            writer.writeStartElement(name);
+        } else {
+            writer.writeStartElement(nameSpace, name);
         }
+        writer.writeCharacters(value);
+        writer.writeEndElement();
     }
 }
