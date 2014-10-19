@@ -37,7 +37,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
 
-class HtmlListingResponse implements WebDavResponse {
+class HtmlListingResponse extends BasicResponse {
 
     private static final Comparator<Entity> LISTING_COMPARATOR = new Comparator<Entity>() {
 
@@ -57,16 +57,14 @@ class HtmlListingResponse implements WebDavResponse {
 
     private final List<Entity> entities;
 
-    private final Entity root;
-
     public HtmlListingResponse(final Entity root, final List<Entity> entities, @Nullable final String cssPath) {
-        this.root = root;
+        super(root);
         this.entities = entities;
         this.cssPath = cssPath;
     }
 
     @Override
-    public void write(final HttpServletResponse response) throws ServletException, IOException {
+    protected void write0(final HttpServletResponse response) throws ServletException, IOException {
         Collections.sort(entities, LISTING_COMPARATOR);
 
         response.setCharacterEncoding("UTF-8");
@@ -75,7 +73,8 @@ class HtmlListingResponse implements WebDavResponse {
         final PrintWriter writer = response.getWriter();
         writer.print("<!DOCTYPE html><html><head>");
         writer.print("<title>Content of folder ");
-        writer.print(StringEscapeUtils.escapeHtml4(root.getPath().toString()));
+        final Path path = entity.getPath();
+        writer.print(StringEscapeUtils.escapeHtml4(path.toString()));
         writer.print("</title>");
 
         if (cssPath != null) {
@@ -85,7 +84,7 @@ class HtmlListingResponse implements WebDavResponse {
         }
 
         writer.print("</head><body><table><thead><tr><th class=\"name\">Name</th><th class=\"size\">Size</th><th class=\"modified\">Modified</th></tr></thead><tbody>");
-        if (Path.ROOT.equals(root.getPath())) {
+        if (Path.ROOT.equals(path)) {
             // do not leave WebDav
             writer.print("<tr class=\"folder parent\"><td colspan=\"3\"><a href=\".\">Parent</a></td></tr>");
         } else {

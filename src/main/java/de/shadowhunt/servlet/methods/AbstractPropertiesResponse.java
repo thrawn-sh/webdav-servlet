@@ -22,19 +22,21 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.shadowhunt.servlet.webdav.Property;
+import de.shadowhunt.servlet.webdav.Entity;
+import de.shadowhunt.servlet.webdav.PropertyIdentifier;
 
-public abstract class AbstractPropertiesResponse implements WebDavResponse {
+abstract class AbstractPropertiesResponse extends BasicResponse {
 
     protected final String baseUri;
 
-    protected AbstractPropertiesResponse(final String baseUri) {
+    protected AbstractPropertiesResponse(final Entity entity, final String baseUri) {
+        super(entity);
         this.baseUri = baseUri;
     }
 
-    protected void announceNameSpacePrefixes0(final PrintWriter writer, final Collection<Property> properties, final Map<String, String> nameSpaceMapping) {
-        for (final Property property : properties) {
-            final String nameSpace = property.getNameSpace();
+    protected void announceNameSpacePrefixes0(final PrintWriter writer, final Collection<PropertyIdentifier> properties, final Map<String, String> nameSpaceMapping) {
+        for (final PropertyIdentifier propertyIdentifier : properties) {
+            final String nameSpace = propertyIdentifier.getNameSpace();
             if (nameSpaceMapping.containsKey(nameSpace)) {
                 continue;
             }

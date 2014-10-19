@@ -25,18 +25,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
-class StreamingResponse implements WebDavResponse {
+import de.shadowhunt.servlet.webdav.Entity;
+
+class StreamingResponse extends BasicResponse {
 
     private final InputStream input;
 
-    public StreamingResponse(final InputStream input) {
+    public StreamingResponse(final Entity entity, final InputStream input) {
+        super(entity);
         this.input = input;
     }
 
     @Override
-    public void write(final HttpServletResponse response) throws ServletException, IOException {
-        response.setCharacterEncoding("UTF-8");
-
+    protected void write0(final HttpServletResponse response) throws ServletException, IOException {
         final ServletOutputStream output = response.getOutputStream();
         try {
             IOUtils.copy(input, output);
