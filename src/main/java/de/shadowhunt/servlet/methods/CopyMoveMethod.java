@@ -62,14 +62,6 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
         }
     }
 
-    protected int determineDepth(final HttpServletRequest request) {
-        final String depth = request.getHeader("Depth");
-        if (StringUtils.isEmpty(depth) || "infinity".equalsIgnoreCase(depth)) {
-            return Integer.MAX_VALUE;
-        }
-        return Integer.parseInt(depth);
-    }
-
     protected boolean determineOverwrite(final HttpServletRequest request) {
         final String overwrite = request.getHeader("Overwrite");
         return "T".equalsIgnoreCase(overwrite);

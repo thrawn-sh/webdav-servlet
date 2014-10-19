@@ -22,8 +22,6 @@ import java.util.UUID;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
-
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Lock;
 import de.shadowhunt.servlet.webdav.Path;
@@ -37,24 +35,12 @@ public class LockMethod extends AbstractWebDavMethod {
         super(METHOD, store);
     }
 
-    protected int determineDepth(final HttpServletRequest request) {
-        final String depth = request.getHeader("Depth");
-        if (StringUtils.isEmpty(depth) || "infinity".equalsIgnoreCase(depth)) {
-            return Integer.MAX_VALUE;
-        }
-        return Integer.parseInt(depth);
-    }
-
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
         if (!store.exists(path)) {
             return BasicResponse.createNotFound();
         }
-
-//        if (determineDepth(request) > 0) {
-//            return StatusResponse.BAD_REQUEST;
-//        }
-
+        
         final Entity entity = store.getEntity(path);
         if (entity.isLocked()) {
             if (hasLockProblem(entity, request, "If")) {

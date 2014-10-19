@@ -97,7 +97,7 @@ public final class Entity {
 
         final String hash = entity.getHash();
         if (hash != null) {
-            result.add(new StringProperty(ETAG_PROPERTY_IDENTIFIER, entity.getHash()));
+            result.add(new StringProperty(ETAG_PROPERTY_IDENTIFIER, hash));
         }
 
         final Lock lock = entity.getLock();

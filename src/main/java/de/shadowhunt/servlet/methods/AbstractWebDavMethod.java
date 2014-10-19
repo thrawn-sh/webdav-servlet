@@ -79,6 +79,14 @@ public abstract class AbstractWebDavMethod {
         return true;
     }
 
+    protected int determineDepth(final HttpServletRequest request) {
+        final String depth = request.getHeader("Depth");
+        if (StringUtils.isEmpty(depth) || "infinity".equalsIgnoreCase(depth)) {
+            return Integer.MAX_VALUE;
+        }
+        return Integer.parseInt(depth);
+    }
+
     protected boolean hasLockProblem(final Entity entity, final HttpServletRequest request, final String headerName) {
         if (entity.isLocked()) {
             final String token = entity.getLock().getToken();
