@@ -17,6 +17,7 @@
 package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +41,9 @@ import de.shadowhunt.servlet.methods.properties.PropertiesMessageHelper;
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Property;
+import de.shadowhunt.servlet.webdav.PropertyIdentifier;
 import de.shadowhunt.servlet.webdav.Store;
+import de.shadowhunt.servlet.webdav.StringProperty;
 
 public class PropFindMethod extends AbstractWebDavMethod {
 
@@ -53,7 +56,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
     static {
         final XPathFactory factory = XPathFactory.newInstance();
         final XPath xpath = factory.newXPath();
-        xpath.setNamespaceContext(Property.DAV_NS_CONTEXT);
+        xpath.setNamespaceContext(PropertyIdentifier.DAV_NS_CONTEXT);
         try {
             ALL_EXPRESSION = xpath.compile("/D:propfind/D:allprop");
             PROPERTIES_EXPRESSION = xpath.compile("/D:propfind/D:prop/*");
@@ -72,26 +75,26 @@ public class PropFindMethod extends AbstractWebDavMethod {
         this.supportInfiniteDepth = supportInfiniteDepth;
     }
 
-    private void collectProperties(final Path path, final int depth, final Map<Path, Map<Property, String>> map) {
+    private void collectProperties(final Path path, final int depth, final Map<Path, Collection<Property>> map) {
         if (depth < 0) {
             return;
         }
 
         final Entity entity = store.getEntity(path);
-        final Map<Property, String> liveProperties = Entity.entityToProperties(entity);
-        final Map<Property, String> deadProperties = store.getProperties(path);
+        final Collection<Property> liveProperties = Entity.entityToProperties(entity);
+        final Collection<StringProperty> deadProperties = store.getProperties(path);
         map.put(path, merge(liveProperties, deadProperties));
         for (final Path child : store.list(path)) {
             collectProperties(child, depth - 1, map);
         }
     }
 
-    private void collectPropertyNames(final Path path, final int depth, final Map<Path, Set<Property>> map) {
+    private void collectPropertyNames(final Path path, final int depth, final Map<Path, Set<PropertyIdentifier>> map) {
         if (depth < 0) {
             return;
         }
 
-        map.put(path, getProperties(path));
+        map.put(path, getPropertyIdentifiers(path));
         for (final Path child : store.list(path)) {
             collectPropertyNames(child, depth - 1, map);
         }
@@ -105,25 +108,27 @@ public class PropFindMethod extends AbstractWebDavMethod {
         return Integer.parseInt(depth);
     }
 
-    private Set<Property> getProperties(final Path path) {
-        final Set<Property> result = new TreeSet<>();
+    private Set<PropertyIdentifier> getPropertyIdentifiers(final Path path) {
+        final Set<PropertyIdentifier> result = new TreeSet<>();
         // add live properties
         result.addAll(Entity.SUPPORTED_LIVE_PROPERTIES);
 
-        final Map<Property, String> properties = store.getProperties(path);
-        result.addAll(properties.keySet());
+        for (Property property : store.getProperties(path)) {
+            result.add(property.getIdentifier());
+        }
+
         return result;
     }
 
     @CheckForNull
-    private Set<Property> getRequestedProperties(final Document document) {
+    private Set<PropertyIdentifier> getRequestedProperties(final Document document) {
         try {
             final NodeList nodes = (NodeList) PROPERTIES_EXPRESSION.evaluate(document, XPathConstants.NODESET);
             final int length = nodes.getLength();
-            final Set<Property> properties = new TreeSet<>();
+            final Set<PropertyIdentifier> properties = new TreeSet<>();
             for (int i = 0; i < length; i++) {
                 final Node node = nodes.item(i);
-                properties.add(new Property(StringUtils.trimToEmpty(node.getNamespaceURI()), node.getLocalName()));
+                properties.add(new PropertyIdentifier(StringUtils.trimToEmpty(node.getNamespaceURI()), node.getLocalName()));
             }
             return properties;
         } catch (Exception e) {
@@ -140,40 +145,42 @@ public class PropFindMethod extends AbstractWebDavMethod {
         }
     }
 
-    private Map<Property, String> merge(final Map<Property, String> live, final Map<Property, String> dead) {
-        live.putAll(dead);
+    private Collection<Property> merge(final Collection<? extends Property> live, final Collection<Property> dead) {
+        live.addAll(dead);
         return live;
     }
 
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
         if (!store.exists(path)) {
-            return StatusResponse.NOT_FOUND;
+            return BasicResponse.createNotFound();
         }
+
+        final Entity entity = store.getEntity(path);
 
         final int depth = determineDepth(request);
         if ((depth == Integer.MAX_VALUE) && !supportInfiniteDepth) {
-            return StatusResponse.FORBIDDEN;
+            return BasicResponse.createForbidden(entity);
         }
 
         final Document document = PropertiesMessageHelper.parse(request.getInputStream());
         if (document == null) {
-            return StatusResponse.BAD_REQUEST;
+            return BasicResponse.createBadRequest(entity);
         }
 
         if (listPropertyNames(document)) {
-            final Map<Path, Set<Property>> result = new LinkedHashMap<>();
+            final Map<Path, Set<PropertyIdentifier>> result = new LinkedHashMap<>();
             collectPropertyNames(path, depth, result);
-            return new PropertyNameResponse(request.getServletPath(), result);
+            return new PropertyNameResponse(entity, request.getServletPath(), result);
         }
 
-        final Set<Property> requested = getRequestedProperties(document);
+        final Set<PropertyIdentifier> requested = getRequestedProperties(document);
         if (requested == null) {
-            return StatusResponse.BAD_REQUEST;
+            return BasicResponse.createBadRequest(entity);
         }
 
-        final Map<Path, Map<Property, String>> result = new LinkedHashMap<>();
+        final Map<Path, Map<PropertyIdentifier, String>> result = new LinkedHashMap<>();
         collectProperties(path, depth, result);
-        return new PropertiesResponse(request.getServletPath(), requested, result);
+        return new PropertiesResponse(entity, request.getServletPath(), requested, result);
     }
 }

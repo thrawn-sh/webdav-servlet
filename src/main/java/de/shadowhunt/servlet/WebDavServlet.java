@@ -33,12 +33,14 @@ import de.shadowhunt.servlet.methods.AbstractWebDavMethod;
 import de.shadowhunt.servlet.methods.CopyMoveMethod;
 import de.shadowhunt.servlet.methods.DeleteMethod;
 import de.shadowhunt.servlet.methods.GetMethod;
+import de.shadowhunt.servlet.methods.HeadMethod;
 import de.shadowhunt.servlet.methods.LockMethod;
 import de.shadowhunt.servlet.methods.MkColMethod;
 import de.shadowhunt.servlet.methods.OptionsMethod;
 import de.shadowhunt.servlet.methods.PropFindMethod;
 import de.shadowhunt.servlet.methods.PropPatchMethod;
 import de.shadowhunt.servlet.methods.PutMethod;
+import de.shadowhunt.servlet.methods.UnlockMethod;
 import de.shadowhunt.servlet.methods.WebDavResponse;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
@@ -73,6 +75,7 @@ public class WebDavServlet extends HttpServlet {
         final String listingCss = config.getInitParameter("listingCss");
         final boolean listing = Boolean.parseBoolean(config.getInitParameter("listing"));
         dispatcher.put(GetMethod.METHOD, new GetMethod(store, listing, listingCss));
+        dispatcher.put(HeadMethod.METHOD, new HeadMethod(store));
         dispatcher.put(OptionsMethod.METHOD, new OptionsMethod(store));
         final boolean infiniteDepthRequests = Boolean.parseBoolean(config.getInitParameter("infiniteDepthRequests"));
         dispatcher.put(PropFindMethod.METHOD, new PropFindMethod(store, infiniteDepthRequests));
@@ -86,6 +89,7 @@ public class WebDavServlet extends HttpServlet {
             dispatcher.put(CopyMoveMethod.MOVE_METHOD, new CopyMoveMethod(store, true));
             dispatcher.put(PropPatchMethod.METHOD, new PropPatchMethod(store));
             dispatcher.put(LockMethod.METHOD, new LockMethod(store));
+            dispatcher.put(UnlockMethod.METHOD, new UnlockMethod(store));
         }
     }
 

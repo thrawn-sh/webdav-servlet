@@ -18,7 +18,7 @@ package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
+import java.util.Collection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,8 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
-import de.shadowhunt.servlet.webdav.Property;
 import de.shadowhunt.servlet.webdav.Store;
+import de.shadowhunt.servlet.webdav.StringProperty;
 
 public class CopyMoveMethod extends AbstractWebDavMethod {
 
@@ -54,7 +54,7 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
         } else {
             store.createItem(target, store.download(source));
         }
-        final Map<Property, String> properties = store.getProperties(source);
+        final Collection<StringProperty> properties = store.getProperties(source);
         store.setProperties(target, properties);
 
         for (final Path child : store.list(source)) {
@@ -87,7 +87,14 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
     @Override
     public WebDavResponse service(final Path source, final HttpServletRequest request) throws ServletException, IOException {
         if (!store.exists(source)) {
-            return StatusResponse.NOT_FOUND;
+            return BasicResponse.createNotFound();
+        }
+
+        final Entity sourceEntity = store.getEntity(source);
+        if (deleteSource) {
+            if (hasLockProblem(sourceEntity, request, "If")) {
+                return BasicResponse.createLocked(sourceEntity);
+            }
         }
 
         final boolean overwrite = determineOverwrite(request);
@@ -96,16 +103,20 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
         final boolean targetExistsBefore = store.exists(target);
         if (targetExistsBefore) {
             if (overwrite) {
+                final Entity targetEntity = store.getEntity(target);
+                if (hasLockProblem(targetEntity, request, "If")) {
+                    return BasicResponse.createLocked(sourceEntity);
+                }
                 store.delete(target);
             } else {
-                return StatusResponse.PRECONDITION_FAILED;
+                return BasicResponse.createPreconditionFailed(sourceEntity);
             }
         }
 
         // targetParent collection must exist
         final Path targetParent = target.getParent();
         if (!store.exists(targetParent)) {
-            return StatusResponse.CONFLICT;
+            return BasicResponse.createConflict(sourceEntity);
         }
 
         copy(source, target, depth);
@@ -115,8 +126,8 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
         }
 
         if (targetExistsBefore) {
-            return StatusResponse.NO_CONTENT;
+            return BasicResponse.createNoContent(sourceEntity);
         }
-        return StatusResponse.CREATED;
+        return BasicResponse.createCreated(sourceEntity);
     }
 }

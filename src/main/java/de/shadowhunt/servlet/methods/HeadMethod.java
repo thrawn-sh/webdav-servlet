@@ -25,29 +25,21 @@ import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
 
-public class PutMethod extends AbstractWebDavMethod {
+public class HeadMethod extends AbstractWebDavMethod {
 
-    public static final String METHOD = "PUT";
+    public static final String METHOD = "HEAD";
 
-    public PutMethod(final Store store) {
+    public HeadMethod(final Store store) {
         super(METHOD, store);
     }
 
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
-        if (store.exists(path)) {
-            final Entity entity = store.getEntity(path);
-            if (entity.getType() == Entity.Type.COLLECTION) {
-                return BasicResponse.createMessageNodeAllowed(entity);
-            }
-
-            if (hasLockProblem(entity, request, "If")) {
-                return BasicResponse.createLocked(entity);
-            }
+        if (!store.exists(path)) {
+            return BasicResponse.createNotFound();
         }
 
-        store.createItem(path, request.getInputStream());
-        Entity entity = store.getEntity(path); // use newly created entity
-        return BasicResponse.createCreated(entity);
+        final Entity entity = store.getEntity(path);
+        return BasicResponse.createOk(entity);
     }
 }

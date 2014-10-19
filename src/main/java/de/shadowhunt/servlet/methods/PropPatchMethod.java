@@ -35,8 +35,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.shadowhunt.servlet.methods.properties.PropertiesMessageHelper;
+import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
-import de.shadowhunt.servlet.webdav.Property;
+import de.shadowhunt.servlet.webdav.PropertyIdentifier;
 import de.shadowhunt.servlet.webdav.Store;
 
 public class PropPatchMethod extends AbstractWebDavMethod {
@@ -44,7 +45,7 @@ public class PropPatchMethod extends AbstractWebDavMethod {
     static {
         final XPathFactory factory = XPathFactory.newInstance();
         final XPath xpath = factory.newXPath();
-        xpath.setNamespaceContext(Property.DAV_NS_CONTEXT);
+        xpath.setNamespaceContext(PropertyIdentifier.DAV_NS_CONTEXT);
         try {
             EXPRESSION = xpath.compile("//D:prop/*");
         } catch (final XPathExpressionException e) {
@@ -60,8 +61,8 @@ public class PropPatchMethod extends AbstractWebDavMethod {
         super(METHOD, store);
     }
 
-    private boolean isLiveProperty(final Property property) {
-        return Property.DAV_NAMESPACE.equals(property.getNameSpace());
+    private boolean isLiveProperty(final PropertyIdentifier propertyIdentifier) {
+        return PropertyIdentifier.DAV_NAMESPACE.equals(propertyIdentifier.getNameSpace());
     }
 
     private boolean isSaveOrUpdate(final Node node) {
@@ -72,36 +73,41 @@ public class PropPatchMethod extends AbstractWebDavMethod {
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
         if (!store.exists(path)) {
-            return StatusResponse.NOT_FOUND;
+            return BasicResponse.createNotFound();
+        }
+
+        final Entity entity = store.getEntity(path);
+        if (hasLockProblem(entity, request, "If")) {
+            return BasicResponse.createLocked(entity);
         }
 
         final Document document = PropertiesMessageHelper.parse(request.getInputStream());
         if (document == null) {
-            return StatusResponse.BAD_REQUEST;
+            return BasicResponse.createBadRequest(entity);
         }
 
-        final Map<Property, String> properties = new TreeMap<>();
+        final Map<PropertyIdentifier, String> properties = new TreeMap<>();
         properties.putAll(store.getProperties(path));
         try {
             final NodeList nodes = (NodeList) EXPRESSION.evaluate(document, XPathConstants.NODESET);
             final int length = nodes.getLength();
             for (int i = 0; i < length; i++) {
                 final Node node = nodes.item(i);
-                final Property property = new Property(StringUtils.trimToEmpty(node.getNamespaceURI()), node.getLocalName());
+                final PropertyIdentifier propertyIdentifier = new PropertyIdentifier(StringUtils.trimToEmpty(node.getNamespaceURI()), node.getLocalName());
 
                 // DAV namespace is only for live property (can not be handled by client) => ignore silently
-                if (isSaveOrUpdate(node) && !isLiveProperty(property)) {
+                if (isSaveOrUpdate(node) && !isLiveProperty(propertyIdentifier)) {
                     final String content = StringEscapeUtils.unescapeXml(node.getTextContent());
-                    properties.put(property, content);
+                    properties.put(propertyIdentifier, content);
                 } else {
-                    properties.remove(property);
+                    properties.remove(propertyIdentifier);
                 }
             }
         } catch (final Exception e) {
-            return StatusResponse.BAD_REQUEST;
+            return BasicResponse.createBadRequest(entity);
         }
 
         store.setProperties(path, properties);
-        return StatusResponse.CREATED;
+        return BasicResponse.createCreated(entity);
     }
 }

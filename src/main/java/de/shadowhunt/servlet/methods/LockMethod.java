@@ -17,10 +17,15 @@
 package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
+
+import de.shadowhunt.servlet.webdav.Entity;
+import de.shadowhunt.servlet.webdav.Lock;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
 
@@ -32,8 +37,34 @@ public class LockMethod extends AbstractWebDavMethod {
         super(METHOD, store);
     }
 
+    protected int determineDepth(final HttpServletRequest request) {
+        final String depth = request.getHeader("Depth");
+        if (StringUtils.isEmpty(depth) || "infinity".equalsIgnoreCase(depth)) {
+            return Integer.MAX_VALUE;
+        }
+        return Integer.parseInt(depth);
+    }
+
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
-        return StatusResponse.NO_CONTENT;
+        if (!store.exists(path)) {
+            return BasicResponse.createNotFound();
+        }
+
+//        if (determineDepth(request) > 0) {
+//            return StatusResponse.BAD_REQUEST;
+//        }
+
+        final Entity entity = store.getEntity(path);
+        if (entity.isLocked()) {
+            if (hasLockProblem(entity, request, "If")) {
+                return BasicResponse.createLocked(entity);
+            }
+            return new LockResponse(entity);
+        }
+
+        final Lock lock = new Lock("opaquelocktoken:" + UUID.randomUUID().toString(), Lock.Scope.EXCLUSIVE, "");
+        store.lock(path, lock);
+        return new LockResponse(store.getEntity(path)); // refreshed entity
     }
 }

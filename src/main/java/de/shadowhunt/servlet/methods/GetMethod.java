@@ -51,12 +51,12 @@ public class GetMethod extends AbstractWebDavMethod {
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) {
         if (!store.exists(path)) {
-            return StatusResponse.NOT_FOUND;
+            return BasicResponse.createNotFound();
         }
         final Entity entity = store.getEntity(path);
         final Entity.Type type = entity.getType();
         if (type == Entity.Type.ITEM) {
-            return new StreamingResponse(store.download(path));
+            return new StreamingResponse(entity, store.download(path));
         }
 
         if ((type == Entity.Type.COLLECTION) && htmlListing) {
@@ -64,6 +64,6 @@ public class GetMethod extends AbstractWebDavMethod {
             return new HtmlListingResponse(entity, entities, cssPath);
         }
 
-        return StatusResponse.FORBIDDEN;
+        return BasicResponse.createForbidden(entity);
     }
 }

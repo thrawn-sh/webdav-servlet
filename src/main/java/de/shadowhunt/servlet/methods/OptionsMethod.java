@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
@@ -41,15 +40,6 @@ public class OptionsMethod extends AbstractWebDavMethod {
             entity = store.getEntity(path);
         }
 
-        final String allowedMethods = getAllowedMethods(entity);
-        return new WebDavResponse() {
-
-            @Override
-            public void write(final HttpServletResponse response) throws ServletException, IOException {
-                response.addHeader("DAV", "1, 2");
-                response.addHeader("Allow", allowedMethods);
-                response.addHeader("MS-Author-Via", "DAV");
-            }
-        };
+        return BasicResponse.createNoContent(entity);
     }
 }

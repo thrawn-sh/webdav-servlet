@@ -18,8 +18,6 @@ package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.annotation.CheckForNull;
 import javax.servlet.ServletException;
@@ -33,47 +31,9 @@ import de.shadowhunt.servlet.webdav.Store;
 
 public abstract class AbstractWebDavMethod {
 
-    private static final String NON_EXISTING, ITEM, COLLECTION;
-
     private final String method;
 
     protected final Store store;
-
-    static {
-        { // non existing
-            final Set<String> operations = new TreeSet<>();
-            operations.add(OptionsMethod.METHOD);
-            operations.add(MkColMethod.METHOD);
-            operations.add(PutMethod.METHOD);
-            NON_EXISTING = StringUtils.join(operations, ", ");
-        }
-        { // items
-            final Set<String> operations = new TreeSet<>();
-            operations.add(CopyMoveMethod.COPY_METHOD);
-            operations.add(CopyMoveMethod.MOVE_METHOD);
-            operations.add(DeleteMethod.METHOD);
-            operations.add(GetMethod.METHOD);
-            operations.add(LockMethod.METHOD);
-            operations.add(OptionsMethod.METHOD);
-            operations.add(PropFindMethod.METHOD);
-            operations.add(PropPatchMethod.METHOD);
-            operations.add(PutMethod.METHOD);
-            ITEM = StringUtils.join(operations, ", ");
-        }
-        { // collections
-            final Set<String> operations = new TreeSet<>();
-            operations.add(CopyMoveMethod.COPY_METHOD);
-            operations.add(CopyMoveMethod.MOVE_METHOD);
-            operations.add(DeleteMethod.METHOD);
-            operations.add(GetMethod.METHOD);
-            operations.add(LockMethod.METHOD);
-            operations.add(MkColMethod.METHOD);
-            operations.add(OptionsMethod.METHOD);
-            operations.add(PropFindMethod.METHOD);
-            operations.add(PropPatchMethod.METHOD);
-            COLLECTION = StringUtils.join(operations, ", ");
-        }
-    }
 
     protected AbstractWebDavMethod(final String method, final Store store) {
         this.method = method;
@@ -88,6 +48,17 @@ public abstract class AbstractWebDavMethod {
             }
         }
         return data;
+    }
+
+    @CheckForNull
+    protected String determineLockToken(final HttpServletRequest request, final String headerName) {
+        final String tokenHeader = request.getHeader(headerName);
+        if (tokenHeader != null) {
+            final int index = Math.max(0, tokenHeader.indexOf("opaquelocktoken:"));
+            final String token = tokenHeader.substring(index);
+            return StringUtils.replaceChars(token, "(<>)", null);
+        }
+        return null;
     }
 
     @Override
@@ -108,14 +79,13 @@ public abstract class AbstractWebDavMethod {
         return true;
     }
 
-    protected final String getAllowedMethods(@CheckForNull final Entity entity) {
-        if (entity == null) {
-            return NON_EXISTING;
+    protected boolean hasLockProblem(final Entity entity, final HttpServletRequest request, final String headerName) {
+        if (entity.isLocked()) {
+            final String token = entity.getLock().getToken();
+            final String requestToken = determineLockToken(request, headerName);
+            return !token.equals(requestToken);
         }
-        if (entity.getType() == Entity.Type.COLLECTION) {
-            return COLLECTION;
-        }
-        return ITEM;
+        return false;
     }
 
     @Override

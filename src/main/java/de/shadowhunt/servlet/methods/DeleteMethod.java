@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
 
@@ -42,13 +43,20 @@ public class DeleteMethod extends AbstractWebDavMethod {
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
         if (Path.ROOT.equals(path)) {
-            return StatusResponse.FORBIDDEN;
+            final Entity entity = store.getEntity(path);
+            return BasicResponse.createForbidden(entity);
         }
+
         if (!store.exists(path)) {
-            return StatusResponse.NOT_FOUND;
+            return BasicResponse.createNotFound();
+        }
+
+        final Entity entity = store.getEntity(path);
+        if (hasLockProblem(entity, request, "If")) {
+            return BasicResponse.createLocked(entity);
         }
 
         delete(path);
-        return StatusResponse.NO_CONTENT;
+        return BasicResponse.createNoContent(null);
     }
 }

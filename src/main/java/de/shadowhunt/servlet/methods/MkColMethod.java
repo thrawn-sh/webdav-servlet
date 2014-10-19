@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
 
@@ -35,18 +36,24 @@ public class MkColMethod extends AbstractWebDavMethod {
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
         if (consume(request.getInputStream())) {
-            return StatusResponse.UNSUPPORTED_MEDIA_TYPE;
+            Entity entity = null;
+            if (store.exists(path)) {
+                entity = store.getEntity(path);
+            }
+            return BasicResponse.createUnsupportedMediaType(entity);
         }
 
         final Path parent = path.getParent();
         if (!store.exists(parent)) {
-            return StatusResponse.CONFLICT;
+            return BasicResponse.createConflict(null);
         }
 
+        Entity entity = null;
         if (!store.exists(path)) {
             store.createCollection(path);
-            return StatusResponse.CREATED;
+            entity = store.getEntity(path);
+            return BasicResponse.createCreated(entity);
         }
-        return StatusResponse.METHOD_NOT_ALLOWED;
+        return BasicResponse.createMethodNotAllowed(entity);
     }
 }
