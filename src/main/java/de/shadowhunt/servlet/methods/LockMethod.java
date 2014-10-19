@@ -40,7 +40,7 @@ public class LockMethod extends AbstractWebDavMethod {
         if (!store.exists(path)) {
             return BasicResponse.createNotFound();
         }
-        
+
         final Entity entity = store.getEntity(path);
         if (entity.isLocked()) {
             if (hasLockProblem(entity, request, "If")) {
