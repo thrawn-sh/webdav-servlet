@@ -27,6 +27,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.PropertyIdentifier;
@@ -49,6 +51,10 @@ class PropertyNameResponse extends AbstractPropertiesResponse {
             for (final PropertyIdentifier identifier : identifiers) {
                 final String nameSpace = identifier.getNameSpace();
                 if (prefixes.containsKey(nameSpace)) {
+                    continue;
+                }
+
+                if (StringUtils.isEmpty(nameSpace)) {
                     continue;
                 }
 
@@ -83,7 +89,13 @@ class PropertyNameResponse extends AbstractPropertiesResponse {
                 writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "propstat");
                 writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "prop");
                 for (final PropertyIdentifier identifier : entry.getValue()) {
-                    writer.writeEmptyElement(identifier.getNameSpace(), identifier.getName());
+                    final String nameSpace = identifier.getNameSpace();
+                    final String name = identifier.getName();
+                    if (StringUtils.isEmpty(nameSpace)) {
+                        writer.writeEmptyElement(name);
+                    } else {
+                        writer.writeEmptyElement(nameSpace, name);
+                    }
                 }
                 writer.writeEndElement();
                 writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "status");

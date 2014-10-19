@@ -19,6 +19,8 @@ package de.shadowhunt.servlet.webdav;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class StringProperty extends Property {
 
     private String value;
@@ -38,8 +40,18 @@ public class StringProperty extends Property {
 
     @Override
     public void write(final XMLStreamWriter writer) throws XMLStreamException {
-        writer.writeStartElement(identifier.getNameSpace(), identifier.getName());
-        writer.writeCharacters(value);
-        writer.writeEndElement();
+        try {
+            final String nameSpace = identifier.getNameSpace();
+            final String name = identifier.getName();
+            if (StringUtils.isEmpty(nameSpace)) {
+                writer.writeStartElement(name);
+            } else {
+                writer.writeStartElement(nameSpace, name);
+            }
+            writer.writeCharacters(value);
+            writer.writeEndElement();
+        } catch (XMLStreamException e) {
+            throw e;
+        }
     }
 }

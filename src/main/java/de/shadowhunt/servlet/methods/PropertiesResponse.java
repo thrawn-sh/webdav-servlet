@@ -51,7 +51,11 @@ class PropertiesResponse extends AbstractPropertiesResponse {
 
     private void announce(final XMLStreamWriter writer, final PropertyIdentifier identifier, final Map<String, String> prefixes) throws XMLStreamException {
         final String nameSpace = identifier.getNameSpace();
-        if (prefixes.containsKey(nameSpace) || StringUtils.isEmpty(nameSpace)) {
+        if (prefixes.containsKey(nameSpace)) {
+            return;
+        }
+
+        if (StringUtils.isEmpty(nameSpace)) {
             return;
         }
 
@@ -153,7 +157,13 @@ class PropertiesResponse extends AbstractPropertiesResponse {
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "propstat");
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "prop");
             for (final PropertyIdentifier identifier : identifiers) {
-                writer.writeEmptyElement(identifier.getNameSpace(), identifier.getName());
+                final String nameSpace = identifier.getNameSpace();
+                final String name = identifier.getName();
+                if (StringUtils.isEmpty(nameSpace)) {
+                    writer.writeEmptyElement(name);
+                } else {
+                    writer.writeEmptyElement(nameSpace, name);
+                }
             }
             writer.writeEndElement();
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "status");
