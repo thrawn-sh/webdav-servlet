@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
@@ -76,7 +77,7 @@ abstract class BasicResponse implements WebDavResponse {
 
     private static final String NON_EXISTING;
 
-    public static final WebDavResponse createBadRequest(final Entity entity) {
+    public static final WebDavResponse createBadRequest(@Nullable final Entity entity) {
         return new BasicResponse(entity) {
 
             @Override
@@ -86,7 +87,7 @@ abstract class BasicResponse implements WebDavResponse {
         };
     }
 
-    public static final WebDavResponse createConflict(final Entity entity) {
+    public static final WebDavResponse createConflict(@Nullable final Entity entity) {
         return new BasicResponse(entity) {
 
             @Override
@@ -96,7 +97,7 @@ abstract class BasicResponse implements WebDavResponse {
         };
     }
 
-    public static final WebDavResponse createCreated(final Entity entity) {
+    public static final WebDavResponse createCreated(@Nullable final Entity entity) {
         return new BasicResponse(entity) {
 
             @Override
@@ -106,7 +107,7 @@ abstract class BasicResponse implements WebDavResponse {
         };
     }
 
-    public static final WebDavResponse createForbidden(final Entity entity) {
+    public static final WebDavResponse createForbidden(@Nullable final Entity entity) {
         return new BasicResponse(entity) {
 
             @Override
@@ -116,7 +117,7 @@ abstract class BasicResponse implements WebDavResponse {
         };
     }
 
-    public static final WebDavResponse createLocked(final Entity entity) {
+    public static final WebDavResponse createLocked(@Nullable final Entity entity) {
         return new BasicResponse(entity) {
 
             @Override
@@ -126,7 +127,7 @@ abstract class BasicResponse implements WebDavResponse {
         };
     }
 
-    public static final WebDavResponse createMessageNodeAllowed(final Entity entity) {
+    public static final WebDavResponse createMessageNodeAllowed(@Nullable final Entity entity) {
         return new BasicResponse(entity) {
 
             @Override
@@ -136,7 +137,7 @@ abstract class BasicResponse implements WebDavResponse {
         };
     }
 
-    public static WebDavResponse createMethodNotAllowed(final Entity entity) {
+    public static WebDavResponse createMethodNotAllowed(@Nullable final Entity entity) {
         return new BasicResponse(entity) {
 
             @Override
@@ -146,7 +147,7 @@ abstract class BasicResponse implements WebDavResponse {
         };
     }
 
-    public static final WebDavResponse createNoContent(final Entity entity) {
+    public static final WebDavResponse createNoContent(@Nullable final Entity entity) {
         return new BasicResponse(entity) {
 
             @Override
@@ -166,7 +167,7 @@ abstract class BasicResponse implements WebDavResponse {
         };
     }
 
-    public static WebDavResponse createOk(final Entity entity) {
+    public static WebDavResponse createOk(@Nullable final Entity entity) {
         return new BasicResponse(entity) {
 
             @Override
@@ -176,7 +177,7 @@ abstract class BasicResponse implements WebDavResponse {
         };
     }
 
-    public static final WebDavResponse createPreconditionFailed(final Entity entity) {
+    public static final WebDavResponse createPreconditionFailed(@Nullable final Entity entity) {
         return new BasicResponse(entity) {
 
             @Override
@@ -186,7 +187,7 @@ abstract class BasicResponse implements WebDavResponse {
         };
     }
 
-    public static final WebDavResponse createUnsupportedMediaType(final Entity entity) {
+    public static final WebDavResponse createUnsupportedMediaType(@Nullable final Entity entity) {
         return new BasicResponse(entity) {
 
             @Override
@@ -208,7 +209,7 @@ abstract class BasicResponse implements WebDavResponse {
 
     protected final Entity entity;
 
-    protected BasicResponse(@CheckForNull final Entity entity) {
+    protected BasicResponse(@Nullable final Entity entity) {
         this.entity = entity;
     }
 
