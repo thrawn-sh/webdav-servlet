@@ -19,6 +19,7 @@ package de.shadowhunt.servlet;
 import java.io.IOException;
 import java.net.URI;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
@@ -32,7 +33,12 @@ import org.junit.BeforeClass;
 
 public abstract class AbstractLitmusIT {
 
-    public static final String BASE = "http://127.0.0.1:8080/webdav/litmus";
+    public static final String BASE;
+
+    static {
+        final String port = System.getProperty("jetty.http.port", "8080");
+        BASE = "http://127.0.0.1:" + port + "/webdav/litmus";
+    }
 
     @AfterClass
     public static void after() throws Exception {
@@ -54,9 +60,11 @@ public abstract class AbstractLitmusIT {
                 final int statusCode = response.getStatusLine().getStatusCode();
                 Assert.assertEquals(HttpStatus.SC_CREATED, statusCode);
 
-                final long contentLength = response.getEntity().getContentLength();
+                final HttpEntity entity = response.getEntity();
+                Assert.assertNotNull(entity);
+                final long contentLength = entity.getContentLength();
                 Assert.assertEquals(0L, contentLength);
-                
+
                 return null;
             }
         });
@@ -69,17 +77,29 @@ public abstract class AbstractLitmusIT {
             @Override
             public Void handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
                 final int statusCode = response.getStatusLine().getStatusCode();
-                Assert.assertEquals(HttpStatus.SC_NO_CONTENT, statusCode);
-                Assert.assertNull(response.getEntity());
-                
+                final HttpEntity entity = response.getEntity();
+                if (statusCode == HttpStatus.SC_NO_CONTENT) {
+                    Assert.assertNull(entity);
+                } else if (statusCode == HttpStatus.SC_NOT_FOUND) {
+                    Assert.assertNotNull(entity);
+                    final long contentLength = entity.getContentLength();
+                    Assert.assertEquals(0L, contentLength);
+                } else {
+                    Assert.fail();
+                }
+
                 return null;
             }
         });
     }
 
     protected static void execute(final HttpUriRequest request, final ResponseHandler<Void> handler) throws Exception {
+        Assert.assertNotNull(request);
+        Assert.assertNotNull(handler);
+
         final HttpClientBuilder builder = HttpClientBuilder.create();
         try (final CloseableHttpClient client = builder.build()) {
+            Assert.assertNotNull(client);
             client.execute(request, handler);
         }
     }

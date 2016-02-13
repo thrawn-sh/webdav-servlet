@@ -38,7 +38,7 @@ import org.junit.runners.MethodSorters;
 public class BasicLitmusIT extends AbstractLitmusIT {
 
     @Test
-    public void test_01_OPTIONS() throws Exception {      
+    public void test_01_OPTIONS() throws Exception {
         final DavTemplateRequest request = new DavTemplateRequest("OPTIONS", URI.create(BASE), "basic: 2 (options)");
         execute(request, new ResponseHandler<Void>() {
 
@@ -47,39 +47,39 @@ public class BasicLitmusIT extends AbstractLitmusIT {
                 final int statusCode = response.getStatusLine().getStatusCode();
                 Assert.assertEquals(HttpStatus.SC_NO_CONTENT, statusCode);
                 Assert.assertNull(response.getEntity());
-                
+
                 final Header[] dav = response.getHeaders("DAV");
                 Assert.assertNotNull(dav);
                 Assert.assertEquals(1, dav.length);
                 Assert.assertEquals("1,2", dav[0].getValue());
-                
+
                 return null;
             }
         });
     }
-    
+
     @Test
-    public void test_02_PUT_GET() throws Exception {      
+    public void test_02_PUT_GET() throws Exception {
         final URI uri = URI.create(BASE + "/res");
         final String data = "This is a test file for litmus testing.";
-        
+
         final DavTemplateRequest put = new DavTemplateRequest("PUT", uri, "basic: 3 (put_get)");
         put.setEntity(new StringEntity(data, StandardCharsets.UTF_8));
-        
+
         execute(put, new ResponseHandler<Void>() {
 
             @Override
             public Void handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
                 final int statusCode = response.getStatusLine().getStatusCode();
                 Assert.assertEquals(HttpStatus.SC_CREATED, statusCode);
-                
+
                 final long contentLength = response.getEntity().getContentLength();
-                Assert.assertEquals(0L, contentLength);                
+                Assert.assertEquals(0L, contentLength);
 
                 return null;
             }
         });
-        
+
         final DavTemplateRequest get = new DavTemplateRequest("GET", uri, "basic: 3 (put_get)");
         execute(get, new ResponseHandler<Void>() {
 
@@ -87,13 +87,13 @@ public class BasicLitmusIT extends AbstractLitmusIT {
             public Void handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
                 final int statusCode = response.getStatusLine().getStatusCode();
                 Assert.assertEquals(HttpStatus.SC_OK, statusCode);
-                
+
                 final HttpEntity entity = response.getEntity();
                 Assert.assertNotNull(entity);
-                
+
                 final long contentLength = entity.getContentLength();
                 Assert.assertEquals(data.length(), contentLength);
-                Assert.assertEquals(data, IOUtils.toString(entity.getContent(), entity.getContentEncoding().getValue()));
+                Assert.assertEquals(data, IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
 
                 return null;
             }

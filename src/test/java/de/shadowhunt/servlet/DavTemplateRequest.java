@@ -28,7 +28,7 @@ public final class DavTemplateRequest extends HttpEntityEnclosingRequestBase {
         this.method = method;
         setURI(uri);
     }
-    
+
     public DavTemplateRequest(final String method, final URI uri, final String litmusMarker) {
         this(method, uri);
         setHeader("X-Litmus", litmusMarker);
