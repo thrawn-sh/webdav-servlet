@@ -20,16 +20,16 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.CheckForNull;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+
+import de.shadowhunt.servlet.webdav.Entity;
+import de.shadowhunt.servlet.webdav.Store;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.shadowhunt.servlet.webdav.Entity;
-import de.shadowhunt.servlet.webdav.Path;
-import de.shadowhunt.servlet.webdav.Store;
+abstract class AbstractWebDavMethod implements WebDavMethod {
 
-public abstract class AbstractWebDavMethod {
+    private static final long serialVersionUID = 1L;
 
     private final String method;
 
@@ -50,6 +50,14 @@ public abstract class AbstractWebDavMethod {
         return data;
     }
 
+    protected int determineDepth(final HttpServletRequest request) {
+        final String depth = request.getHeader("Depth");
+        if (StringUtils.isEmpty(depth) || "infinity".equalsIgnoreCase(depth)) {
+            return Integer.MAX_VALUE;
+        }
+        return Integer.parseInt(depth);
+    }
+
     @CheckForNull
     protected String determineLockToken(final HttpServletRequest request, final String headerName) {
         final String tokenHeader = request.getHeader(headerName);
@@ -62,7 +70,7 @@ public abstract class AbstractWebDavMethod {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -79,12 +87,9 @@ public abstract class AbstractWebDavMethod {
         return true;
     }
 
-    protected int determineDepth(final HttpServletRequest request) {
-        final String depth = request.getHeader("Depth");
-        if (StringUtils.isEmpty(depth) || "infinity".equalsIgnoreCase(depth)) {
-            return Integer.MAX_VALUE;
-        }
-        return Integer.parseInt(depth);
+    @Override
+    public int hashCode() {
+        return method.hashCode();
     }
 
     protected boolean hasLockProblem(final Entity entity, final HttpServletRequest request, final String headerName) {
@@ -95,11 +100,4 @@ public abstract class AbstractWebDavMethod {
         }
         return false;
     }
-
-    @Override
-    public int hashCode() {
-        return method.hashCode();
-    }
-
-    public abstract WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException;
 }

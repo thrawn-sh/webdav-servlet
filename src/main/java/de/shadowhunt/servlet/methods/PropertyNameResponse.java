@@ -27,17 +27,17 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.lang3.StringUtils;
-
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.PropertyIdentifier;
+
+import org.apache.commons.lang3.StringUtils;
 
 class PropertyNameResponse extends AbstractPropertiesResponse {
 
     private final Map<Path, Collection<PropertyIdentifier>> entries;
 
-    public PropertyNameResponse(final Entity entity, final String baseUri, final Map<Path, Collection<PropertyIdentifier>> entries) {
+    PropertyNameResponse(final Entity entity, final String baseUri, final Map<Path, Collection<PropertyIdentifier>> entries) {
         super(entity, baseUri);
         this.entries = entries;
     }

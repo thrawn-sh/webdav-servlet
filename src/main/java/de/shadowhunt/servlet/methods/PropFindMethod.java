@@ -32,11 +32,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import de.shadowhunt.servlet.methods.properties.PropertiesMessageHelper;
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
@@ -45,6 +40,11 @@ import de.shadowhunt.servlet.webdav.PropertyIdentifier;
 import de.shadowhunt.servlet.webdav.Store;
 import de.shadowhunt.servlet.webdav.StringProperty;
 
+import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 public class PropFindMethod extends AbstractWebDavMethod {
 
     private static final XPathExpression ALL_EXPRESSION;
@@ -52,6 +52,8 @@ public class PropFindMethod extends AbstractWebDavMethod {
     public static final String METHOD = "PROPFIND";
 
     private static final XPathExpression NAME_EXPRESSION;
+
+    private static final XPathExpression PROPERTIES_EXPRESSION;
 
     static {
         final XPathFactory factory = XPathFactory.newInstance();
@@ -65,8 +67,6 @@ public class PropFindMethod extends AbstractWebDavMethod {
             throw new ExceptionInInitializerError(e);
         }
     }
-
-    private static final XPathExpression PROPERTIES_EXPRESSION;
 
     protected final boolean supportInfiniteDepth;
 
@@ -100,6 +100,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
         }
     }
 
+    @Override
     protected int determineDepth(final HttpServletRequest request) {
         final String depth = request.getHeader("Depth");
         if (StringUtils.isEmpty(depth) || "infinity".equalsIgnoreCase(depth)) {
@@ -131,7 +132,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
                 properties.add(new PropertyIdentifier(StringUtils.trimToEmpty(node.getNamespaceURI()), node.getLocalName()));
             }
             return properties;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return null;
         }
     }
@@ -140,7 +141,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
         try {
             final NodeList nodeList = (NodeList) NAME_EXPRESSION.evaluate(document, XPathConstants.NODESET);
             return (nodeList.getLength() > 0);
-        } catch (XPathExpressionException e) {
+        } catch (final XPathExpressionException e) {
             return false;
         }
     }
@@ -153,19 +154,19 @@ public class PropFindMethod extends AbstractWebDavMethod {
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
         if (!store.exists(path)) {
-            return BasicResponse.createNotFound();
+            return AbstractBasicResponse.createNotFound();
         }
 
         final Entity entity = store.getEntity(path);
 
         final int depth = determineDepth(request);
         if ((depth == Integer.MAX_VALUE) && !supportInfiniteDepth) {
-            return BasicResponse.createForbidden(entity);
+            return AbstractBasicResponse.createForbidden(entity);
         }
 
         final Document document = PropertiesMessageHelper.parse(request.getInputStream());
         if (document == null) {
-            return BasicResponse.createBadRequest(entity);
+            return AbstractBasicResponse.createBadRequest(entity);
         }
 
         if (listPropertyNames(document)) {
@@ -176,7 +177,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
 
         final Set<PropertyIdentifier> requested = getRequestedProperties(document);
         if (requested == null) {
-            return BasicResponse.createBadRequest(entity);
+            return AbstractBasicResponse.createBadRequest(entity);
         }
 
         final Map<Path, Collection<Property>> result = new LinkedHashMap<>();

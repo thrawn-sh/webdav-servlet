@@ -31,13 +31,13 @@ import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
 
-class HtmlListingResponse extends BasicResponse {
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+
+class HtmlListingResponse extends AbstractBasicResponse {
 
     private static final Comparator<Entity> LISTING_COMPARATOR = new Comparator<Entity>() {
 
@@ -57,7 +57,7 @@ class HtmlListingResponse extends BasicResponse {
 
     private final List<Entity> entities;
 
-    public HtmlListingResponse(final Entity root, final List<Entity> entities, @Nullable final String cssPath) {
+    HtmlListingResponse(final Entity root, final List<Entity> entities, @Nullable final String cssPath) {
         super(root);
         this.entities = entities;
         this.cssPath = cssPath;
@@ -74,7 +74,7 @@ class HtmlListingResponse extends BasicResponse {
         writer.print("<!DOCTYPE html><html><head>");
         writer.print("<title>Content of folder ");
         final Path path = entity.getPath();
-        writer.print(StringEscapeUtils.escapeHtml4(path.toString()));
+        writer.print(StringEscapeUtils.escapeHtml4(path.getValue()));
         writer.print("</title>");
 
         if (cssPath != null) {

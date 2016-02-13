@@ -25,7 +25,7 @@ import javax.xml.stream.XMLStreamWriter;
 @Immutable
 public final class Lock {
 
-    public static enum Scope {
+    public enum Scope {
         EXCLUSIVE, SHARED;
     }
 
@@ -76,18 +76,8 @@ public final class Lock {
         return token.hashCode();
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Lock{");
-        sb.append("owner=").append(owner);
-        sb.append(", token=").append(token);
-        sb.append(", scope=").append(scope);
-        sb.append('}');
-        return sb.toString();
-    }
-
     public Property toProperty() {
-        return new Property(Entity.LOCK_IDENTIFIER) {
+        return new AbstractProperty(Entity.LOCK_IDENTIFIER) {
 
             @Override
             public void write(final XMLStreamWriter writer) throws XMLStreamException {
@@ -103,5 +93,15 @@ public final class Lock {
                 writer.writeEndElement();
             }
         };
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Lock{");
+        sb.append("owner=").append(owner);
+        sb.append(", token=").append(token);
+        sb.append(", scope=").append(scope);
+        sb.append('}');
+        return sb.toString();
     }
 }

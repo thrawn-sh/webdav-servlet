@@ -25,15 +25,15 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.lang3.StringUtils;
-
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Lock;
 import de.shadowhunt.servlet.webdav.PropertyIdentifier;
 
-class LockResponse extends BasicResponse {
+import org.apache.commons.lang3.StringUtils;
 
-    public LockResponse(final Entity entity) {
+class LockResponse extends AbstractBasicResponse {
+
+    LockResponse(final Entity entity) {
         super(entity);
     }
 

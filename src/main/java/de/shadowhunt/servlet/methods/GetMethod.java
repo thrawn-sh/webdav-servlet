@@ -29,6 +29,8 @@ public class GetMethod extends AbstractWebDavMethod {
 
     public static final String METHOD = "GET";
 
+    private static final long serialVersionUID = 1L;
+
     protected final String cssPath;
 
     protected final boolean htmlListing;
@@ -41,7 +43,7 @@ public class GetMethod extends AbstractWebDavMethod {
 
     protected List<Entity> getEntities(final Path path) {
         final List<Path> children = store.list(path);
-        final List<Entity> result = new ArrayList<>();
+        final List<Entity> result = new ArrayList<>(children.size());
         for (final Path child : children) {
             result.add(store.getEntity(child));
         }
@@ -51,7 +53,7 @@ public class GetMethod extends AbstractWebDavMethod {
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) {
         if (!store.exists(path)) {
-            return BasicResponse.createNotFound();
+            return AbstractBasicResponse.createNotFound();
         }
         final Entity entity = store.getEntity(path);
         final Entity.Type type = entity.getType();
@@ -64,6 +66,6 @@ public class GetMethod extends AbstractWebDavMethod {
             return new HtmlListingResponse(entity, entities, cssPath);
         }
 
-        return BasicResponse.createForbidden(entity);
+        return AbstractBasicResponse.createForbidden(entity);
     }
 }

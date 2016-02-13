@@ -27,9 +27,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
-
-import de.shadowhunt.servlet.methods.AbstractWebDavMethod;
 import de.shadowhunt.servlet.methods.CopyMoveMethod;
 import de.shadowhunt.servlet.methods.DeleteMethod;
 import de.shadowhunt.servlet.methods.GetMethod;
@@ -41,15 +38,20 @@ import de.shadowhunt.servlet.methods.PropFindMethod;
 import de.shadowhunt.servlet.methods.PropPatchMethod;
 import de.shadowhunt.servlet.methods.PutMethod;
 import de.shadowhunt.servlet.methods.UnlockMethod;
+import de.shadowhunt.servlet.methods.WebDavMethod;
 import de.shadowhunt.servlet.methods.WebDavResponse;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Store;
 import de.shadowhunt.servlet.webdav.WebDavException;
 import de.shadowhunt.servlet.webdav.backend.FileSystemStore;
 
+import org.apache.commons.io.FileUtils;
+
 public class WebDavServlet extends HttpServlet {
 
-    private final Map<String, AbstractWebDavMethod> dispatcher = new HashMap<>();
+    private static final long serialVersionUID = 1L;
+    
+    private final Map<String, WebDavMethod> dispatcher = new HashMap<>();
 
     @Override
     public void destroy() {
@@ -96,7 +98,7 @@ public class WebDavServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         final String method = request.getMethod();
-        final AbstractWebDavMethod dispatch = dispatcher.get(method);
+        final WebDavMethod dispatch = dispatcher.get(method);
         if (dispatch == null) {
             response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
             return;

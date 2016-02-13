@@ -34,6 +34,8 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
 
     public static final String MOVE_METHOD = "MOVE";
 
+    private static final long serialVersionUID = 1L;
+
     protected final boolean deleteSource;
 
     public CopyMoveMethod(final Store store, final boolean deleteSource) {
@@ -77,13 +79,13 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
     @Override
     public WebDavResponse service(final Path source, final HttpServletRequest request) throws ServletException, IOException {
         if (!store.exists(source)) {
-            return BasicResponse.createNotFound();
+            return AbstractBasicResponse.createNotFound();
         }
 
         final Entity sourceEntity = store.getEntity(source);
         if (deleteSource) {
             if (hasLockProblem(sourceEntity, request, "If")) {
-                return BasicResponse.createLocked(sourceEntity);
+                return AbstractBasicResponse.createLocked(sourceEntity);
             }
         }
 
@@ -95,18 +97,18 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
             if (overwrite) {
                 final Entity targetEntity = store.getEntity(target);
                 if (hasLockProblem(targetEntity, request, "If")) {
-                    return BasicResponse.createLocked(sourceEntity);
+                    return AbstractBasicResponse.createLocked(sourceEntity);
                 }
                 store.delete(target);
             } else {
-                return BasicResponse.createPreconditionFailed(sourceEntity);
+                return AbstractBasicResponse.createPreconditionFailed(sourceEntity);
             }
         }
 
         // targetParent collection must exist
         final Path targetParent = target.getParent();
         if (!store.exists(targetParent)) {
-            return BasicResponse.createConflict(sourceEntity);
+            return AbstractBasicResponse.createConflict(sourceEntity);
         }
 
         copy(source, target, depth);
@@ -116,8 +118,8 @@ public class CopyMoveMethod extends AbstractWebDavMethod {
         }
 
         if (targetExistsBefore) {
-            return BasicResponse.createNoContent(sourceEntity);
+            return AbstractBasicResponse.createNoContent(sourceEntity);
         }
-        return BasicResponse.createCreated(sourceEntity);
+        return AbstractBasicResponse.createCreated(sourceEntity);
     }
 }

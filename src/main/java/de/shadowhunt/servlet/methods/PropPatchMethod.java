@@ -30,21 +30,25 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import de.shadowhunt.servlet.methods.properties.PropertiesMessageHelper;
+import de.shadowhunt.servlet.webdav.AbstractProperty;
+import de.shadowhunt.servlet.webdav.Entity;
+import de.shadowhunt.servlet.webdav.Path;
+import de.shadowhunt.servlet.webdav.PropertyIdentifier;
+import de.shadowhunt.servlet.webdav.Store;
+import de.shadowhunt.servlet.webdav.StringProperty;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import de.shadowhunt.servlet.methods.properties.PropertiesMessageHelper;
-import de.shadowhunt.servlet.webdav.Entity;
-import de.shadowhunt.servlet.webdav.Path;
-import de.shadowhunt.servlet.webdav.Property;
-import de.shadowhunt.servlet.webdav.PropertyIdentifier;
-import de.shadowhunt.servlet.webdav.Store;
-import de.shadowhunt.servlet.webdav.StringProperty;
-
 public class PropPatchMethod extends AbstractWebDavMethod {
+
+    private static final XPathExpression EXPRESSION;
+
+    public static final String METHOD = "PROPPATCH";
 
     static {
         final XPathFactory factory = XPathFactory.newInstance();
@@ -56,10 +60,6 @@ public class PropPatchMethod extends AbstractWebDavMethod {
             throw new ExceptionInInitializerError(e);
         }
     }
-
-    private static final XPathExpression EXPRESSION;
-
-    public static final String METHOD = "PROPPATCH";
 
     public PropPatchMethod(final Store store) {
         super(METHOD, store);
@@ -77,17 +77,17 @@ public class PropPatchMethod extends AbstractWebDavMethod {
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
         if (!store.exists(path)) {
-            return BasicResponse.createNotFound();
+            return AbstractBasicResponse.createNotFound();
         }
 
         final Entity entity = store.getEntity(path);
         if (hasLockProblem(entity, request, "If")) {
-            return BasicResponse.createLocked(entity);
+            return AbstractBasicResponse.createLocked(entity);
         }
 
         final Document document = PropertiesMessageHelper.parse(request.getInputStream());
         if (document == null) {
-            return BasicResponse.createBadRequest(entity);
+            return AbstractBasicResponse.createBadRequest(entity);
         }
 
         final Collection<StringProperty> properties = new HashSet<>();
@@ -108,7 +108,7 @@ public class PropPatchMethod extends AbstractWebDavMethod {
                     properties.remove(property); // remove old entry
                     properties.add(property);
                 } else {
-                    properties.remove(new Property(propertyIdentifier) {
+                    properties.remove(new AbstractProperty(propertyIdentifier) {
 
                         @Override
                         public void write(final XMLStreamWriter writer) throws XMLStreamException {
@@ -118,10 +118,10 @@ public class PropPatchMethod extends AbstractWebDavMethod {
                 }
             }
         } catch (final Exception e) {
-            return BasicResponse.createBadRequest(entity);
+            return AbstractBasicResponse.createBadRequest(entity);
         }
 
         store.setProperties(path, properties);
-        return BasicResponse.createCreated(entity);
+        return AbstractBasicResponse.createCreated(entity);
     }
 }

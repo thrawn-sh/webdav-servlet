@@ -21,23 +21,25 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 /**
- * {@link Path} defines a resource location in the repository
+ * {@link Path} defines a resource location in the repository.
  */
 public final class Path implements Comparable<Path> {
 
     /**
-     * Represents the base {@link Path} in the repository
+     * Represents the base {@link Path} in the repository.
      */
     public static final Path ROOT = new Path("");
 
     /**
-     * Create a new {@link Path} instance for the given value
+     * Create a new {@link Path} instance for the given value.
      *
-     * @param path value of the {@link Path}
+     * @param path
+     *            value of the {@link Path}
      *
      * @return the new {@link Path} instance with the given value
      *
-     * @throws IllegalArgumentException if the given path is not valid
+     * @throws IllegalArgumentException
+     *             if the given path is not valid
      */
     public static Path create(final String path) {
         if (StringUtils.isEmpty(path) || "/".equals(path)) {
@@ -63,14 +65,15 @@ public final class Path implements Comparable<Path> {
     }
 
     /**
-     * Appends the specified {@link Path} to the end of this {@link Path}
+     * Appends the specified {@link Path} to the end of this {@link Path}.
      *
-     * @param path the {@link Path} that is appended to the end
-     * of this {@link Path}
+     * @param path
+     *            the {@link Path} that is appended to the end of this {@link Path}
      *
      * @return a {@link Path} that represents the combination of this {@link Path} and the specified {@link Path}
      */
     public Path append(final Path path) {
+        Validate.notNull(path, "path must not be null");
         return new Path(value + path.value);
     }
 
@@ -96,13 +99,14 @@ public final class Path implements Comparable<Path> {
     }
 
     public Path getChild(final String name) {
+        Validate.notNull(name, "name must not be null");
         if (name.indexOf('/') >= 0) {
             throw new IllegalArgumentException("name must not contain path separator: " + name);
         }
         return new Path(value + "/" + name);
     }
 
-    public final String getName() {
+    public String getName() {
         final int index = value.lastIndexOf('/');
         if (index < 0) {
             return value;
@@ -111,7 +115,7 @@ public final class Path implements Comparable<Path> {
     }
 
     /**
-     * Returns the parent {@link Path} of the {@link Path}, the parent of the ROOT element is the ROOT itself
+     * Returns the parent {@link Path} of the {@link Path}, the parent of the ROOT element is the ROOT itself.
      *
      * @return the parent {@link Path} of the {@link Path}
      */
@@ -125,7 +129,7 @@ public final class Path implements Comparable<Path> {
     }
 
     /**
-     * Returns a {@link String} representation of the {@link Path}
+     * Returns a {@link String} representation of the {@link Path}.
      *
      * @return the {@link String} representation of the {@link Path}
      */

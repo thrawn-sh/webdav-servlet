@@ -40,20 +40,20 @@ public class MkColMethod extends AbstractWebDavMethod {
             if (store.exists(path)) {
                 entity = store.getEntity(path);
             }
-            return BasicResponse.createUnsupportedMediaType(entity);
+            return AbstractBasicResponse.createUnsupportedMediaType(entity);
         }
 
         final Path parent = path.getParent();
         if (!store.exists(parent)) {
-            return BasicResponse.createConflict(null);
+            return AbstractBasicResponse.createConflict(null);
         }
 
         Entity entity = null;
         if (!store.exists(path)) {
             store.createCollection(path);
             entity = store.getEntity(path);
-            return BasicResponse.createCreated(entity);
+            return AbstractBasicResponse.createCreated(entity);
         }
-        return BasicResponse.createMethodNotAllowed(entity);
+        return AbstractBasicResponse.createMethodNotAllowed(entity);
     }
 }

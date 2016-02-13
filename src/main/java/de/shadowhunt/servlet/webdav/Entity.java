@@ -30,6 +30,16 @@ import javax.xml.stream.XMLStreamWriter;
 
 public final class Entity {
 
+    public enum Type {
+        COLLECTION(1), ITEM(2);
+
+        public final int priority;
+
+        Type(final int priority) {
+            this.priority = priority;
+        }
+    }
+
     public static final PropertyIdentifier CONTENT_LENGTH_IDENTIFIER;
 
     public static final PropertyIdentifier CONTENT_TYPE_IDENTIFIER;
@@ -45,6 +55,8 @@ public final class Entity {
     public static final PropertyIdentifier LOCK_IDENTIFIER;
 
     public static final PropertyIdentifier RESOURCE_TYPE_IDENTIFIER;
+
+    public static final Set<PropertyIdentifier> SUPPORTED_LIVE_PROPERTIES;
 
     static {
         CREATION_DATE_IDENTIFIER = new PropertyIdentifier(PropertyIdentifier.DAV_NAMESPACE, "creationdate");
@@ -68,8 +80,6 @@ public final class Entity {
         SUPPORTED_LIVE_PROPERTIES = Collections.unmodifiableSet(properties);
     }
 
-    public static final Set<PropertyIdentifier> SUPPORTED_LIVE_PROPERTIES;
-
     public static Entity createCollection(final Path path, final Date lastModified, @Nullable final Lock lock) {
         return new Entity(path, Type.COLLECTION, null, lastModified, 0L, lock);
     }
@@ -84,7 +94,7 @@ public final class Entity {
         result.add(new StringProperty(CONTENT_LENGTH_IDENTIFIER, Long.toString(entity.getSize())));
         result.add(new StringProperty(LAST_MODIFIED_IDENTIFIER, entity.getLastModified().toString())); // FIXME
         if (entity.getType() == Type.COLLECTION) {
-            result.add(new Property(RESOURCE_TYPE_IDENTIFIER) {
+            result.add(new AbstractProperty(RESOURCE_TYPE_IDENTIFIER) {
 
                 @Override
                 public void write(final XMLStreamWriter writer) throws XMLStreamException {
@@ -106,16 +116,6 @@ public final class Entity {
         }
         return result;
 
-    }
-
-    public static enum Type {
-        COLLECTION(1), ITEM(2);
-
-        public final int priority;
-
-        private Type(final int priority) {
-            this.priority = priority;
-        }
     }
 
     private final String hash;
@@ -161,7 +161,7 @@ public final class Entity {
     }
 
     /**
-     * Returns a checksum of the resource
+     * Returns a checksum of the resource.
      *
      * @return the checksum of the resource or {@code null} if the resource is a collection
      */
@@ -183,7 +183,7 @@ public final class Entity {
     }
 
     /**
-     * Returns a {@link Path} of the resource (relative to the root of the repository)
+     * Returns a {@link Path} of the resource (relative to the root of the repository).
      *
      * @return the {@link Path} of the resource (relative to the root of the repository)
      */

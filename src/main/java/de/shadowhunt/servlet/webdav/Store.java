@@ -23,115 +23,139 @@ import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * Interface listing all available operations on a WebDav storage
+ * Interface listing all available operations on a WebDav storage.
  */
 @ThreadSafe
 public interface Store {
 
     /**
-     * Create a folder with all necessary parents folders
+     * Create a folder with all necessary parents folders.
      *
-     * @param path the {@link Path} of the resource (relative to the repository root)
+     * @param path
+     *            the {@link Path} of the resource (relative to the repository root)
      *
-     * @throws NullPointerException if any parameter is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
+     * @throws NullPointerException
+     *             if any parameter is {@code null}
+     * @throws WebDavException
+     *             if an error occurs while operating on the repository
      */
     void createCollection(Path path) throws WebDavException;
 
     /**
-     * Upload a new revision of the resource and set properties
+     * Upload a new revision of the resource and set properties.
      *
-     * @param path the {@link Path} of the resource (relative to the repository root)
-     * @param parents whether to create missing parents folders or not
-     * @param content {@link InputStream} from which the content will be read (will be closed after transfer)
+     * @param path
+     *            the {@link Path} of the resource (relative to the repository root)
+     * @param content
+     *            {@link InputStream} from which the content will be read (will be closed after transfer)
      *
-     * @throws NullPointerException if any parameter is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
+     * @throws NullPointerException
+     *             if any parameter is {@code null}
+     * @throws WebDavException
+     *             if an error occurs while operating on the repository
      */
     void createItem(Path path, InputStream content) throws WebDavException;
 
     /**
-     * Delete the resource from the repository
+     * Delete the resource from the repository.
      *
-     * @param path the {@link Path} of the resource (relative to the repository root)
+     * @param path
+     *            the {@link Path} of the resource (relative to the repository root)
      *
-     * @throws NullPointerException if any parameter is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
+     * @throws NullPointerException
+     *             if any parameter is {@code null}
+     * @throws WebDavException
+     *             if an error occurs while operating on the repository
      */
     void delete(Path path) throws WebDavException;
 
     /**
-     * Download the resource
+     * Download the resource.
      *
-     * @param path the {@link Path} of the resource (relative to the repository root)
+     * @param path
+     *            the {@link Path} of the resource (relative to the repository root)
      *
      * @return {@link InputStream} from which the content can be read (caller has to close the stream properly)
      *
-     * @throws NullPointerException if any parameter is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
+     * @throws NullPointerException
+     *             if any parameter is {@code null}
+     * @throws WebDavException
+     *             if an error occurs while operating on the repository
      */
     InputStream download(Path path) throws WebDavException;
 
     /**
-     * Check if the resource already exists in the latest revision of the repository
+     * Check if the resource already exists in the latest revision of the repository.
      *
-     * @param path the {@link Path} of the resource (relative to the repository root)
+     * @param path
+     *            the {@link Path} of the resource (relative to the repository root)
      *
      * @return {@code true} if the resource already exists in the latest revision of the repository otherwise {@code false}
      *
-     * @throws NullPointerException if any parameter is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
+     * @throws NullPointerException
+     *             if any parameter is {@code null}
+     * @throws WebDavException
+     *             if an error occurs while operating on the repository
      */
     boolean exists(Path path) throws WebDavException;
 
     /**
-     * Retrieve information for the resource
+     * Retrieve information for the resource.
      *
-     * @param path the {@link Path} of the resource (relative to the repository root)
+     * @param path
+     *            the {@link Path} of the resource (relative to the repository root)
      *
      * @return {@link Entity} for the resource
      *
-     * @throws NullPointerException if any parameter is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
+     * @throws NullPointerException
+     *             if any parameter is {@code null}
+     * @throws WebDavException
+     *             if an error occurs while operating on the repository
      */
     Entity getEntity(Path path) throws WebDavException;
 
     Collection<StringProperty> getProperties(Path path) throws WebDavException;
 
     /**
-     * Retrieve information for the resource in the given revision and its child resources (depending on depth parameter)
+     * Retrieve information for the resource in the given revision and its child resources (depending on depth parameter).
      *
-     * @param path the {@link Path} of the resource (relative to the repository root)
-     * @param depth whether to retrieve only for the given resource, its children or only part of its children depending on the value of {@link Depth}
+     * @param path
+     *            the {@link Path} of the resource (relative to the repository root)
      *
      * @return {@link List} of {@link Entity} for the resource and its child resources (depending on depth parameter)
      *
-     * @throws NullPointerException if any parameter is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
+     * @throws NullPointerException
+     *             if any parameter is {@code null}
+     * @throws WebDavException
+     *             if an error occurs while operating on the repository
      */
     List<Path> list(Path path) throws WebDavException;
 
     /**
-     * Mark the expected revision of the resource as locked
+     * Mark the expected revision of the resource as locked.
      *
-     * @param path the {@link Path} of the resource (relative to the repository root)
-     * @param steal if the resource is locked by another user {@code true} will override the lock, otherwise the operation will fail
+     * @param path
+     *            the {@link Path} of the resource (relative to the repository root)
      *
-     * @throws NullPointerException if resource is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
+     * @throws NullPointerException
+     *             if resource is {@code null}
+     * @throws WebDavException
+     *             if an error occurs while operating on the repository
      */
     void lock(Path path, final Lock lock) throws WebDavException;
 
     void setProperties(Path path, Collection<StringProperty> properties) throws WebDavException;
 
     /**
-     * Remove the lock on the expected revision of the resource
+     * Remove the lock on the expected revision of the resource.
      *
-     * @param path the {@link Path} of the resource (relative to the repository root)
-     * @param force the user that created the lock must match the user who wants to delete it, unless force is {@code true}
+     * @param path
+     *            the {@link Path} of the resource (relative to the repository root)
      *
-     * @throws NullPointerException if resource is {@code null}
-     * @throws WebDavException if an error occurs while operating on the repository
+     * @throws NullPointerException
+     *             if resource is {@code null}
+     * @throws WebDavException
+     *             if an error occurs while operating on the repository
      */
     void unlock(Path path) throws WebDavException;
 }

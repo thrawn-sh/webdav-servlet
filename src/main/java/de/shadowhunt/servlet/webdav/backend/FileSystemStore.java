@@ -32,10 +32,6 @@ import java.util.Properties;
 
 import javax.annotation.CheckForNull;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Lock;
 import de.shadowhunt.servlet.webdav.Path;
@@ -43,6 +39,10 @@ import de.shadowhunt.servlet.webdav.PropertyIdentifier;
 import de.shadowhunt.servlet.webdav.Store;
 import de.shadowhunt.servlet.webdav.StringProperty;
 import de.shadowhunt.servlet.webdav.WebDavException;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 public class FileSystemStore implements Store {
 
@@ -67,14 +67,10 @@ public class FileSystemStore implements Store {
     }
 
     private String calculateMd5(final File file, final Path path) {
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
+        try (final FileInputStream fis = new FileInputStream(file)) {
             return DigestUtils.md5Hex(fis);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new WebDavException("can not calculate md5 hash for " + path, e);
-        } finally {
-            IOUtils.closeQuietly(fis);
         }
     }
 
@@ -85,7 +81,7 @@ public class FileSystemStore implements Store {
 
         try {
             return file.length();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new WebDavException("can not calculate size for " + path, e);
         }
     }
@@ -105,16 +101,18 @@ public class FileSystemStore implements Store {
     @Override
     public void createItem(final Path path, final InputStream content) throws WebDavException {
         final File file = getFile(path, false);
-        OutputStream os = null;
-        try {
-            os = FileUtils.openOutputStream(file);
+        try (final OutputStream os = FileUtils.openOutputStream(file)) {
             IOUtils.copy(content, os);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new WebDavException("can not write to resource " + path, e);
         } finally {
             IOUtils.closeQuietly(content);
-            IOUtils.closeQuietly(os);
         }
+    }
+
+    private PropertyIdentifier createPropertyIdentifier(final String elementName) {
+        final String[] parts = elementName.split(" ");
+        return new PropertyIdentifier(parts[0], parts[1]);
     }
 
     @Override
@@ -131,7 +129,7 @@ public class FileSystemStore implements Store {
         } else {
             try {
                 FileUtils.deleteDirectory(file);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new WebDavException("can not delete " + path, e);
             }
         }
@@ -154,7 +152,7 @@ public class FileSystemStore implements Store {
 
         try {
             return new Lock(FileUtils.readFileToString(lock), Lock.Scope.EXCLUSIVE, "");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new WebDavException("can not read lock for " + path, e);
         }
     }
@@ -164,7 +162,7 @@ public class FileSystemStore implements Store {
         final File file = getFile(path, true);
         try {
             return new FileInputStream(file);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new WebDavException("can not retrieve content", e);
         }
     }
@@ -210,11 +208,9 @@ public class FileSystemStore implements Store {
             return new ArrayList<>();
         }
 
-        InputStream is = null;
-        try {
-            final Properties properties = new Properties();
-            is = new FileInputStream(meta);
-            properties.loadFromXML(new FileInputStream(meta));
+        final Properties properties = new Properties();
+        try (final InputStream is = new FileInputStream(meta)) {
+            properties.loadFromXML(is);
 
             final Collection<StringProperty> result = new ArrayList<>();
             final Enumeration<?> enumeration = properties.propertyNames();
@@ -225,16 +221,9 @@ public class FileSystemStore implements Store {
                 result.add(new StringProperty(identifier, value.toString()));
             }
             return result;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new WebDavException("can not load properties for " + path, e);
-        } finally {
-            IOUtils.closeQuietly(is);
         }
-    }
-
-    private PropertyIdentifier createPropertyIdentifier(final String elementName) {
-        final String[] parts = elementName.split(" ");
-        return new PropertyIdentifier(parts[0], parts[1]);
     }
 
     @Override
@@ -244,11 +233,14 @@ public class FileSystemStore implements Store {
             return Collections.emptyList();
         }
 
-        final List<Path> children = new ArrayList<>();
-        for (final String child : file.list()) {
-            children.add(path.getChild(child));
+        final List<Path> result = new ArrayList<>();
+        final String[] children = file.list();
+        if (children != null) {
+            for (final String child : children) {
+                result.add(path.getChild(child));
+            }
         }
-        return children;
+        return result;
     }
 
     @Override
@@ -256,7 +248,7 @@ public class FileSystemStore implements Store {
         final File lockFile = getMetaFile(path.append(LOCK_SUFFIX));
         try {
             FileUtils.write(lockFile, lock.getToken());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new WebDavException("can not write lock for " + path, e);
         }
     }
@@ -277,14 +269,10 @@ public class FileSystemStore implements Store {
             store.put(identifier.getNameSpace() + " " + identifier.getName(), property.getValue());
         }
 
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(meta);
+        try (final OutputStream os = new FileOutputStream(meta)) {
             store.storeToXML(os, "", "UTF-8");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new WebDavException("can not save properties for " + path, e);
-        } finally {
-            IOUtils.closeQuietly(os);
         }
     }
 

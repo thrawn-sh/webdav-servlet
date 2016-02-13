@@ -40,6 +40,6 @@ public class OptionsMethod extends AbstractWebDavMethod {
             entity = store.getEntity(path);
         }
 
-        return BasicResponse.createNoContent(entity);
+        return AbstractBasicResponse.createNoContent(entity);
     }
 }

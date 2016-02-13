@@ -36,10 +36,10 @@ public class HeadMethod extends AbstractWebDavMethod {
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
         if (!store.exists(path)) {
-            return BasicResponse.createNotFound();
+            return AbstractBasicResponse.createNotFound();
         }
 
         final Entity entity = store.getEntity(path);
-        return BasicResponse.createOk(entity);
+        return AbstractBasicResponse.createOk(entity);
     }
 }

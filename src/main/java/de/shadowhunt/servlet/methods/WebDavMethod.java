@@ -17,37 +17,15 @@
 package de.shadowhunt.servlet.methods;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
-import de.shadowhunt.servlet.webdav.Store;
 
-public class UnlockMethod extends AbstractWebDavMethod {
+public interface WebDavMethod extends Serializable {
 
-    public static final String METHOD = "UNLOCK";
+    WebDavResponse service(Path path, HttpServletRequest request) throws ServletException, IOException;
 
-    public UnlockMethod(final Store store) {
-        super(METHOD, store);
-    }
-
-    @Override
-    public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
-        if (!store.exists(path)) {
-            return AbstractBasicResponse.createNotFound();
-        }
-
-        final Entity entity = store.getEntity(path);
-        if (!entity.isLocked()) {
-            return AbstractBasicResponse.createBadRequest(entity);
-        }
-
-        if (hasLockProblem(entity, request, "Lock-Token")) {
-            return AbstractBasicResponse.createLocked(entity);
-        }
-        store.unlock(path);
-        return AbstractBasicResponse.createNoContent(entity);
-    }
 }

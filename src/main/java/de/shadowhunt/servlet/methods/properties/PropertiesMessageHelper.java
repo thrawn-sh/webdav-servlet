@@ -55,7 +55,7 @@ public final class PropertiesMessageHelper {
             final DocumentBuilder db = factory.newDocumentBuilder();
             db.setErrorHandler(QUIET_ERROR_HANDLER);
             return db.parse(inputStream);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return null;
         }
     }

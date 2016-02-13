@@ -44,19 +44,19 @@ public class DeleteMethod extends AbstractWebDavMethod {
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
         if (Path.ROOT.equals(path)) {
             final Entity entity = store.getEntity(path);
-            return BasicResponse.createForbidden(entity);
+            return AbstractBasicResponse.createForbidden(entity);
         }
 
         if (!store.exists(path)) {
-            return BasicResponse.createNotFound();
+            return AbstractBasicResponse.createNotFound();
         }
 
         final Entity entity = store.getEntity(path);
         if (hasLockProblem(entity, request, "If")) {
-            return BasicResponse.createLocked(entity);
+            return AbstractBasicResponse.createLocked(entity);
         }
 
         delete(path);
-        return BasicResponse.createNoContent(null);
+        return AbstractBasicResponse.createNoContent(null);
     }
 }

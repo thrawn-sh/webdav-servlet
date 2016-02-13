@@ -38,13 +38,13 @@ public class LockMethod extends AbstractWebDavMethod {
     @Override
     public WebDavResponse service(final Path path, final HttpServletRequest request) throws ServletException, IOException {
         if (!store.exists(path)) {
-            return BasicResponse.createNotFound();
+            return AbstractBasicResponse.createNotFound();
         }
 
         final Entity entity = store.getEntity(path);
         if (entity.isLocked()) {
             if (hasLockProblem(entity, request, "If")) {
-                return BasicResponse.createLocked(entity);
+                return AbstractBasicResponse.createLocked(entity);
             }
             return new LockResponse(entity);
         }

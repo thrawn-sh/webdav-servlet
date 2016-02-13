@@ -25,60 +25,56 @@ import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
-
 import de.shadowhunt.servlet.webdav.Entity;
 
-abstract class BasicResponse implements WebDavResponse {
+import org.apache.commons.lang3.StringUtils;
+
+abstract class AbstractBasicResponse implements WebDavResponse {
 
     private static final String COLLECTION;
-
-    static {
-        { // non existing
-            final Set<String> operations = new TreeSet<>();
-            operations.add(OptionsMethod.METHOD);
-            operations.add(MkColMethod.METHOD);
-            operations.add(PutMethod.METHOD);
-            NON_EXISTING = StringUtils.join(operations, ", ");
-        }
-        { // items
-            final Set<String> operations = new TreeSet<>();
-            operations.add(CopyMoveMethod.COPY_METHOD);
-            operations.add(CopyMoveMethod.MOVE_METHOD);
-            operations.add(DeleteMethod.METHOD);
-            operations.add(GetMethod.METHOD);
-            operations.add(HeadMethod.METHOD);
-            operations.add(LockMethod.METHOD);
-            operations.add(OptionsMethod.METHOD);
-            operations.add(PropFindMethod.METHOD);
-            operations.add(PropPatchMethod.METHOD);
-            operations.add(PutMethod.METHOD);
-            operations.add(UnlockMethod.METHOD);
-            ITEM = StringUtils.join(operations, ", ");
-        }
-        { // collections
-            final Set<String> operations = new TreeSet<>();
-            operations.add(CopyMoveMethod.COPY_METHOD);
-            operations.add(CopyMoveMethod.MOVE_METHOD);
-            operations.add(DeleteMethod.METHOD);
-            operations.add(GetMethod.METHOD);
-            operations.add(HeadMethod.METHOD);
-            operations.add(LockMethod.METHOD);
-            // operations.add(MkColMethod.METHOD);
-            operations.add(OptionsMethod.METHOD);
-            operations.add(PropFindMethod.METHOD);
-            operations.add(PropPatchMethod.METHOD);
-            operations.add(UnlockMethod.METHOD);
-            COLLECTION = StringUtils.join(operations, ", ");
-        }
-    }
 
     private static final String ITEM;
 
     private static final String NON_EXISTING;
 
+    static {
+        final Set<String> nonExistingOperations = new TreeSet<>();
+        nonExistingOperations.add(OptionsMethod.METHOD);
+        nonExistingOperations.add(MkColMethod.METHOD);
+        nonExistingOperations.add(PutMethod.METHOD);
+        NON_EXISTING = StringUtils.join(nonExistingOperations, ", ");
+        
+        final Set<String> itemOperations = new TreeSet<>();
+        itemOperations.add(CopyMoveMethod.COPY_METHOD);
+        itemOperations.add(CopyMoveMethod.MOVE_METHOD);
+        itemOperations.add(DeleteMethod.METHOD);
+        itemOperations.add(GetMethod.METHOD);
+        itemOperations.add(HeadMethod.METHOD);
+        itemOperations.add(LockMethod.METHOD);
+        itemOperations.add(OptionsMethod.METHOD);
+        itemOperations.add(PropFindMethod.METHOD);
+        itemOperations.add(PropPatchMethod.METHOD);
+        itemOperations.add(PutMethod.METHOD);
+        itemOperations.add(UnlockMethod.METHOD);
+        ITEM = StringUtils.join(itemOperations, ", ");
+        
+        final Set<String> collectionOperations = new TreeSet<>();
+        collectionOperations.add(CopyMoveMethod.COPY_METHOD);
+        collectionOperations.add(CopyMoveMethod.MOVE_METHOD);
+        collectionOperations.add(DeleteMethod.METHOD);
+        collectionOperations.add(GetMethod.METHOD);
+        collectionOperations.add(HeadMethod.METHOD);
+        collectionOperations.add(LockMethod.METHOD);
+        // operations.add(MkColMethod.METHOD);
+        collectionOperations.add(OptionsMethod.METHOD);
+        collectionOperations.add(PropFindMethod.METHOD);
+        collectionOperations.add(PropPatchMethod.METHOD);
+        collectionOperations.add(UnlockMethod.METHOD);
+        COLLECTION = StringUtils.join(collectionOperations, ", ");
+    }
+
     public static final WebDavResponse createBadRequest(@Nullable final Entity entity) {
-        return new BasicResponse(entity) {
+        return new AbstractBasicResponse(entity) {
 
             @Override
             protected void write0(final HttpServletResponse response) throws ServletException, IOException {
@@ -88,7 +84,7 @@ abstract class BasicResponse implements WebDavResponse {
     }
 
     public static final WebDavResponse createConflict(@Nullable final Entity entity) {
-        return new BasicResponse(entity) {
+        return new AbstractBasicResponse(entity) {
 
             @Override
             protected void write0(final HttpServletResponse response) throws ServletException, IOException {
@@ -98,7 +94,7 @@ abstract class BasicResponse implements WebDavResponse {
     }
 
     public static final WebDavResponse createCreated(@Nullable final Entity entity) {
-        return new BasicResponse(entity) {
+        return new AbstractBasicResponse(entity) {
 
             @Override
             protected void write0(final HttpServletResponse response) throws ServletException, IOException {
@@ -108,7 +104,7 @@ abstract class BasicResponse implements WebDavResponse {
     }
 
     public static final WebDavResponse createForbidden(@Nullable final Entity entity) {
-        return new BasicResponse(entity) {
+        return new AbstractBasicResponse(entity) {
 
             @Override
             protected void write0(final HttpServletResponse response) throws ServletException, IOException {
@@ -118,7 +114,7 @@ abstract class BasicResponse implements WebDavResponse {
     }
 
     public static final WebDavResponse createLocked(@Nullable final Entity entity) {
-        return new BasicResponse(entity) {
+        return new AbstractBasicResponse(entity) {
 
             @Override
             protected void write0(final HttpServletResponse response) throws ServletException, IOException {
@@ -128,7 +124,7 @@ abstract class BasicResponse implements WebDavResponse {
     }
 
     public static final WebDavResponse createMessageNodeAllowed(@Nullable final Entity entity) {
-        return new BasicResponse(entity) {
+        return new AbstractBasicResponse(entity) {
 
             @Override
             protected void write0(final HttpServletResponse response) throws ServletException, IOException {
@@ -138,7 +134,7 @@ abstract class BasicResponse implements WebDavResponse {
     }
 
     public static WebDavResponse createMethodNotAllowed(@Nullable final Entity entity) {
-        return new BasicResponse(entity) {
+        return new AbstractBasicResponse(entity) {
 
             @Override
             protected void write0(final HttpServletResponse response) throws ServletException, IOException {
@@ -148,7 +144,7 @@ abstract class BasicResponse implements WebDavResponse {
     }
 
     public static final WebDavResponse createNoContent(@Nullable final Entity entity) {
-        return new BasicResponse(entity) {
+        return new AbstractBasicResponse(entity) {
 
             @Override
             protected void write0(final HttpServletResponse response) throws ServletException, IOException {
@@ -158,7 +154,7 @@ abstract class BasicResponse implements WebDavResponse {
     }
 
     public static final WebDavResponse createNotFound() {
-        return new BasicResponse(null) {
+        return new AbstractBasicResponse(null) {
 
             @Override
             protected void write0(final HttpServletResponse response) throws ServletException, IOException {
@@ -168,7 +164,7 @@ abstract class BasicResponse implements WebDavResponse {
     }
 
     public static WebDavResponse createOk(@Nullable final Entity entity) {
-        return new BasicResponse(entity) {
+        return new AbstractBasicResponse(entity) {
 
             @Override
             protected void write0(final HttpServletResponse response) throws ServletException, IOException {
@@ -178,7 +174,7 @@ abstract class BasicResponse implements WebDavResponse {
     }
 
     public static final WebDavResponse createPreconditionFailed(@Nullable final Entity entity) {
-        return new BasicResponse(entity) {
+        return new AbstractBasicResponse(entity) {
 
             @Override
             protected void write0(final HttpServletResponse response) throws ServletException, IOException {
@@ -188,7 +184,7 @@ abstract class BasicResponse implements WebDavResponse {
     }
 
     public static final WebDavResponse createUnsupportedMediaType(@Nullable final Entity entity) {
-        return new BasicResponse(entity) {
+        return new AbstractBasicResponse(entity) {
 
             @Override
             protected void write0(final HttpServletResponse response) throws ServletException, IOException {
@@ -209,7 +205,7 @@ abstract class BasicResponse implements WebDavResponse {
 
     protected final Entity entity;
 
-    protected BasicResponse(@Nullable final Entity entity) {
+    protected AbstractBasicResponse(@Nullable final Entity entity) {
         this.entity = entity;
     }
 

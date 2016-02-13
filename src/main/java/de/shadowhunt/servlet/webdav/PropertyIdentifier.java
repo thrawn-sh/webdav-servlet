@@ -23,9 +23,6 @@ import javax.xml.namespace.NamespaceContext;
 
 import org.apache.commons.lang3.Validate;
 
-/**
- * {@link PropertyIdentifier} represents a resource property
- */
 @Immutable
 public final class PropertyIdentifier implements Comparable<PropertyIdentifier> {
 
@@ -47,7 +44,7 @@ public final class PropertyIdentifier implements Comparable<PropertyIdentifier> 
         }
 
         @Override
-        public Iterator getPrefixes(final String namespaceURI) {
+        public Iterator<?> getPrefixes(final String namespaceURI) {
             throw new UnsupportedOperationException();
         }
     };
@@ -58,15 +55,6 @@ public final class PropertyIdentifier implements Comparable<PropertyIdentifier> 
 
     private final String nameSpace;
 
-    /**
-     * Create a new {@link PropertyIdentifier} with the given {@link Type}, name and value
-     *
-     * @param type {@link Type} of the {@link PropertyIdentifier}
-     * @param name name of the {@link PropertyIdentifier}
-     * @param value value of the {@link PropertyIdentifier}
-     *
-     * @throws NullPointerException if any parameter is {@code null}
-     */
     public PropertyIdentifier(final String nameSpace, final String name) {
         Validate.notNull(nameSpace, "nameSpace must not be null");
         Validate.notNull(name, "name must not be null");
@@ -103,11 +91,6 @@ public final class PropertyIdentifier implements Comparable<PropertyIdentifier> 
         return true;
     }
 
-    /**
-     * Returns the name of the {@link PropertyIdentifier}
-     *
-     * @return the name of the {@link PropertyIdentifier}
-     */
     public String getName() {
         return name;
     }

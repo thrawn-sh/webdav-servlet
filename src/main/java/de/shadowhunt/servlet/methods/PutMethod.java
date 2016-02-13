@@ -38,16 +38,16 @@ public class PutMethod extends AbstractWebDavMethod {
         if (store.exists(path)) {
             final Entity entity = store.getEntity(path);
             if (entity.getType() == Entity.Type.COLLECTION) {
-                return BasicResponse.createMessageNodeAllowed(entity);
+                return AbstractBasicResponse.createMessageNodeAllowed(entity);
             }
 
             if (hasLockProblem(entity, request, "If")) {
-                return BasicResponse.createLocked(entity);
+                return AbstractBasicResponse.createLocked(entity);
             }
         }
 
         store.createItem(path, request.getInputStream());
         final Entity entity = store.getEntity(path); // use newly created entity
-        return BasicResponse.createCreated(entity);
+        return AbstractBasicResponse.createCreated(entity);
     }
 }

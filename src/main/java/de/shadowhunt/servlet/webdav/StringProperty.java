@@ -21,7 +21,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class StringProperty extends Property {
+public class StringProperty extends AbstractProperty {
 
     private String value;
 

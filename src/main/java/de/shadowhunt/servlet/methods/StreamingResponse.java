@@ -23,15 +23,15 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-
 import de.shadowhunt.servlet.webdav.Entity;
 
-class StreamingResponse extends BasicResponse {
+import org.apache.commons.io.IOUtils;
+
+class StreamingResponse extends AbstractBasicResponse {
 
     private final InputStream input;
 
-    public StreamingResponse(final Entity entity, final InputStream input) {
+    StreamingResponse(final Entity entity, final InputStream input) {
         super(entity);
         this.input = input;
     }

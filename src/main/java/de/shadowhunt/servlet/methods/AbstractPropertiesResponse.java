@@ -20,12 +20,12 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.PropertyIdentifier;
 
-abstract class AbstractPropertiesResponse extends BasicResponse {
+import org.apache.commons.lang3.StringUtils;
+
+abstract class AbstractPropertiesResponse extends AbstractBasicResponse {
 
     protected final String baseUri;
 

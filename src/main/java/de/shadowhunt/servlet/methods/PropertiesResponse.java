@@ -30,12 +30,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.lang3.StringUtils;
-
 import de.shadowhunt.servlet.webdav.Entity;
 import de.shadowhunt.servlet.webdav.Path;
 import de.shadowhunt.servlet.webdav.Property;
 import de.shadowhunt.servlet.webdav.PropertyIdentifier;
+
+import org.apache.commons.lang3.StringUtils;
 
 class PropertiesResponse extends AbstractPropertiesResponse {
 
@@ -43,7 +43,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
 
     private final Set<PropertyIdentifier> requested;
 
-    public PropertiesResponse(final Entity entity, final String baseUri, final Set<PropertyIdentifier> requested, final Map<Path, Collection<Property>> entries) {
+    PropertiesResponse(final Entity entity, final String baseUri, final Set<PropertyIdentifier> requested, final Map<Path, Collection<Property>> entries) {
         super(entity, baseUri);
         this.requested = requested;
         this.entries = entries;
@@ -111,7 +111,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
         try {
             final XMLOutputFactory factory = XMLOutputFactory.newFactory();
 
-            final  XMLStreamWriter writer = factory.createXMLStreamWriter(response.getOutputStream(), "UTF-8");
+            final XMLStreamWriter writer = factory.createXMLStreamWriter(response.getOutputStream(), "UTF-8");
             writer.writeStartDocument("UTF-8", "1.0");
             final Map<String, String> prefixes = announceNameSpacePrefixes(writer);
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "multistatus");
