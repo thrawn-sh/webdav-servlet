@@ -29,6 +29,8 @@ public class OptionsMethod extends AbstractWebDavMethod {
 
     public static final String METHOD = "OPTIONS";
 
+    private static final long serialVersionUID = 1L;
+
     public OptionsMethod(final Store store) {
         super(METHOD, store);
     }

@@ -29,6 +29,8 @@ public class UnlockMethod extends AbstractWebDavMethod {
 
     public static final String METHOD = "UNLOCK";
 
+    private static final long serialVersionUID = 1L;
+
     public UnlockMethod(final Store store) {
         super(METHOD, store);
     }

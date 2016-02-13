@@ -22,7 +22,7 @@ import javax.xml.stream.XMLStreamWriter;
 public interface Property {
 
     PropertyIdentifier getIdentifier();
-    
+
     void write(final XMLStreamWriter writer) throws XMLStreamException;
-    
+
 }

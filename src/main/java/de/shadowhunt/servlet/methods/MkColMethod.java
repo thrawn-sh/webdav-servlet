@@ -29,6 +29,8 @@ public class MkColMethod extends AbstractWebDavMethod {
 
     public static final String METHOD = "MKCOL";
 
+    private static final long serialVersionUID = 1L;
+
     public MkColMethod(final Store store) {
         super(METHOD, store);
     }

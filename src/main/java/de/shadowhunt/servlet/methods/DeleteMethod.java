@@ -29,6 +29,8 @@ public class DeleteMethod extends AbstractWebDavMethod {
 
     public static final String METHOD = "DELETE";
 
+    private static final long serialVersionUID = 1L;
+
     public DeleteMethod(final Store store) {
         super(METHOD, store);
     }

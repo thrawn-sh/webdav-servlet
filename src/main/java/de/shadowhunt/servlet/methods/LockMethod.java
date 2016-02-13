@@ -31,6 +31,8 @@ public class LockMethod extends AbstractWebDavMethod {
 
     public static final String METHOD = "LOCK";
 
+    private static final long serialVersionUID = 1L;
+
     public LockMethod(final Store store) {
         super(METHOD, store);
     }

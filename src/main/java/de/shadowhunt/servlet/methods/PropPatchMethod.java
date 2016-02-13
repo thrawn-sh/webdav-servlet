@@ -50,6 +50,8 @@ public class PropPatchMethod extends AbstractWebDavMethod {
 
     public static final String METHOD = "PROPPATCH";
 
+    private static final long serialVersionUID = 1L;
+
     static {
         final XPathFactory factory = XPathFactory.newInstance();
         final XPath xpath = factory.newXPath();

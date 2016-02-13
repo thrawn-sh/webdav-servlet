@@ -43,7 +43,7 @@ abstract class AbstractBasicResponse implements WebDavResponse {
         nonExistingOperations.add(MkColMethod.METHOD);
         nonExistingOperations.add(PutMethod.METHOD);
         NON_EXISTING = StringUtils.join(nonExistingOperations, ", ");
-        
+
         final Set<String> itemOperations = new TreeSet<>();
         itemOperations.add(CopyMoveMethod.COPY_METHOD);
         itemOperations.add(CopyMoveMethod.MOVE_METHOD);
@@ -57,7 +57,7 @@ abstract class AbstractBasicResponse implements WebDavResponse {
         itemOperations.add(PutMethod.METHOD);
         itemOperations.add(UnlockMethod.METHOD);
         ITEM = StringUtils.join(itemOperations, ", ");
-        
+
         final Set<String> collectionOperations = new TreeSet<>();
         collectionOperations.add(CopyMoveMethod.COPY_METHOD);
         collectionOperations.add(CopyMoveMethod.MOVE_METHOD);

@@ -29,6 +29,8 @@ public class HeadMethod extends AbstractWebDavMethod {
 
     public static final String METHOD = "HEAD";
 
+    private static final long serialVersionUID = 1L;
+
     public HeadMethod(final Store store) {
         super(METHOD, store);
     }

@@ -29,6 +29,8 @@ public class PutMethod extends AbstractWebDavMethod {
 
     public static final String METHOD = "PUT";
 
+    private static final long serialVersionUID = 1L;
+
     public PutMethod(final Store store) {
         super(METHOD, store);
     }

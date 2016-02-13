@@ -50,7 +50,7 @@ import org.apache.commons.io.FileUtils;
 public class WebDavServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    
+
     private final Map<String, WebDavMethod> dispatcher = new HashMap<>();
 
     @Override
