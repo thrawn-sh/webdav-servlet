@@ -111,4 +111,112 @@ public class BasicLitmusIT extends AbstractLitmusIT {
 
         doPutGet(uri, data, "basic: 4 (put_get_utf8_segment)");
     }
+    
+    @Test
+    public void test_04_PUT_GET_utf8() throws Exception {
+        final URI uri = URI.create(BASE + "/409me/noparent.txt/");
+
+        final DavTemplateRequest request = new DavTemplateRequest("MKCOL", uri, "basic: 5 (put_no_parent)");
+        execute(request, new ResponseHandler<Void>() {
+
+            @Override
+            public Void handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
+                final int statusCode = response.getStatusLine().getStatusCode();
+                Assert.assertEquals(HttpStatus.SC_CONFLICT, statusCode);
+
+                final HttpEntity entity = response.getEntity();
+                Assert.assertNotNull(entity);
+                final long contentLength = entity.getContentLength();
+                Assert.assertEquals(0L, contentLength);
+
+                return null;
+            }
+        });
+    }
+    
+    @Test
+    public void test_05_PUT_GET_utf8() throws Exception {
+        final URI uri = URI.create(BASE + "/res-€");
+
+        final DavTemplateRequest request = new DavTemplateRequest("MKCOL", uri, "basic: 6 (mkcol_over_plain)");
+        execute(request, new ResponseHandler<Void>() {
+
+            @Override
+            public Void handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
+                final int statusCode = response.getStatusLine().getStatusCode();
+                Assert.assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, statusCode);
+
+                final HttpEntity entity = response.getEntity();
+                Assert.assertNotNull(entity);
+                final long contentLength = entity.getContentLength();
+                Assert.assertEquals(0L, contentLength);
+
+                return null;
+            }
+        });
+    }
+    
+    @Test
+    public void test_06_PUT_GET_utf8() throws Exception {
+        final URI uri = URI.create(BASE + "/res-€");
+
+        final DavTemplateRequest request = new DavTemplateRequest("DELETE", uri, "basic: 7 (delete)");
+        execute(request, new ResponseHandler<Void>() {
+
+            @Override
+            public Void handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
+                final int statusCode = response.getStatusLine().getStatusCode();
+                Assert.assertEquals(HttpStatus.SC_NO_CONTENT, statusCode);
+
+                final HttpEntity entity = response.getEntity();
+                Assert.assertNull(entity);
+
+                return null;
+            }
+        });
+    }
+    
+    @Test
+    public void test_07_PUT_GET_utf8() throws Exception {
+        final URI uri = URI.create(BASE + "/404me");
+
+        final DavTemplateRequest request = new DavTemplateRequest("DELETE", uri, "basic: 8 (delete_null)");
+        execute(request, new ResponseHandler<Void>() {
+
+            @Override
+            public Void handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
+                final int statusCode = response.getStatusLine().getStatusCode();
+                Assert.assertEquals(HttpStatus.SC_NOT_FOUND, statusCode);
+
+                final HttpEntity entity = response.getEntity();
+                Assert.assertNotNull(entity);
+                final long contentLength = entity.getContentLength();
+                Assert.assertEquals(0L, contentLength);
+
+                return null;
+            }
+        });
+    }
+    
+    @Test
+    public void test_08_PUT_GET_utf8() throws Exception {
+        final URI uri = URI.create(BASE + "/coll");
+
+        final DavTemplateRequest request = new DavTemplateRequest("MKCOL", uri, "basic: 10 (mkcol)");
+        execute(request, new ResponseHandler<Void>() {
+
+            @Override
+            public Void handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
+                final int statusCode = response.getStatusLine().getStatusCode();
+                Assert.assertEquals(HttpStatus.SC_CREATED, statusCode);
+
+                final HttpEntity entity = response.getEntity();
+                Assert.assertNotNull(entity);
+                final long contentLength = entity.getContentLength();
+                Assert.assertEquals(0L, contentLength);
+
+                return null;
+            }
+        });
+    }
 }
