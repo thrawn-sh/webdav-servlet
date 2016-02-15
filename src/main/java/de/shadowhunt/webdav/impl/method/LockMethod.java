@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import de.shadowhunt.webdav.Entity;
 import de.shadowhunt.webdav.Lock;
 import de.shadowhunt.webdav.Path;
-import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavStore;
 
 public class LockMethod extends AbstractWebDavMethod {
 

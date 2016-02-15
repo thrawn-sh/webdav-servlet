@@ -26,6 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.shadowhunt.webdav.WebDavMethod.Method;
+
 public final class WebDavDispatcher {
 
     private static final WebDavDispatcher INSTANCE = new WebDavDispatcher();
@@ -51,10 +53,17 @@ public final class WebDavDispatcher {
     }
 
     public void service(final WebDavStore store, final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-        final String method = request.getMethod().toUpperCase(Locale.US);
-        final WebDavMethod dispatch = dispatcher.get(method);
+        final String methodString = request.getMethod().toUpperCase(Locale.US);
+        final WebDavMethod dispatch = dispatcher.get(methodString);
         if (dispatch == null) {
             response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+            return;
+        }
+
+        final WebDavConfig config = WebDavConfig.getInstance();
+        final Method method = dispatch.getMethod();
+        if (config.isReadOnly() && !method.isReadOnly()) {
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             return;
         }
 

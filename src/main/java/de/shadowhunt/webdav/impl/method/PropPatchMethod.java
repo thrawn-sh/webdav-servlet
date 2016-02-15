@@ -34,8 +34,8 @@ import de.shadowhunt.webdav.Entity;
 import de.shadowhunt.webdav.Path;
 import de.shadowhunt.webdav.Property;
 import de.shadowhunt.webdav.PropertyIdentifier;
-import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.impl.AbstractProperty;
 import de.shadowhunt.webdav.impl.StringProperty;
 
@@ -58,6 +58,11 @@ public class PropPatchMethod extends AbstractWebDavMethod {
         } catch (final XPathExpressionException e) {
             throw new ExceptionInInitializerError(e);
         }
+    }
+
+    @Override
+    public Method getMethod() {
+        return Method.PROPPATCH;
     }
 
     private boolean isLiveProperty(final PropertyIdentifier propertyIdentifier) {
@@ -103,13 +108,13 @@ public class PropPatchMethod extends AbstractWebDavMethod {
                     properties.remove(new AbstractProperty(propertyIdentifier) {
 
                         @Override
-                        public void write(final XMLStreamWriter writer) throws XMLStreamException {
-                            // nothing to do
+                        public String getValue() {
+                            return null;
                         }
 
                         @Override
-                        public String getValue() {
-                            return null;
+                        public void write(final XMLStreamWriter writer) throws XMLStreamException {
+                            // nothing to do
                         }
                     });
                 }
@@ -120,10 +125,5 @@ public class PropPatchMethod extends AbstractWebDavMethod {
 
         store.setProperties(path, properties);
         return AbstractBasicResponse.createCreated(entity);
-    }
-
-    @Override
-    public Method getMethod() {
-        return Method.PROPPATCH;
     }
 }

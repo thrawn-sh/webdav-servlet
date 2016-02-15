@@ -29,7 +29,7 @@ public interface WebDavStore {
 
     void createItem(Path path, InputStream content) throws WebDavException;
 
-    Lock createLock();
+    Lock createLock() throws WebDavException;
 
     void delete(Path path) throws WebDavException;
 
@@ -46,6 +46,6 @@ public interface WebDavStore {
     void lock(Path path, Lock lock) throws WebDavException;
 
     void setProperties(Path path, Collection<Property> properties) throws WebDavException;
-    
+
     void unlock(Path path) throws WebDavException;
 }

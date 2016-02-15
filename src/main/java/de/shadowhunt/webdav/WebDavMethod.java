@@ -24,7 +24,17 @@ import javax.servlet.http.HttpServletRequest;
 public interface WebDavMethod {
 
     enum Method {
-        COPY, DELETE, GET, HEAD, LOCK, MKCOL, MOVE, OPTIONS, PROPFIND, PROPPATCH, PUT, UNLOCK;
+        COPY(false), DELETE(false), GET(true), HEAD(true), LOCK(false), MKCOL(false), MOVE(false), OPTIONS(true), PROPFIND(true), PROPPATCH(false), PUT(false), UNLOCK(false);
+
+        private final boolean readOnly;
+
+        Method(final boolean readOnly) {
+            this.readOnly = readOnly;
+        }
+
+        public boolean isReadOnly() {
+            return readOnly;
+        }
     }
 
     Method getMethod();

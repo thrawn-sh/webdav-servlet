@@ -23,19 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import de.shadowhunt.webdav.Entity;
 import de.shadowhunt.webdav.Path;
-import de.shadowhunt.webdav.WebDavStore;
+import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavStore;
 
 public class GetMethod extends AbstractWebDavMethod {
-
-//    protected final String cssPath;
-//
-//    protected final boolean htmlListing;
-//
-//    public GetMethod(final boolean htmlListing, final String cssPath) {
-//        this.htmlListing = htmlListing;
-//        this.cssPath = cssPath;
-//    }
 
     protected List<Entity> getEntities(final WebDavStore store, final Path path) {
         final List<Path> children = store.list(path);
@@ -62,10 +54,11 @@ public class GetMethod extends AbstractWebDavMethod {
             return new StreamingResponse(entity, store.download(path));
         }
 
-//        if ((type == Entity.Type.COLLECTION) && htmlListing) {
-//            final List<Entity> entities = getEntities(store, path);
-//            return new HtmlListingResponse(entity, entities, cssPath);
-//        }
+        final WebDavConfig config = WebDavConfig.getInstance();
+        if ((type == Entity.Type.COLLECTION) && config.isShowCollectionListings()) {
+            final List<Entity> entities = getEntities(store, path);
+            return new HtmlListingResponse(entity, entities, "/style.css"); // FIXME
+        }
 
         return AbstractBasicResponse.createForbidden(entity);
     }

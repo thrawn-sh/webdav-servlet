@@ -26,17 +26,17 @@ import javax.servlet.http.HttpServletRequest;
 import de.shadowhunt.webdav.Entity;
 import de.shadowhunt.webdav.Path;
 import de.shadowhunt.webdav.Property;
-import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavStore;
 
 public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
 
     private final boolean deleteSource;
-    
+
     protected AbstractCopyMoveMethod(final boolean deleteSource) {
         this.deleteSource = deleteSource;
     }
-    
+
     protected void copy(final WebDavStore store, final Path source, final Path target, final int depth) {
         if (depth < 0) {
             return;

@@ -67,15 +67,15 @@ public final class PropertyIdentifier implements Comparable<PropertyIdentifier> 
     public static final PropertyIdentifier LAST_MODIFIED_IDENTIFIER;
 
     public static final PropertyIdentifier LOCK_IDENTIFIER;
-    
+
     public static final PropertyIdentifier RESOURCE_TYPE_IDENTIFIER;
-    
+
     public static final Set<PropertyIdentifier> SUPPORTED_LIVE_PROPERTIES;
-    
+
     static {
         DAV_NAMESPACE = "DAV:";
         DEFAULT_DAV_PREFIX = "D";
-        
+
         CREATION_DATE_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "creationdate");
         DISPLAY_NAME_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "displayname");
         CONTENT_LENGTH_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "getcontentlength");

@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import de.shadowhunt.webdav.WebDavStore;
+import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavDispatcher;
 
 public class WebDavServlet extends HttpServlet {
@@ -32,6 +33,11 @@ public class WebDavServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        final WebDavConfig config = WebDavConfig.getInstance();
+        config.setAllowInfiniteDepthRequests(true);
+        config.setReadOnly(false);
+        config.setShowCollectionListings(true);
+
         final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();
         final WebDavStore store = null;
         dispatcher.service(store, request, response);

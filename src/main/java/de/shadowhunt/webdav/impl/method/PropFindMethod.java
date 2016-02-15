@@ -41,6 +41,7 @@ import de.shadowhunt.webdav.Lock;
 import de.shadowhunt.webdav.Path;
 import de.shadowhunt.webdav.Property;
 import de.shadowhunt.webdav.PropertyIdentifier;
+import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.impl.AbstractProperty;
@@ -74,7 +75,6 @@ public class PropFindMethod extends AbstractWebDavMethod {
         }
     }
 
-    
     private static Collection<Property> entityToProperties(final Entity entity) {
         final Collection<Property> result = new ArrayList<>();
         result.add(new StringProperty(PropertyIdentifier.DISPLAY_NAME_IDENTIFIER, entity.getName()));
@@ -109,7 +109,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
         return result;
 
     }
-    
+
     private void collectProperties(final WebDavStore store, final Path path, final int depth, final Map<Path, Collection<Property>> map) {
         if (depth < 0) {
             return;
@@ -199,8 +199,9 @@ public class PropFindMethod extends AbstractWebDavMethod {
 
         final Entity entity = store.getEntity(path);
 
+        final WebDavConfig config = WebDavConfig.getInstance();
         final int depth = determineDepth(request);
-        if ((depth == Integer.MAX_VALUE)) { // TODO
+        if ((depth == Integer.MAX_VALUE) && !config.isAllowInfiniteDepthRequests()) {
             return AbstractBasicResponse.createForbidden(entity);
         }
 

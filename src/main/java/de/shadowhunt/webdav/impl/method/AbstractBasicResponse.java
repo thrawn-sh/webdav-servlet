@@ -17,6 +17,7 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -26,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import de.shadowhunt.webdav.Entity;
+import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavMethod.Method;
 
@@ -35,41 +37,50 @@ abstract class AbstractBasicResponse implements WebDavResponse {
 
     private static final String COLLECTION;
 
+    private static final String COLLECTION_READ_ONLY;
+
     private static final String ITEM;
 
+    private static final String ITEM_READ_ONLY;
+
     private static final String NON_EXISTING;
+
+    private static final String NON_EXISTING_READ_ONLY;
 
     static {
         final Set<Method> nonExistingOperations = new TreeSet<>();
         nonExistingOperations.add(Method.OPTIONS);
+        NON_EXISTING_READ_ONLY = StringUtils.join(nonExistingOperations, ", ");
         nonExistingOperations.add(Method.MKCOL);
         nonExistingOperations.add(Method.PUT);
         NON_EXISTING = StringUtils.join(nonExistingOperations, ", ");
 
         final Set<Method> itemOperations = new TreeSet<>();
-        itemOperations.add(Method.COPY);
-        itemOperations.add(Method.MOVE);
-        itemOperations.add(Method.DELETE);
         itemOperations.add(Method.GET);
         itemOperations.add(Method.HEAD);
-        itemOperations.add(Method.LOCK);
         itemOperations.add(Method.OPTIONS);
         itemOperations.add(Method.PROPFIND);
+        ITEM_READ_ONLY = StringUtils.join(itemOperations, ", ");
+        itemOperations.add(Method.COPY);
+        itemOperations.add(Method.DELETE);
+        itemOperations.add(Method.LOCK);
+        itemOperations.add(Method.MOVE);
         itemOperations.add(Method.PROPPATCH);
         itemOperations.add(Method.PUT);
         itemOperations.add(Method.UNLOCK);
         ITEM = StringUtils.join(itemOperations, ", ");
 
         final Set<Method> collectionOperations = new TreeSet<>();
-        collectionOperations.add(Method.COPY);
-        collectionOperations.add(Method.MOVE);
-        collectionOperations.add(Method.DELETE);
         collectionOperations.add(Method.GET);
         collectionOperations.add(Method.HEAD);
-        collectionOperations.add(Method.LOCK);
-        // operations.add(Method.MKCOL);
         collectionOperations.add(Method.OPTIONS);
         collectionOperations.add(Method.PROPFIND);
+        COLLECTION_READ_ONLY = StringUtils.join(collectionOperations, ", ");
+        collectionOperations.add(Method.COPY);
+        collectionOperations.add(Method.DELETE);
+        collectionOperations.add(Method.LOCK);
+        // collectionOperations.add(Method.MKCOL);
+        collectionOperations.add(Method.MOVE);
         collectionOperations.add(Method.PROPPATCH);
         collectionOperations.add(Method.UNLOCK);
         COLLECTION = StringUtils.join(collectionOperations, ", ");
@@ -196,13 +207,14 @@ abstract class AbstractBasicResponse implements WebDavResponse {
     }
 
     protected static final String getAllowedMethods(@CheckForNull final Entity entity) {
+        final WebDavConfig config = WebDavConfig.getInstance();
         if (entity == null) {
-            return NON_EXISTING;
+            return config.isReadOnly() ? NON_EXISTING_READ_ONLY : NON_EXISTING;
         }
         if (entity.getType() == Entity.Type.COLLECTION) {
-            return COLLECTION;
+            return config.isReadOnly() ?  COLLECTION_READ_ONLY : COLLECTION;
         }
-        return ITEM;
+        return config.isReadOnly() ?  ITEM_READ_ONLY : ITEM;
     }
 
     protected final Entity entity;
@@ -218,7 +230,10 @@ abstract class AbstractBasicResponse implements WebDavResponse {
         response.addHeader("MS-Author-Via", "DAV"); // MS required header
         if (entity != null) {
             if (entity.getType() == Entity.Type.ITEM) {
-                response.addHeader("ETag", "TODO"); // TODO FIXME
+                Optional<String> hash = entity.getHash();
+                if (hash.isPresent()) {
+                    response.addHeader("ETag", hash.get());
+                }
             }
             response.addDateHeader("Last-Modified", entity.getLastModified().getTime());
         }
