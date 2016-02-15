@@ -105,7 +105,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
     @Override
     protected void write0(final HttpServletResponse response) throws ServletException, IOException {
         response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/xml");
+        response.setContentType("application/xml");
         response.setStatus(207); // FIXME constant
 
         try {

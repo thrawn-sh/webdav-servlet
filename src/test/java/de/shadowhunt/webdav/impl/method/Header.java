@@ -14,21 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav.impl;
+package de.shadowhunt.webdav.impl.method;
 
-import de.shadowhunt.webdav.PropertyIdentifier;
+public class Header {
 
-public class StringProperty extends AbstractProperty {
+    public final String name;
 
-    private final String value;
+    public final String value;
 
-    public StringProperty(final PropertyIdentifier identifier, final String value) {
-        super(identifier);
+    public Header(final String name, final String value) {
+        this.name = name;
         this.value = value;
     }
 
     @Override
-    public String getValue() {
-        return value;
+    public String toString() {
+        return "Header [name=" + name + ", value=" + value + "]";
     }
 }

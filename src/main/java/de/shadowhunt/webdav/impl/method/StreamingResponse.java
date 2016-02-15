@@ -38,6 +38,7 @@ class StreamingResponse extends AbstractBasicResponse {
 
     @Override
     protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
         final ServletOutputStream output = response.getOutputStream();
         try {
             IOUtils.copy(input, output);

@@ -23,9 +23,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavDispatcher;
+import de.shadowhunt.webdav.WebDavStore;
+import de.shadowhunt.webdav.impl.store.FileSystemStore;
+
+import org.apache.commons.io.FileUtils;
 
 public class WebDavServlet extends HttpServlet {
 
@@ -39,7 +42,7 @@ public class WebDavServlet extends HttpServlet {
         config.setShowCollectionListings(true);
 
         final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();
-        final WebDavStore store = null;
+        final WebDavStore store = new FileSystemStore(FileUtils.getTempDirectory());
         dispatcher.service(store, request, response);
     }
 }

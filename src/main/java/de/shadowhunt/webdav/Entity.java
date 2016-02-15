@@ -34,6 +34,7 @@ public interface Entity extends Comparable<Entity> {
         }
     }
 
+    @Override
     boolean equals(Object o);
 
     Optional<String> getHash();
@@ -50,10 +51,12 @@ public interface Entity extends Comparable<Entity> {
 
     Type getType();
 
+    @Override
     int hashCode();
 
     boolean isLocked();
 
+    @Override
     String toString();
 
 }

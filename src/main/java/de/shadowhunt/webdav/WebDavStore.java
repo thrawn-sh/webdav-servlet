@@ -33,9 +33,9 @@ public interface WebDavStore {
 
     void delete(Path path) throws WebDavException;
 
-    InputStream download(Path path) throws WebDavException;
-
     boolean exists(Path path) throws WebDavException;
+
+    InputStream getContent(Path path) throws WebDavException;
 
     Entity getEntity(Path path) throws WebDavException;
 

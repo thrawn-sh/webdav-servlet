@@ -52,8 +52,7 @@ class HtmlListingResponse extends AbstractBasicResponse {
 
     @Override
     protected void write0(final HttpServletResponse response) throws ServletException, IOException {
-        Collections.sort(entities);
-
+        response.setStatus(HttpServletResponse.SC_OK);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
 
@@ -78,6 +77,7 @@ class HtmlListingResponse extends AbstractBasicResponse {
             writer.print("<tr class=\"folder parent\"><td colspan=\"3\"><a href=\"..\">Parent</a></td></tr>");
         }
 
+        Collections.sort(entities);
         for (final Entity entity : entities) {
             final String entityName = entity.getName();
             final String link = URLEncoder.encode(entityName, response.getCharacterEncoding());

@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import de.shadowhunt.webdav.Entity;
 import de.shadowhunt.webdav.WebDavConfig;
-import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavMethod.Method;
+import de.shadowhunt.webdav.WebDavResponse;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -212,9 +212,9 @@ abstract class AbstractBasicResponse implements WebDavResponse {
             return config.isReadOnly() ? NON_EXISTING_READ_ONLY : NON_EXISTING;
         }
         if (entity.getType() == Entity.Type.COLLECTION) {
-            return config.isReadOnly() ?  COLLECTION_READ_ONLY : COLLECTION;
+            return config.isReadOnly() ? COLLECTION_READ_ONLY : COLLECTION;
         }
-        return config.isReadOnly() ?  ITEM_READ_ONLY : ITEM;
+        return config.isReadOnly() ? ITEM_READ_ONLY : ITEM;
     }
 
     protected final Entity entity;
@@ -230,7 +230,7 @@ abstract class AbstractBasicResponse implements WebDavResponse {
         response.addHeader("MS-Author-Via", "DAV"); // MS required header
         if (entity != null) {
             if (entity.getType() == Entity.Type.ITEM) {
-                Optional<String> hash = entity.getHash();
+                final Optional<String> hash = entity.getHash();
                 if (hash.isPresent()) {
                     response.addHeader("ETag", hash.get());
                 }

@@ -16,6 +16,7 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,14 +49,16 @@ public class GetMethod extends AbstractWebDavMethod {
         if (!store.exists(path)) {
             return AbstractBasicResponse.createNotFound();
         }
+
         final Entity entity = store.getEntity(path);
         final Entity.Type type = entity.getType();
         if (type == Entity.Type.ITEM) {
-            return new StreamingResponse(entity, store.download(path));
+            final InputStream content = store.getContent(path);
+            return new StreamingResponse(entity, content);
         }
 
         final WebDavConfig config = WebDavConfig.getInstance();
-        if ((type == Entity.Type.COLLECTION) && config.isShowCollectionListings()) {
+        if (config.isShowCollectionListings()) {
             final List<Entity> entities = getEntities(store, path);
             return new HtmlListingResponse(entity, entities, "/style.css"); // FIXME
         }

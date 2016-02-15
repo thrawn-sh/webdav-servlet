@@ -18,7 +18,7 @@ package de.shadowhunt.webdav.impl.method;
 
 public class MoveMethod extends AbstractCopyMoveMethod {
 
-    protected MoveMethod() {
+    public MoveMethod() {
         super(true);
     }
 

@@ -39,8 +39,8 @@ import de.shadowhunt.webdav.Lock;
 import de.shadowhunt.webdav.Path;
 import de.shadowhunt.webdav.Property;
 import de.shadowhunt.webdav.PropertyIdentifier;
-import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.WebDavException;
+import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.impl.StringProperty;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -174,7 +174,7 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public InputStream download(final Path path) throws WebDavException {
+    public InputStream getContent(final Path path) throws WebDavException {
         synchronized (monitor) {
             final File file = getFile(path, true);
             try {
