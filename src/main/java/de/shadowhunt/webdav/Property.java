@@ -14,26 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.servlet;
+package de.shadowhunt.webdav;
 
-import java.io.IOException;
+import javax.annotation.concurrent.Immutable;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+@Immutable
+public interface Property {
 
-import de.shadowhunt.webdav.WebDavStore;
-import de.shadowhunt.webdav.WebDavDispatcher;
+    PropertyIdentifier getIdentifier();
 
-public class WebDavServlet extends HttpServlet {
+    String getValue();
 
-    private static final long serialVersionUID = 1L;
-
-    @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-        final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();
-        final WebDavStore store = null;
-        dispatcher.service(store, request, response);
-    }
+    void write(final XMLStreamWriter writer) throws XMLStreamException;
 }

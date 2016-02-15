@@ -14,26 +14,36 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.servlet;
+package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import de.shadowhunt.webdav.WebDavStore;
-import de.shadowhunt.webdav.WebDavDispatcher;
+import de.shadowhunt.webdav.Entity;
 
-public class WebDavServlet extends HttpServlet {
+import org.apache.commons.io.IOUtils;
 
-    private static final long serialVersionUID = 1L;
+class StreamingResponse extends AbstractBasicResponse {
+
+    private final InputStream input;
+
+    StreamingResponse(final Entity entity, final InputStream input) {
+        super(entity);
+        this.input = input;
+    }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-        final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();
-        final WebDavStore store = null;
-        dispatcher.service(store, request, response);
+    protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+        final ServletOutputStream output = response.getOutputStream();
+        try {
+            IOUtils.copy(input, output);
+        } finally {
+            // output is closed by servlet api
+            IOUtils.closeQuietly(input);
+        }
     }
 }

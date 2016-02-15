@@ -14,26 +14,46 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.servlet;
+package de.shadowhunt.webdav;
 
-import java.io.IOException;
+import java.util.Date;
+import java.util.Optional;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.annotation.concurrent.Immutable;
 
-import de.shadowhunt.webdav.WebDavStore;
-import de.shadowhunt.webdav.WebDavDispatcher;
+@Immutable
+public interface Entity extends Comparable<Entity> {
 
-public class WebDavServlet extends HttpServlet {
+    enum Type {
+        COLLECTION(1), ITEM(2);
 
-    private static final long serialVersionUID = 1L;
+        public final int priority;
 
-    @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-        final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();
-        final WebDavStore store = null;
-        dispatcher.service(store, request, response);
+        Type(final int priority) {
+            this.priority = priority;
+        }
     }
+
+    boolean equals(Object o);
+
+    Optional<String> getHash();
+
+    Date getLastModified();
+
+    Lock getLock();
+
+    String getName();
+
+    Path getPath();
+
+    long getSize();
+
+    Type getType();
+
+    int hashCode();
+
+    boolean isLocked();
+
+    String toString();
+
 }

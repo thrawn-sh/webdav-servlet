@@ -103,7 +103,7 @@ public class BasicLitmusIT extends AbstractLitmusIT {
 
         doPutGet(uri, data, "basic: 3 (put_get)");
     }
-    
+
     @Test
     public void test_03_PUT_GET_utf8() throws Exception {
         final URI uri = URI.create(BASE + "/res-€");

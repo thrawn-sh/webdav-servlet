@@ -14,26 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.servlet;
+package de.shadowhunt.webdav.impl.method;
 
-import java.io.IOException;
+public class MoveMethod extends AbstractCopyMoveMethod {
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import de.shadowhunt.webdav.WebDavStore;
-import de.shadowhunt.webdav.WebDavDispatcher;
-
-public class WebDavServlet extends HttpServlet {
-
-    private static final long serialVersionUID = 1L;
+    protected MoveMethod() {
+        super(true);
+    }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-        final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();
-        final WebDavStore store = null;
-        dispatcher.service(store, request, response);
+    public Method getMethod() {
+        return Method.MOVE;
     }
 }
