@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import de.shadowhunt.webdav.WebDavMethod;
@@ -28,7 +29,11 @@ import org.apache.commons.lang3.StringUtils;
 
 abstract class AbstractWebDavMethod implements WebDavMethod {
 
-    protected boolean consume(final InputStream inputStream) throws IOException {
+    protected boolean consume(@Nullable final InputStream inputStream) throws IOException {
+        if (inputStream == null) {
+            return false;
+        }
+
         final boolean data = (inputStream.read() != -1);
         if (data) {
             while (inputStream.read() != -1) {
