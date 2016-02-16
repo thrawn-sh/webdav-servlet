@@ -41,6 +41,15 @@ public class Response {
         return result;
     }
 
+    public Header getFirstHeader(final String name) {
+        for (final Header header : headers) {
+            if (name.equalsIgnoreCase(header.name)) {
+                return header;
+            }
+        }
+        throw new IllegalArgumentException("no header with name: " + name + " found");
+    }
+
     public Collection<Header> getHeaders() {
         return headers;
     }
