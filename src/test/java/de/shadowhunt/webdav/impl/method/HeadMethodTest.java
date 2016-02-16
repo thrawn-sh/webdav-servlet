@@ -83,6 +83,7 @@ public class HeadMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(store.exists(path)).thenReturn(true);
         Mockito.when(store.getEntity(path)).thenReturn(entity);
+        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
         Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
         Mockito.when(entity.getPath()).thenReturn(path);
         Mockito.when(entity.getType()).thenReturn(Entity.Type.COLLECTION);
