@@ -19,6 +19,7 @@ package de.shadowhunt.webdav;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -38,6 +39,13 @@ public interface WebDavStore {
     InputStream getContent(Path path) throws WebDavException;
 
     Entity getEntity(Path path) throws WebDavException;
+
+    default Optional<Entity> getEntityIfExists(Path path) throws WebDavException {
+        if (exists(path)) {
+            return Optional.of(getEntity(path));
+        }
+        return Optional.empty();
+    }
 
     Collection<Property> getProperties(Path path) throws WebDavException;
 
