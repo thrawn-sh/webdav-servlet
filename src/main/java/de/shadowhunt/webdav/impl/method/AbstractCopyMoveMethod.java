@@ -29,6 +29,8 @@ import de.shadowhunt.webdav.Property;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavStore;
 
+import org.apache.commons.lang3.StringUtils;
+
 public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
 
     private final boolean deleteSource;
@@ -58,7 +60,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
 
     protected boolean determineOverwrite(final HttpServletRequest request) {
         final String overwrite = request.getHeader("Overwrite");
-        return "T".equalsIgnoreCase(overwrite);
+        return StringUtils.isEmpty(overwrite) || "T".equalsIgnoreCase(overwrite);
     }
 
     protected Path determineTarget(final HttpServletRequest request) {
