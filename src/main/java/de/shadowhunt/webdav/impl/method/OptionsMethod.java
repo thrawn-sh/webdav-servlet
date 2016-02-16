@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import de.shadowhunt.webdav.Entity;
 import de.shadowhunt.webdav.Path;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavStore;
@@ -34,6 +35,7 @@ public class OptionsMethod extends AbstractWebDavMethod {
 
     @Override
     public WebDavResponse service(final WebDavStore store, final Path path, final HttpServletRequest request) throws ServletException, IOException {
-        return AbstractBasicResponse.createNoContent(null);
+        final Entity entity = store.getEntity(path);
+        return AbstractBasicResponse.createNoContent(entity);
     }
 }
