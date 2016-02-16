@@ -42,7 +42,7 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
     public void test00_missingReadOnly() throws Exception {
         final WebDavConfig config = WebDavConfig.getInstance();
         config.setReadOnly(true);
-        
+
         final WebDavMethod method = new OptionsMethod();
 
         final Path path = Path.create("/item.txt");
@@ -57,12 +57,12 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         final Header allow = response.getFirstHeader("Allow");
         Assert.assertEquals("allow must match", allow.value, "OPTIONS");
     }
-    
+
     @Test
     public void test00_missingWritable() throws Exception {
         final WebDavConfig config = WebDavConfig.getInstance();
         config.setReadOnly(false);
-        
+
         final WebDavMethod method = new OptionsMethod();
 
         final Path path = Path.create("/item.txt");
@@ -82,7 +82,7 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
     public void test01_exisitingItemReadOnly() throws Exception {
         final WebDavConfig config = WebDavConfig.getInstance();
         config.setReadOnly(true);
-        
+
         final WebDavMethod method = new OptionsMethod();
 
         final Path path = Path.create("/item.txt");
@@ -102,12 +102,12 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         final Header allow = response.getFirstHeader("Allow");
         Assert.assertEquals("allow must match", allow.value, "GET, HEAD, OPTIONS, PROPFIND");
     }
-    
+
     @Test
     public void test01_exisitingItemWritable() throws Exception {
         final WebDavConfig config = WebDavConfig.getInstance();
         config.setReadOnly(false);
-        
+
         final WebDavMethod method = new OptionsMethod();
 
         final Path path = Path.create("/item.txt");
@@ -132,7 +132,7 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
     public void test02_exisitingCollectionReadOnly() throws Exception {
         final WebDavConfig config = WebDavConfig.getInstance();
         config.setReadOnly(true);
-        
+
         final WebDavMethod method = new OptionsMethod();
 
         final Path path = Path.create("/collection/");

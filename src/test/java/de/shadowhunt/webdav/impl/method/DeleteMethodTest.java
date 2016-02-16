@@ -117,4 +117,3 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
         Assert.assertNull("content must be null", response.getContent());
     }
 }
-
