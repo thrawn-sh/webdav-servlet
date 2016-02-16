@@ -94,6 +94,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(store.exists(target)).thenReturn(true);
         Mockito.when(store.getEntity(source)).thenReturn(entity);
         Mockito.when(request.getHeader("Destination")).thenReturn("http://127.0.0.1/webdav/target_item.txt");
+        Mockito.when(request.getHeader("Overwrite")).thenReturn("F");
         Mockito.when(request.getServletPath()).thenReturn("/webdav");
         Mockito.when(entity.getHash()).thenReturn(Optional.empty());
         Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
