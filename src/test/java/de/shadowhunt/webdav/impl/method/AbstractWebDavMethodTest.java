@@ -18,6 +18,8 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -28,12 +30,76 @@ import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavStore;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 public abstract class AbstractWebDavMethodTest {
+
+    public static class Header {
+
+        public final String name;
+
+        public final String value;
+
+        public Header(final String name, final String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return "Header [name=" + name + ", value=" + value + "]";
+        }
+    }
+
+    public static class Response {
+
+        private final StringBuilder content = new StringBuilder();
+
+        private final Collection<Header> headers = new ArrayList<>();
+
+        private int status = -1;
+
+        public void addHeader(final String name, final String value) {
+            headers.add(new Header(name, value));
+        }
+
+        public String getContent() {
+            final String result = content.toString();
+            if (StringUtils.isEmpty(result)) {
+                return null;
+            }
+            return result;
+        }
+
+        public Header getFirstHeader(final String name) {
+            for (final Header header : headers) {
+                if (name.equalsIgnoreCase(header.name)) {
+                    return header;
+                }
+            }
+            throw new IllegalArgumentException("no header with name: " + name + " found");
+        }
+
+        public Collection<Header> getHeaders() {
+            return headers;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public void setStatus(final int status) {
+            this.status = status;
+        }
+
+        public void writeContent(final int character) {
+            content.append((char) character);
+        }
+    }
 
     private HttpServletResponse createHttpServletResponseMock(final Response r) throws Exception {
         final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
