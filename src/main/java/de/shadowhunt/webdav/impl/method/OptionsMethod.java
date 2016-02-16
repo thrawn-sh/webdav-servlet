@@ -35,7 +35,10 @@ public class OptionsMethod extends AbstractWebDavMethod {
 
     @Override
     public WebDavResponse service(final WebDavStore store, final Path path, final HttpServletRequest request) throws ServletException, IOException {
-        final Entity entity = store.getEntity(path);
+        Entity entity = null;
+        if (store.exists(path)) {
+            entity = store.getEntity(path);
+        }
         return AbstractBasicResponse.createNoContent(entity);
     }
 }
