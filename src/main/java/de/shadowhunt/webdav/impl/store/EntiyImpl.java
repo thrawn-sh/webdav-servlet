@@ -50,6 +50,10 @@ public class EntiyImpl implements Entity {
 
     @Override
     public int compareTo(final Entity other) {
+        final int result = Integer.compare(type.priority, other.getType().priority);
+        if (result != 0) {
+            return result;
+        }
         return path.compareTo(other.getPath());
     }
 
