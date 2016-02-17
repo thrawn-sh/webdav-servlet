@@ -109,7 +109,7 @@ public class PropPatchMethod extends AbstractWebDavMethod {
 
                         @Override
                         public String getValue() {
-                            return null;
+                            throw new UnsupportedOperationException();
                         }
 
                         @Override
