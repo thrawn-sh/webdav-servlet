@@ -90,6 +90,7 @@
 
         <jacoco.reportPath>${project.basedir}/target/jacoco-ut.exec</jacoco.reportPath>
         <jacoco.itReportPath>${project.basedir}/target/jacoco-it.exec</jacoco.itReportPath>
+        <version.antlr>4.5.2-1</version.antlr>
     </properties>
 
     <build>
@@ -112,6 +113,11 @@
                     <groupId>de.shadowhunt.maven.plugins</groupId>
                     <artifactId>package-info-maven-plugin</artifactId>
                     <version>1.4.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr4-maven-plugin</artifactId>
+                    <version>${version.antlr}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -253,6 +259,9 @@
                         <exclude>README</exclude>
                     </excludes>
                     <header>com/mycila/maven/plugin/license/templates/GPL-3.txt</header>
+                    <mapping>
+                        <g4>JAVADOC_STYLE</g4>
+                    </mapping>
                     <properties>
                         <owner>${project.organization.name}</owner>
                         <project.inceptionYear>${build.copyright.year}</project.inceptionYear>
@@ -706,6 +715,11 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>${version.antlr}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
