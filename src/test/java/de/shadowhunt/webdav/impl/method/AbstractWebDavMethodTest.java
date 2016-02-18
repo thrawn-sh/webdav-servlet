@@ -32,6 +32,7 @@ import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavResponseFoo;
 import de.shadowhunt.webdav.WebDavStore;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -60,7 +61,7 @@ public abstract class AbstractWebDavMethodTest {
         @Override
         public void addHeader(final String name, final String value) {
             final String previous = headers.put(name, value);
-            // Assert.assertNotNull("header must not be defined multiple times", previous);
+            Assert.assertNull("header '" + name + "' must not be defined multiple times", previous);
         }
 
         public String getCharacterEncoding() {
