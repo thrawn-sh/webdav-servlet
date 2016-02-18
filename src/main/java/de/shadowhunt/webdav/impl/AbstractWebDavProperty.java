@@ -19,16 +19,16 @@ package de.shadowhunt.webdav.impl;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import de.shadowhunt.webdav.Property;
 import de.shadowhunt.webdav.PropertyIdentifier;
+import de.shadowhunt.webdav.WebDavProperty;
 
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class AbstractProperty implements Property {
+public abstract class AbstractWebDavProperty implements WebDavProperty {
 
     protected final PropertyIdentifier identifier;
 
-    protected AbstractProperty(final PropertyIdentifier identifier) {
+    protected AbstractWebDavProperty(final PropertyIdentifier identifier) {
         this.identifier = identifier;
     }
 
@@ -37,11 +37,11 @@ public abstract class AbstractProperty implements Property {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof AbstractProperty)) {
+        if (!(o instanceof AbstractWebDavProperty)) {
             return false;
         }
 
-        final AbstractProperty property = (AbstractProperty) o;
+        final AbstractWebDavProperty property = (AbstractWebDavProperty) o;
 
         if (!identifier.equals(property.identifier)) {
             return false;

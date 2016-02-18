@@ -17,11 +17,19 @@
 package de.shadowhunt.webdav;
 
 import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 
 public interface WebDavResponse {
 
-    void write(final HttpServletResponse response) throws ServletException, IOException;
+    void addHeader(final String name, final String value);
+
+    OutputStream getOutputStream() throws IOException;
+
+    WebDavRequest getRequest();
+
+    void setCharacterEncoding(String charset);
+
+    void setContentType(String contentType);
+
+    void setStatus(int status);
 }

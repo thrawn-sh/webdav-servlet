@@ -22,7 +22,7 @@ import java.util.Optional;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
-public interface Entity extends Comparable<Entity> {
+public interface WebDavEntity extends Comparable<WebDavEntity> {
 
     enum Type {
         COLLECTION(1), ITEM(2);
@@ -41,11 +41,11 @@ public interface Entity extends Comparable<Entity> {
 
     Date getLastModified();
 
-    Lock getLock();
+    WebDavLock getLock();
 
     String getName();
 
-    Path getPath();
+    WebDavPath getPath();
 
     long getSize();
 

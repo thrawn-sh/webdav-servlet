@@ -19,27 +19,27 @@ package de.shadowhunt.webdav.impl.method;
 import java.io.IOException;
 import java.util.Locale;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Lock;
 import de.shadowhunt.webdav.PropertyIdentifier;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavException;
+import de.shadowhunt.webdav.WebDavLock;
+import de.shadowhunt.webdav.WebDavResponse;
 
 import org.apache.commons.lang3.StringUtils;
 
 class LockResponse extends AbstractBasicResponse {
 
-    LockResponse(final Entity entity) {
+    LockResponse(final WebDavEntity entity) {
         super(entity);
     }
 
     @Override
-    protected void write0(final HttpServletResponse response) throws ServletException, IOException {
-        final Lock lock = entity.getLock();
+    protected void write0(final WebDavResponse response) throws IOException {
+        final WebDavLock lock = entity.getLock();
 
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/xml");
@@ -91,7 +91,7 @@ class LockResponse extends AbstractBasicResponse {
             writer.writeCharacters("\r\n"); // required by some clients
             writer.close();
         } catch (final XMLStreamException e) {
-            throw new ServletException("can not write response", e);
+            throw new WebDavException("can not write response", e);
         }
     }
 }

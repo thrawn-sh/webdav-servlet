@@ -20,8 +20,8 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Map;
 
-import de.shadowhunt.webdav.Entity;
 import de.shadowhunt.webdav.PropertyIdentifier;
+import de.shadowhunt.webdav.WebDavEntity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,7 +29,7 @@ abstract class AbstractPropertiesResponse extends AbstractBasicResponse {
 
     protected final String baseUri;
 
-    protected AbstractPropertiesResponse(final Entity entity, final String baseUri) {
+    protected AbstractPropertiesResponse(final WebDavEntity entity, final String baseUri) {
         super(entity);
         this.baseUri = baseUri;
     }

@@ -18,12 +18,10 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Path;
-import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavRequest;
+import de.shadowhunt.webdav.WebDavResponseFoo;
 import de.shadowhunt.webdav.WebDavStore;
 
 public class MkColMethod extends AbstractWebDavMethod {
@@ -34,24 +32,25 @@ public class MkColMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponse service(final WebDavStore store, final Path path, final HttpServletRequest request) throws ServletException, IOException {
+    public WebDavResponseFoo service(final WebDavStore store, final WebDavRequest request) throws IOException {
+        final WebDavPath target = request.getPath();
         if (consume(request.getInputStream())) {
-            Entity entity = null;
-            if (store.exists(path)) {
-                entity = store.getEntity(path);
+            WebDavEntity entity = null;
+            if (store.exists(target)) {
+                entity = store.getEntity(target);
             }
             return AbstractBasicResponse.createUnsupportedMediaType(entity);
         }
 
-        final Path parent = path.getParent();
+        final WebDavPath parent = target.getParent();
         if (!store.exists(parent)) {
             return AbstractBasicResponse.createConflict(null);
         }
 
-        Entity entity = null;
-        if (!store.exists(path)) {
-            store.createCollection(path);
-            entity = store.getEntity(path);
+        WebDavEntity entity = null;
+        if (!store.exists(target)) {
+            store.createCollection(target);
+            entity = store.getEntity(target);
             return AbstractBasicResponse.createCreated(entity);
         }
         return AbstractBasicResponse.createMethodNotAllowed(entity);

@@ -21,25 +21,25 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Lock;
-import de.shadowhunt.webdav.Path;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavLock;
+import de.shadowhunt.webdav.WebDavPath;
 
-public class EntiyImpl implements Entity {
+class EntiyImpl implements WebDavEntity {
 
     private final String hash;
 
     private final Date lastModified;
 
-    private final Lock lock;
+    private final WebDavLock lock;
 
-    private final Path path;
+    private final WebDavPath path;
 
     private final long size;
 
     private final Type type;
 
-    EntiyImpl(final Path path, final Type type, @Nullable final String hash, final Date lastModified, final long size, @Nullable final Lock lock) {
+    EntiyImpl(final WebDavPath path, final Type type, @Nullable final String hash, final Date lastModified, final long size, @Nullable final WebDavLock lock) {
         this.path = path;
         this.type = type;
         this.hash = hash;
@@ -49,7 +49,7 @@ public class EntiyImpl implements Entity {
     }
 
     @Override
-    public int compareTo(final Entity other) {
+    public int compareTo(final WebDavEntity other) {
         final int result = Integer.compare(type.priority, other.getType().priority);
         if (result != 0) {
             return result;
@@ -93,7 +93,7 @@ public class EntiyImpl implements Entity {
     }
 
     @Override
-    public Lock getLock() {
+    public WebDavLock getLock() {
         return lock;
     }
 
@@ -103,7 +103,7 @@ public class EntiyImpl implements Entity {
     }
 
     @Override
-    public Path getPath() {
+    public WebDavPath getPath() {
         return path;
     }
 

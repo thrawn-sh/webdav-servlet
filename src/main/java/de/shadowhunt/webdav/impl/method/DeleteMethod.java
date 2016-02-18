@@ -18,18 +18,16 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Path;
-import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavRequest;
+import de.shadowhunt.webdav.WebDavResponseFoo;
 import de.shadowhunt.webdav.WebDavStore;
 
 public class DeleteMethod extends AbstractWebDavMethod {
 
-    private void delete(final WebDavStore store, final Path path) {
-        for (final Path child : store.list(path)) {
+    private void delete(final WebDavStore store, final WebDavPath path) {
+        for (final WebDavPath child : store.list(path)) {
             delete(store, child);
         }
         store.delete(path);
@@ -41,17 +39,18 @@ public class DeleteMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponse service(final WebDavStore store, final Path path, final HttpServletRequest request) throws ServletException, IOException {
-        if (Path.ROOT.equals(path)) {
-            final Entity entity = store.getEntity(path);
+    public WebDavResponseFoo service(final WebDavStore store, final WebDavRequest request) throws IOException {
+        final WebDavPath target = request.getPath();
+        if (WebDavPath.ROOT.equals(target)) {
+            final WebDavEntity entity = store.getEntity(target);
             return AbstractBasicResponse.createForbidden(entity);
         }
 
-        if (!store.exists(path)) {
+        if (!store.exists(target)) {
             return AbstractBasicResponse.createNotFound();
         }
 
-        delete(store, path);
+        delete(store, target);
         return AbstractBasicResponse.createNoContent(null);
     }
 }

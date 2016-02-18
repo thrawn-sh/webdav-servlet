@@ -23,8 +23,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavDispatcher;
+import de.shadowhunt.webdav.WebDavRequest;
+import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.impl.store.FileSystemStore;
 
@@ -36,13 +37,16 @@ public class WebDavServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-        final WebDavConfig config = WebDavConfig.getInstance();
+        final HttpServletConfig config = new HttpServletConfig();
         config.setAllowInfiniteDepthRequests(true);
         config.setReadOnly(false);
         config.setShowCollectionListings(true);
 
-        final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();
         final WebDavStore store = new FileSystemStore(FileUtils.getTempDirectory());
-        dispatcher.service(store, request, response);
+        final WebDavRequest webDavRequest = new HttpServletRequestWrapper(request, config);
+        final WebDavResponse webDavResponse = new HttpServletResponseWrapper(response, webDavRequest);
+
+        final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();
+        dispatcher.service(store, webDavRequest, webDavResponse);
     }
 }

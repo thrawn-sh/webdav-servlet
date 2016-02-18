@@ -24,26 +24,26 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Path;
-import de.shadowhunt.webdav.Property;
 import de.shadowhunt.webdav.PropertyIdentifier;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavException;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavProperty;
+import de.shadowhunt.webdav.WebDavResponse;
 
 import org.apache.commons.lang3.StringUtils;
 
 class PropertiesResponse extends AbstractPropertiesResponse {
 
-    private final Map<Path, Collection<Property>> entries;
+    private final Map<WebDavPath, Collection<WebDavProperty>> entries;
 
     private final Set<PropertyIdentifier> requested;
 
-    PropertiesResponse(final Entity entity, final String baseUri, final Set<PropertyIdentifier> requested, final Map<Path, Collection<Property>> entries) {
+    PropertiesResponse(final WebDavEntity entity, final String baseUri, final Set<PropertyIdentifier> requested, final Map<WebDavPath, Collection<WebDavProperty>> entries) {
         super(entity, baseUri);
         this.requested = requested;
         this.entries = entries;
@@ -69,8 +69,8 @@ class PropertiesResponse extends AbstractPropertiesResponse {
         writer.setPrefix(PropertyIdentifier.DEFAULT_DAV_PREFIX, PropertyIdentifier.DAV_NAMESPACE);
         prefixes.put(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.DEFAULT_DAV_PREFIX);
 
-        for (final Collection<Property> properties : entries.values()) {
-            for (final Property property : properties) {
+        for (final Collection<WebDavProperty> properties : entries.values()) {
+            for (final WebDavProperty property : properties) {
                 announce(writer, property.getIdentifier(), prefixes);
             }
         }
@@ -80,10 +80,10 @@ class PropertiesResponse extends AbstractPropertiesResponse {
         return prefixes;
     }
 
-    private Collection<Property> getAvailable(final Collection<Property> properties) {
-        final Collection<Property> available = new ArrayList<>();
+    private Collection<WebDavProperty> getAvailable(final Collection<WebDavProperty> properties) {
+        final Collection<WebDavProperty> available = new ArrayList<>();
 
-        for (final Property property : properties) {
+        for (final WebDavProperty property : properties) {
             final PropertyIdentifier identifier = property.getIdentifier();
             if (requested.contains(identifier)) {
                 available.add(property);
@@ -92,10 +92,10 @@ class PropertiesResponse extends AbstractPropertiesResponse {
         return available;
     }
 
-    private Collection<PropertyIdentifier> getMissing(final Collection<Property> available) {
+    private Collection<PropertyIdentifier> getMissing(final Collection<WebDavProperty> available) {
         final Collection<PropertyIdentifier> missing = new HashSet<>(requested);
 
-        for (final Property property : available) {
+        for (final WebDavProperty property : available) {
             final PropertyIdentifier identifier = property.getIdentifier();
             missing.remove(identifier);
         }
@@ -103,7 +103,7 @@ class PropertiesResponse extends AbstractPropertiesResponse {
     }
 
     @Override
-    protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+    protected void write0(final WebDavResponse response) throws IOException {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/xml");
         response.setStatus(207); // FIXME constant
@@ -116,13 +116,13 @@ class PropertiesResponse extends AbstractPropertiesResponse {
             final Map<String, String> prefixes = announceNameSpacePrefixes(writer);
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "multistatus");
             writeNameSpaceDeclarations(writer, prefixes);
-            for (final Map.Entry<Path, Collection<Property>> entry : entries.entrySet()) {
+            for (final Map.Entry<WebDavPath, Collection<WebDavProperty>> entry : entries.entrySet()) {
                 writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "response");
                 writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "href");
-                final Path path = entry.getKey();
+                final WebDavPath path = entry.getKey();
                 writer.writeCharacters(baseUri + path.toString());
                 writer.writeEndElement();
-                final Collection<Property> available = getAvailable(entry.getValue());
+                final Collection<WebDavProperty> available = getAvailable(entry.getValue());
                 writeAvailable(writer, available);
                 final Collection<PropertyIdentifier> missing = getMissing(available);
                 writeMissing(writer, missing);
@@ -133,15 +133,15 @@ class PropertiesResponse extends AbstractPropertiesResponse {
             writer.writeCharacters("\r\n"); // required by some clients
             writer.close();
         } catch (final XMLStreamException e) {
-            throw new ServletException("can not write response", e);
+            throw new WebDavException("can not write response", e);
         }
     }
 
-    private void writeAvailable(final XMLStreamWriter writer, final Collection<Property> properties) throws XMLStreamException {
+    private void writeAvailable(final XMLStreamWriter writer, final Collection<WebDavProperty> properties) throws XMLStreamException {
         if (!properties.isEmpty()) {
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "propstat");
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "prop");
-            for (final Property property : properties) {
+            for (final WebDavProperty property : properties) {
                 property.write(writer);
             }
             writer.writeEndElement();

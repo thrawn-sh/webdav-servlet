@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nullable;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Path;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -42,24 +42,24 @@ class HtmlListingResponse extends AbstractBasicResponse {
 
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
-    private final List<Entity> entities;
+    private final List<WebDavEntity> entities;
 
-    HtmlListingResponse(final Entity root, final List<Entity> entities, @Nullable final String cssPath) {
+    HtmlListingResponse(final WebDavEntity root, final List<WebDavEntity> entities, @Nullable final String cssPath) {
         super(root);
         this.entities = entities;
         this.cssPath = cssPath;
     }
 
     @Override
-    protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+    protected void write0(final WebDavResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html");
+        // response.setCharacterEncoding("UTF-8"); FIXME
+        // response.setContentType("text/html");
 
-        final PrintWriter writer = response.getWriter();
+        final PrintWriter writer = new PrintWriter(response.getOutputStream());
         writer.print("<!DOCTYPE html><html><head>");
         writer.print("<title>Content of folder ");
-        final Path path = entity.getPath();
+        final WebDavPath path = entity.getPath();
         writer.print(StringEscapeUtils.escapeHtml4(path.getValue()));
         writer.print("</title>");
 
@@ -70,7 +70,7 @@ class HtmlListingResponse extends AbstractBasicResponse {
         }
 
         writer.print("</head><body><table><thead><tr><th class=\"name\">Name</th><th class=\"size\">Size</th><th class=\"modified\">Modified</th></tr></thead><tbody>");
-        if (Path.ROOT.equals(path)) {
+        if (WebDavPath.ROOT.equals(path)) {
             // do not leave WebDav
             writer.print("<tr class=\"folder parent\"><td colspan=\"3\"><a href=\".\">Parent</a></td></tr>");
         } else {
@@ -78,11 +78,11 @@ class HtmlListingResponse extends AbstractBasicResponse {
         }
 
         Collections.sort(entities);
-        for (final Entity entity : entities) {
+        for (final WebDavEntity entity : entities) {
             final String entityName = entity.getName();
-            final String link = URLEncoder.encode(entityName, response.getCharacterEncoding());
+            final String link = URLEncoder.encode(entityName, "UTF-8"); // FIXME
             final String entityNameHtml = StringEscapeUtils.escapeHtml4(entityName);
-            if (Entity.Type.COLLECTION == entity.getType()) {
+            if (WebDavEntity.Type.COLLECTION == entity.getType()) {
                 writer.print("<tr class=\"folder\"><td colspan=\"3\"><a href=\"./");
                 writer.print(link);
                 writer.print("/\">");
@@ -106,5 +106,6 @@ class HtmlListingResponse extends AbstractBasicResponse {
 
         writer.print("</tbody></table>");
         writer.print("</body></html>");
+        writer.close();
     }
 }

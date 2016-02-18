@@ -19,12 +19,9 @@ package de.shadowhunt.webdav.impl.method;
 import java.util.Date;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Path;
+import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavMethod;
-import de.shadowhunt.webdav.WebDavStore;
+import de.shadowhunt.webdav.WebDavPath;
 
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
@@ -41,13 +38,13 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new PutMethod();
 
-        final Path path = Path.create("/item.txt");
-        final WebDavStore store = Mockito.mock(WebDavStore.class);
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        final WebDavPath path = WebDavPath.create("/item.txt");
+
+        Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(false);
 
-        final Response response = execute(method, store, path, request);
+        final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_CREATED);
         Assert.assertNull("content must be null", response.getContent());
     }
@@ -56,18 +53,18 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
     public void test01_exisitingItem() throws Exception {
         final WebDavMethod method = new PutMethod();
 
-        final Path path = Path.create("/item.txt");
-        final WebDavStore store = Mockito.mock(WebDavStore.class);
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        final Entity entity = Mockito.mock(Entity.class);
+        final WebDavPath path = WebDavPath.create("/item.txt");
+
+        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
+        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
+        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
+
+        Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(true);
         Mockito.when(store.getEntity(path)).thenReturn(entity);
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getType()).thenReturn(Entity.Type.ITEM);
 
-        final Response response = execute(method, store, path, request);
+        final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_CREATED);
         Assert.assertNull("content must be null", response.getContent());
     }
@@ -76,19 +73,19 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
     public void test02_exisitingCollection() throws Exception {
         final WebDavMethod method = new PutMethod();
 
-        final Path path = Path.create("/collection/");
-        final WebDavStore store = Mockito.mock(WebDavStore.class);
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        final Entity entity = Mockito.mock(Entity.class);
+        final WebDavPath path = WebDavPath.create("/collection/");
 
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
         Mockito.when(entity.getHash()).thenReturn(Optional.empty());
         Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
         Mockito.when(entity.getPath()).thenReturn(path);
-        Mockito.when(entity.getType()).thenReturn(Entity.Type.COLLECTION);
+        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.COLLECTION);
 
-        final Response response = execute(method, store, path, request);
+        Mockito.when(request.getPath()).thenReturn(path);
+
+        Mockito.when(store.exists(path)).thenReturn(true);
+        Mockito.when(store.getEntity(path)).thenReturn(entity);
+
+        final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_METHOD_NOT_ALLOWED);
         Assert.assertNull("content must be null", response.getContent());
     }

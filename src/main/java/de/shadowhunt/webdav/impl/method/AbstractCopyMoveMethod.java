@@ -20,16 +20,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Path;
-import de.shadowhunt.webdav.Property;
-import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavProperty;
+import de.shadowhunt.webdav.WebDavRequest;
+import de.shadowhunt.webdav.WebDavResponseFoo;
 import de.shadowhunt.webdav.WebDavStore;
-
-import org.apache.commons.lang3.StringUtils;
 
 public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
 
@@ -39,50 +35,51 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
         this.deleteSource = deleteSource;
     }
 
-    protected void copy(final WebDavStore store, final Path source, final Path target, final int depth) {
+    protected void copy(final WebDavStore store, final WebDavPath source, final WebDavPath target, final int depth) {
         if (depth < 0) {
             return;
         }
 
-        final Entity sourceEntity = store.getEntity(source);
-        if (sourceEntity.getType() == Entity.Type.COLLECTION) {
+        final WebDavEntity sourceEntity = store.getEntity(source);
+        if (sourceEntity.getType() == WebDavEntity.Type.COLLECTION) {
             store.createCollection(target);
         } else {
             store.createItem(target, store.getContent(source));
         }
-        final Collection<Property> properties = store.getProperties(source);
+        final Collection<WebDavProperty> properties = store.getProperties(source);
         store.setProperties(target, properties);
 
-        for (final Path child : store.list(source)) {
+        for (final WebDavPath child : store.list(source)) {
             copy(store, child, target.getChild(child.getName()), depth - 1);
         }
     }
 
-    protected boolean determineOverwrite(final HttpServletRequest request) {
-        final String overwrite = request.getHeader("Overwrite");
-        return StringUtils.isEmpty(overwrite) || "T".equalsIgnoreCase(overwrite);
+    protected boolean determineOverwrite(final WebDavRequest request) {
+        final String overwrite = request.getOption("Overwrite", "T");
+        return "T".equalsIgnoreCase(overwrite);
     }
 
-    protected Path determineTarget(final HttpServletRequest request) {
-        final String pathInfo = request.getServletPath();
-        final String destination = request.getHeader("Destination");
+    protected WebDavPath determineTarget(final WebDavRequest request) {
+        final String pathInfo = request.getBase();
+        final String destination = request.getOption("Destination", "");
         final URI destinationUri = URI.create(destination);
         final String destinationPath = destinationUri.getPath();
         final int indexOf = destinationPath.indexOf(pathInfo);
-        return Path.create(destinationPath.substring(indexOf + pathInfo.length()));
+        return WebDavPath.create(destinationPath.substring(indexOf + pathInfo.length()));
     }
 
     @Override
-    public WebDavResponse service(final WebDavStore store, final Path source, final HttpServletRequest request) throws ServletException, IOException {
+    public WebDavResponseFoo service(final WebDavStore store, final WebDavRequest request) throws IOException {
+        final WebDavPath source = request.getPath();
         if (!store.exists(source)) {
             return AbstractBasicResponse.createNotFound();
         }
 
-        final Entity sourceEntity = store.getEntity(source);
+        final WebDavEntity sourceEntity = store.getEntity(source);
 
         final boolean overwrite = determineOverwrite(request);
         final int depth = determineDepth(request);
-        final Path target = determineTarget(request);
+        final WebDavPath target = determineTarget(request);
         final boolean targetExistsBefore = store.exists(target);
         if (targetExistsBefore) {
             if (overwrite) {
@@ -93,7 +90,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
         }
 
         // targetParent collection must exist
-        final Path targetParent = target.getParent();
+        final WebDavPath targetParent = target.getParent();
         if (!store.exists(targetParent)) {
             return AbstractBasicResponse.createConflict(sourceEntity);
         }

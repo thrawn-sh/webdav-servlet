@@ -26,34 +26,34 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public interface WebDavStore {
 
-    void createCollection(Path path) throws WebDavException;
+    void createCollection(WebDavPath path) throws WebDavException;
 
-    void createItem(Path path, InputStream content) throws WebDavException;
+    void createItem(WebDavPath path, InputStream content) throws WebDavException;
 
-    Lock createLock() throws WebDavException;
+    WebDavLock createLock() throws WebDavException;
 
-    void delete(Path path) throws WebDavException;
+    void delete(WebDavPath path) throws WebDavException;
 
-    boolean exists(Path path) throws WebDavException;
+    boolean exists(WebDavPath path) throws WebDavException;
 
-    InputStream getContent(Path path) throws WebDavException;
+    InputStream getContent(WebDavPath path) throws WebDavException;
 
-    Entity getEntity(Path path) throws WebDavException;
+    WebDavEntity getEntity(WebDavPath path) throws WebDavException;
 
-    default Optional<Entity> getEntityIfExists(Path path) throws WebDavException {
+    default Optional<WebDavEntity> getEntityIfExists(final WebDavPath path) throws WebDavException {
         if (exists(path)) {
             return Optional.of(getEntity(path));
         }
         return Optional.empty();
     }
 
-    Collection<Property> getProperties(Path path) throws WebDavException;
+    Collection<WebDavProperty> getProperties(WebDavPath path) throws WebDavException;
 
-    List<Path> list(Path path) throws WebDavException;
+    List<WebDavPath> list(WebDavPath path) throws WebDavException;
 
-    void lock(Path path, Lock lock) throws WebDavException;
+    void lock(WebDavPath path, WebDavLock lock) throws WebDavException;
 
-    void setProperties(Path path, Collection<Property> properties) throws WebDavException;
+    void setProperties(WebDavPath path, Collection<WebDavProperty> properties) throws WebDavException;
 
-    void unlock(Path path) throws WebDavException;
+    void unlock(WebDavPath path) throws WebDavException;
 }

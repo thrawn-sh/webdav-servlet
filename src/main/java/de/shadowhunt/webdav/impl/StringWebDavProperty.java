@@ -14,30 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav.impl.method;
+package de.shadowhunt.webdav.impl;
 
-import java.io.IOException;
+import de.shadowhunt.webdav.PropertyIdentifier;
 
-import de.shadowhunt.webdav.WebDavEntity;
-import de.shadowhunt.webdav.WebDavPath;
-import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavResponseFoo;
-import de.shadowhunt.webdav.WebDavStore;
+public class StringWebDavProperty extends AbstractWebDavProperty {
 
-public class OptionsMethod extends AbstractWebDavMethod {
+    private final String value;
 
-    @Override
-    public Method getMethod() {
-        return Method.OPTIONS;
+    public StringWebDavProperty(final PropertyIdentifier identifier, final String value) {
+        super(identifier);
+        this.value = value;
     }
 
     @Override
-    public WebDavResponseFoo service(final WebDavStore store, final WebDavRequest request) throws IOException {
-        final WebDavPath target = request.getPath();
-        WebDavEntity entity = null;
-        if (store.exists(target)) {
-            entity = store.getEntity(target);
-        }
-        return AbstractBasicResponse.createNoContent(entity);
+    public String getValue() {
+        return value;
     }
 }

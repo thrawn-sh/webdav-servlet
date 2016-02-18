@@ -20,20 +20,19 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Path;
 import de.shadowhunt.webdav.WebDavConfig;
-import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavRequest;
+import de.shadowhunt.webdav.WebDavResponseFoo;
 import de.shadowhunt.webdav.WebDavStore;
 
 public class GetMethod extends AbstractWebDavMethod {
 
-    protected List<Entity> getEntities(final WebDavStore store, final Path path) {
-        final List<Path> children = store.list(path);
-        final List<Entity> result = new ArrayList<>(children.size());
-        for (final Path child : children) {
+    protected List<WebDavEntity> getEntities(final WebDavStore store, final WebDavPath path) {
+        final List<WebDavPath> children = store.list(path);
+        final List<WebDavEntity> result = new ArrayList<>(children.size());
+        for (final WebDavPath child : children) {
             result.add(store.getEntity(child));
         }
         return result;
@@ -45,21 +44,22 @@ public class GetMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponse service(final WebDavStore store, final Path path, final HttpServletRequest request) {
-        if (!store.exists(path)) {
+    public WebDavResponseFoo service(final WebDavStore store, final WebDavRequest request) {
+        final WebDavPath target = request.getPath();
+        if (!store.exists(target)) {
             return AbstractBasicResponse.createNotFound();
         }
 
-        final Entity entity = store.getEntity(path);
-        final Entity.Type type = entity.getType();
-        if (type == Entity.Type.ITEM) {
-            final InputStream content = store.getContent(path);
+        final WebDavEntity entity = store.getEntity(target);
+        final WebDavEntity.Type type = entity.getType();
+        if (type == WebDavEntity.Type.ITEM) {
+            final InputStream content = store.getContent(target);
             return new StreamingResponse(entity, content);
         }
 
-        final WebDavConfig config = WebDavConfig.getInstance();
+        final WebDavConfig config = request.getConfig();
         if (config.isShowCollectionListings()) {
-            final List<Entity> entities = getEntities(store, path);
+            final List<WebDavEntity> entities = getEntities(store, target);
             return new HtmlListingResponse(entity, entities, "/style.css"); // FIXME
         }
 

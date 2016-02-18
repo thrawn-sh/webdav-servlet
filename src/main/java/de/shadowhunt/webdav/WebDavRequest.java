@@ -16,16 +16,25 @@
  */
 package de.shadowhunt.webdav;
 
-import javax.annotation.concurrent.Immutable;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.UUID;
 
-@Immutable
-public interface Property {
+import de.shadowhunt.webdav.WebDavMethod.Method;
 
-    PropertyIdentifier getIdentifier();
+public interface WebDavRequest {
 
-    String getValue();
+    String getBase();
 
-    void write(final XMLStreamWriter writer) throws XMLStreamException;
+    WebDavConfig getConfig();
+
+    UUID getId();
+
+    InputStream getInputStream() throws IOException;
+
+    Method getMethod();
+
+    String getOption(String name, String defaultValue);
+
+    WebDavPath getPath();
 }

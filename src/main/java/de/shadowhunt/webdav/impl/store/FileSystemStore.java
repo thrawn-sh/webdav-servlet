@@ -33,15 +33,15 @@ import java.util.UUID;
 
 import javax.annotation.CheckForNull;
 
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Entity.Type;
-import de.shadowhunt.webdav.Lock;
-import de.shadowhunt.webdav.Path;
-import de.shadowhunt.webdav.Property;
 import de.shadowhunt.webdav.PropertyIdentifier;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavEntity.Type;
 import de.shadowhunt.webdav.WebDavException;
+import de.shadowhunt.webdav.WebDavLock;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavProperty;
 import de.shadowhunt.webdav.WebDavStore;
-import de.shadowhunt.webdav.impl.StringProperty;
+import de.shadowhunt.webdav.impl.StringWebDavProperty;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
@@ -49,15 +49,15 @@ import org.apache.commons.io.IOUtils;
 
 public class FileSystemStore implements WebDavStore {
 
-    private static final Path LOCK_SUFFIX = Path.create("_lock");
+    private static final WebDavPath LOCK_SUFFIX = WebDavPath.create("_lock");
 
-    private static final Path PROPERTIES_SUFFIX = Path.create("_xml");
+    private static final WebDavPath PROPERTIES_SUFFIX = WebDavPath.create("_xml");
 
     private final File metaRoot;
 
-    private final File resourceRoot;
-
     private final Object monitor = new Object();
+
+    private final File resourceRoot;
 
     public FileSystemStore(final File root) {
         this.resourceRoot = new File(root, "content");
@@ -71,7 +71,7 @@ public class FileSystemStore implements WebDavStore {
         }
     }
 
-    private String calculateMd5(final File file, final Path path) {
+    private String calculateMd5(final File file, final WebDavPath path) {
         try (final FileInputStream fis = new FileInputStream(file)) {
             return DigestUtils.md5Hex(fis);
         } catch (final Exception e) {
@@ -79,7 +79,7 @@ public class FileSystemStore implements WebDavStore {
         }
     }
 
-    private long calculateSize(final File file, final Path path) {
+    private long calculateSize(final File file, final WebDavPath path) {
         if (file.isDirectory()) {
             return 0L;
         }
@@ -92,21 +92,21 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public void createCollection(final Path path) throws WebDavException {
+    public void createCollection(final WebDavPath path) throws WebDavException {
         synchronized (monitor) {
             createFolder(path, getFile(path, false));
             createFolder(path, getMetaFile(path));
         }
     }
 
-    private void createFolder(final Path path, final File file) {
+    private void createFolder(final WebDavPath path, final File file) {
         if (!file.mkdir()) {
             throw new WebDavException("can not create folder " + path);
         }
     }
 
     @Override
-    public void createItem(final Path path, final InputStream content) throws WebDavException {
+    public void createItem(final WebDavPath path, final InputStream content) throws WebDavException {
         synchronized (monitor) {
             final File file = getFile(path, false);
             try (final OutputStream os = FileUtils.openOutputStream(file)) {
@@ -120,8 +120,8 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public Lock createLock() {
-        return new LockImpl("opaquelocktoken:" + UUID.randomUUID().toString(), Lock.Scope.EXCLUSIVE, "");
+    public WebDavLock createLock() {
+        return new LockImpl("opaquelocktoken:" + UUID.randomUUID().toString(), WebDavLock.Scope.EXCLUSIVE, "");
     }
 
     private PropertyIdentifier createPropertyIdentifier(final String elementName) {
@@ -130,12 +130,12 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public void delete(final Path path) throws WebDavException {
+    public void delete(final WebDavPath path) throws WebDavException {
         delete(path, getFile(path, true));
         delete(path, getMetaFile(path));
     }
 
-    private void delete(final Path path, final File file) {
+    private void delete(final WebDavPath path, final File file) {
         if (file.isFile()) {
             if (!file.delete()) {
                 throw new WebDavException("can not delete " + path);
@@ -149,7 +149,7 @@ public class FileSystemStore implements WebDavStore {
         }
     }
 
-    private Date determineLastModified(final File file, final Path path) {
+    private Date determineLastModified(final File file, final WebDavPath path) {
         try {
             return new Date(file.lastModified());
         } catch (final Exception e) {
@@ -158,7 +158,7 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @CheckForNull
-    private Lock determineLock(final Path path) {
+    private WebDavLock determineLock(final WebDavPath path) {
         synchronized (monitor) {
             final File lock = getMetaFile(path.append(LOCK_SUFFIX));
             if (!lock.exists()) {
@@ -166,7 +166,7 @@ public class FileSystemStore implements WebDavStore {
             }
 
             try {
-                return new LockImpl(FileUtils.readFileToString(lock), Lock.Scope.EXCLUSIVE, "");
+                return new LockImpl(FileUtils.readFileToString(lock), WebDavLock.Scope.EXCLUSIVE, "");
             } catch (final IOException e) {
                 throw new WebDavException("can not read lock for " + path, e);
             }
@@ -174,7 +174,15 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public InputStream getContent(final Path path) throws WebDavException {
+    public boolean exists(final WebDavPath path) throws WebDavException {
+        synchronized (monitor) {
+            final File file = getFile(path, false);
+            return file.exists();
+        }
+    }
+
+    @Override
+    public InputStream getContent(final WebDavPath path) throws WebDavException {
         synchronized (monitor) {
             final File file = getFile(path, true);
             try {
@@ -186,20 +194,12 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public boolean exists(final Path path) throws WebDavException {
-        synchronized (monitor) {
-            final File file = getFile(path, false);
-            return file.exists();
-        }
-    }
-
-    @Override
-    public Entity getEntity(final Path path) throws WebDavException {
+    public WebDavEntity getEntity(final WebDavPath path) throws WebDavException {
         synchronized (monitor) {
             final File file = getFile(path, true);
 
             final Date lastModified = determineLastModified(file, path);
-            final Lock lock = determineLock(path);
+            final WebDavLock lock = determineLock(path);
             if (file.isFile()) {
                 final String hash = calculateMd5(file, path);
                 final long size = calculateSize(file, path);
@@ -209,7 +209,7 @@ public class FileSystemStore implements WebDavStore {
         }
     }
 
-    private File getFile(final Path path, final boolean mustExist) throws WebDavException {
+    private File getFile(final WebDavPath path, final boolean mustExist) throws WebDavException {
         final File file = new File(resourceRoot, path.getValue());
         if (mustExist && !file.exists()) {
             throw new WebDavException("can not locate resource: " + path);
@@ -217,12 +217,12 @@ public class FileSystemStore implements WebDavStore {
         return file;
     }
 
-    private File getMetaFile(final Path path) throws WebDavException {
+    private File getMetaFile(final WebDavPath path) throws WebDavException {
         return new File(metaRoot, path.getValue());
     }
 
     @Override
-    public Collection<Property> getProperties(final Path path) throws WebDavException {
+    public Collection<WebDavProperty> getProperties(final WebDavPath path) throws WebDavException {
         synchronized (monitor) {
             getFile(path, true); // ensure collection/item exists
 
@@ -235,13 +235,13 @@ public class FileSystemStore implements WebDavStore {
             try (final InputStream is = new FileInputStream(meta)) {
                 properties.loadFromXML(is);
 
-                final Collection<Property> result = new ArrayList<>();
+                final Collection<WebDavProperty> result = new ArrayList<>();
                 final Enumeration<?> enumeration = properties.propertyNames();
                 while (enumeration.hasMoreElements()) {
                     final Object element = enumeration.nextElement();
                     final Object value = properties.get(element);
                     final PropertyIdentifier identifier = createPropertyIdentifier(element.toString());
-                    result.add(new StringProperty(identifier, value.toString()));
+                    result.add(new StringWebDavProperty(identifier, value.toString()));
                 }
                 return result;
             } catch (final Exception e) {
@@ -251,14 +251,14 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public List<Path> list(final Path path) throws WebDavException {
+    public List<WebDavPath> list(final WebDavPath path) throws WebDavException {
         synchronized (monitor) {
             final File file = getFile(path, true);
             if (file.isFile()) {
                 return Collections.emptyList();
             }
 
-            final List<Path> result = new ArrayList<>();
+            final List<WebDavPath> result = new ArrayList<>();
             final String[] children = file.list();
             if (children != null) {
                 for (final String child : children) {
@@ -270,7 +270,7 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public void lock(final Path path, final Lock lock) throws WebDavException {
+    public void lock(final WebDavPath path, final WebDavLock lock) throws WebDavException {
         synchronized (monitor) {
             final File lockFile = getMetaFile(path.append(LOCK_SUFFIX));
             try {
@@ -282,7 +282,7 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public void setProperties(final Path path, final Collection<Property> properties) throws WebDavException {
+    public void setProperties(final WebDavPath path, final Collection<WebDavProperty> properties) throws WebDavException {
         synchronized (monitor) {
             getFile(path, true); // ensure collection/item exists
 
@@ -293,7 +293,7 @@ public class FileSystemStore implements WebDavStore {
             }
 
             final Properties store = new Properties();
-            for (final Property property : properties) {
+            for (final WebDavProperty property : properties) {
                 final PropertyIdentifier identifier = property.getIdentifier();
                 store.put(identifier.getNameSpace() + " " + identifier.getName(), property.getValue());
             }
@@ -307,7 +307,7 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public void unlock(final Path path) throws WebDavException {
+    public void unlock(final WebDavPath path) throws WebDavException {
         synchronized (monitor) {
             final File lock = getMetaFile(path.append(LOCK_SUFFIX));
             if (!lock.delete()) {

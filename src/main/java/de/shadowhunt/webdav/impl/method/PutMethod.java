@@ -18,12 +18,10 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Path;
-import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavRequest;
+import de.shadowhunt.webdav.WebDavResponseFoo;
 import de.shadowhunt.webdav.WebDavStore;
 
 public class PutMethod extends AbstractWebDavMethod {
@@ -34,16 +32,17 @@ public class PutMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponse service(final WebDavStore store, final Path path, final HttpServletRequest request) throws ServletException, IOException {
-        if (store.exists(path)) {
-            final Entity entity = store.getEntity(path);
-            if (entity.getType() == Entity.Type.COLLECTION) {
+    public WebDavResponseFoo service(final WebDavStore store, final WebDavRequest request) throws IOException {
+        final WebDavPath target = request.getPath();
+        if (store.exists(target)) {
+            final WebDavEntity entity = store.getEntity(target);
+            if (entity.getType() == WebDavEntity.Type.COLLECTION) {
                 return AbstractBasicResponse.createMessageNodeAllowed(entity);
             }
         }
 
-        store.createItem(path, request.getInputStream());
-        final Entity entity = store.getEntity(path); // use newly created entity
+        store.createItem(target, request.getInputStream());
+        final WebDavEntity entity = store.getEntity(target); // use newly created entity
         return AbstractBasicResponse.createCreated(entity);
     }
 }

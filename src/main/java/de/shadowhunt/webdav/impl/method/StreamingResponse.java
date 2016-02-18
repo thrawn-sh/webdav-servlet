@@ -18,12 +18,12 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import de.shadowhunt.webdav.Entity;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavResponse;
 
 import org.apache.commons.io.IOUtils;
 
@@ -31,15 +31,15 @@ class StreamingResponse extends AbstractBasicResponse {
 
     private final InputStream input;
 
-    StreamingResponse(final Entity entity, final InputStream input) {
+    StreamingResponse(final WebDavEntity entity, final InputStream input) {
         super(entity);
         this.input = input;
     }
 
     @Override
-    protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+    protected void write0(final WebDavResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
-        final ServletOutputStream output = response.getOutputStream();
+        final OutputStream output = response.getOutputStream();
         try {
             IOUtils.copy(input, output);
         } finally {

@@ -17,20 +17,15 @@
 package de.shadowhunt.webdav;
 
 import javax.annotation.concurrent.Immutable;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 @Immutable
-public interface Lock {
+public interface WebDavProperty {
 
-    enum Scope {
-        EXCLUSIVE, SHARED;
-    }
+    PropertyIdentifier getIdentifier();
 
-    String getOwner();
+    String getValue();
 
-    Scope getScope();
-
-    String getToken();
-
-    Property toProperty();
-
+    void write(final XMLStreamWriter writer) throws XMLStreamException;
 }

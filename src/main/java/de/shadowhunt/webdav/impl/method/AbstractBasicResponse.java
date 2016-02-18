@@ -23,17 +23,18 @@ import java.util.TreeSet;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
-import de.shadowhunt.webdav.Entity;
 import de.shadowhunt.webdav.WebDavConfig;
+import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavMethod.Method;
+import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavResponseFoo;
 
 import org.apache.commons.lang3.StringUtils;
 
-abstract class AbstractBasicResponse implements WebDavResponse {
+abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
     private static final String COLLECTION;
 
@@ -86,146 +87,148 @@ abstract class AbstractBasicResponse implements WebDavResponse {
         COLLECTION = StringUtils.join(collectionOperations, ", ");
     }
 
-    public static final WebDavResponse createBadRequest(@Nullable final Entity entity) {
+    public static final WebDavResponseFoo createBadRequest(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
-            protected void write0(final HttpServletResponse response) throws ServletException, IOException {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            protected void write0(final WebDavResponse response) throws IOException {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
         };
     }
 
-    public static final WebDavResponse createConflict(@Nullable final Entity entity) {
+    public static final WebDavResponseFoo createConflict(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
-            protected void write0(final HttpServletResponse response) throws ServletException, IOException {
-                response.sendError(HttpServletResponse.SC_CONFLICT);
+            protected void write0(final WebDavResponse response) throws IOException {
+                response.setStatus(HttpServletResponse.SC_CONFLICT);
             }
         };
     }
 
-    public static final WebDavResponse createCreated(@Nullable final Entity entity) {
+    public static final WebDavResponseFoo createCreated(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
-            protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+            protected void write0(final WebDavResponse response) throws IOException {
                 response.setStatus(HttpServletResponse.SC_CREATED);
             }
         };
     }
 
-    public static final WebDavResponse createForbidden(@Nullable final Entity entity) {
+    public static final WebDavResponseFoo createForbidden(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
-            protected void write0(final HttpServletResponse response) throws ServletException, IOException {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            protected void write0(final WebDavResponse response) throws IOException {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
         };
     }
 
-    public static final WebDavResponse createLocked(@Nullable final Entity entity) {
+    public static final WebDavResponseFoo createLocked(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
-            protected void write0(final HttpServletResponse response) throws ServletException, IOException {
-                response.sendError(423);
+            protected void write0(final WebDavResponse response) throws IOException {
+                response.setStatus(423);
             }
         };
     }
 
-    public static final WebDavResponse createMessageNodeAllowed(@Nullable final Entity entity) {
+    public static final WebDavResponseFoo createMessageNodeAllowed(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
-            protected void write0(final HttpServletResponse response) throws ServletException, IOException {
-                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-            }
-        };
-    }
-
-    public static WebDavResponse createMethodNotAllowed(@Nullable final Entity entity) {
-        return new AbstractBasicResponse(entity) {
-
-            @Override
-            protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+            protected void write0(final WebDavResponse response) throws IOException {
                 response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             }
         };
     }
 
-    public static final WebDavResponse createNoContent(@Nullable final Entity entity) {
+    public static WebDavResponseFoo createMethodNotAllowed(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
-            protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+            protected void write0(final WebDavResponse response) throws IOException {
+                response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            }
+        };
+    }
+
+    public static final WebDavResponseFoo createNoContent(@Nullable final WebDavEntity entity) {
+        return new AbstractBasicResponse(entity) {
+
+            @Override
+            protected void write0(final WebDavResponse response) throws IOException {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
         };
     }
 
-    public static final WebDavResponse createNotFound() {
+    public static final WebDavResponseFoo createNotFound() {
         return new AbstractBasicResponse(null) {
 
             @Override
-            protected void write0(final HttpServletResponse response) throws ServletException, IOException {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            protected void write0(final WebDavResponse response) throws IOException {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
         };
     }
 
-    public static WebDavResponse createOk(@Nullable final Entity entity) {
+    public static WebDavResponseFoo createOk(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
-            protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+            protected void write0(final WebDavResponse response) throws IOException {
                 response.setStatus(HttpServletResponse.SC_OK);
             }
         };
     }
 
-    public static final WebDavResponse createPreconditionFailed(@Nullable final Entity entity) {
+    public static final WebDavResponseFoo createPreconditionFailed(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
-            protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+            protected void write0(final WebDavResponse response) throws IOException {
                 response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
             }
         };
     }
 
-    public static final WebDavResponse createUnsupportedMediaType(@Nullable final Entity entity) {
+    public static final WebDavResponseFoo createUnsupportedMediaType(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
-            protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+            protected void write0(final WebDavResponse response) throws IOException {
                 response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
             }
         };
     }
 
-    protected static final String getAllowedMethods(@CheckForNull final Entity entity) {
-        final WebDavConfig config = WebDavConfig.getInstance();
+    protected static final String getAllowedMethods(@CheckForNull final WebDavEntity entity, final WebDavConfig config) {
         if (entity == null) {
             return config.isReadOnly() ? NON_EXISTING_READ_ONLY : NON_EXISTING;
         }
-        if (entity.getType() == Entity.Type.COLLECTION) {
+        if (entity.getType() == WebDavEntity.Type.COLLECTION) {
             return config.isReadOnly() ? COLLECTION_READ_ONLY : COLLECTION;
         }
         return config.isReadOnly() ? ITEM_READ_ONLY : ITEM;
     }
 
-    protected final Entity entity;
+    protected final WebDavEntity entity;
 
-    protected AbstractBasicResponse(@Nullable final Entity entity) {
+    protected AbstractBasicResponse(@Nullable final WebDavEntity entity) {
         this.entity = entity;
     }
 
     @Override
-    public final void write(final HttpServletResponse response) throws ServletException, IOException {
-        response.addHeader("Allow", getAllowedMethods(entity));
+    public final void write(final WebDavResponse response) throws IOException {
+        final WebDavRequest request = response.getRequest();
+        final WebDavConfig config = request.getConfig();
+
+        response.addHeader("Allow", getAllowedMethods(entity, config));
         response.addHeader("DAV", "1,2");
         response.addHeader("MS-Author-Via", "DAV"); // MS required header
         if (entity != null) {
@@ -234,11 +237,12 @@ abstract class AbstractBasicResponse implements WebDavResponse {
                 response.addHeader("ETag", hash.get());
             }
 
-            response.addDateHeader("Last-Modified", entity.getLastModified().getTime());
+            // response.addDateHeader("Last-Modified", entity.getLastModified().getTime()); FIXME
         }
-        response.setCharacterEncoding("UTF-8");
+        // response.setCharacterEncoding("UTF-8"); FIXME
         write0(response);
     }
 
-    protected abstract void write0(final HttpServletResponse response) throws ServletException, IOException;
+    protected abstract void write0(final WebDavResponse response) throws IOException;
+
 }

@@ -19,13 +19,9 @@ package de.shadowhunt.webdav.impl.method;
 import java.util.Date;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Path;
-import de.shadowhunt.webdav.WebDavConfig;
+import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavMethod;
-import de.shadowhunt.webdav.WebDavStore;
+import de.shadowhunt.webdav.WebDavPath;
 
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
@@ -40,142 +36,136 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
 
     @Test
     public void test00_missingReadOnly() throws Exception {
-        final WebDavConfig config = WebDavConfig.getInstance();
-        config.setReadOnly(true);
-
         final WebDavMethod method = new OptionsMethod();
 
-        final Path path = Path.create("/item.txt");
-        final WebDavStore store = Mockito.mock(WebDavStore.class);
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        final WebDavPath path = WebDavPath.create("/item.txt");
+
+        Mockito.when(config.isReadOnly()).thenReturn(true);
+
+        Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(false);
 
-        final Response response = execute(method, store, path, request);
+        final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_NO_CONTENT);
         Assert.assertNull("content must be null", response.getContent());
-        final Header allow = response.getFirstHeader("Allow");
-        Assert.assertEquals("allow must match", allow.value, "OPTIONS");
+        final String allow = response.getHeader("Allow");
+        Assert.assertEquals("allow must match", allow, "OPTIONS");
     }
 
     @Test
     public void test00_missingWritable() throws Exception {
-        final WebDavConfig config = WebDavConfig.getInstance();
-        config.setReadOnly(false);
-
         final WebDavMethod method = new OptionsMethod();
 
-        final Path path = Path.create("/item.txt");
-        final WebDavStore store = Mockito.mock(WebDavStore.class);
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        final WebDavPath path = WebDavPath.create("/item.txt");
+
+        Mockito.when(config.isReadOnly()).thenReturn(false);
+
+        Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(false);
 
-        final Response response = execute(method, store, path, request);
+        final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_NO_CONTENT);
         Assert.assertNull("content must be null", response.getContent());
-        final Header allow = response.getFirstHeader("Allow");
-        Assert.assertEquals("allow must match", allow.value, "MKCOL, OPTIONS, PUT");
+        final String allow = response.getHeader("Allow");
+        Assert.assertEquals("allow must match", allow, "MKCOL, OPTIONS, PUT");
     }
 
     @Test
     public void test01_exisitingItemReadOnly() throws Exception {
-        final WebDavConfig config = WebDavConfig.getInstance();
-        config.setReadOnly(true);
-
         final WebDavMethod method = new OptionsMethod();
 
-        final Path path = Path.create("/item.txt");
-        final WebDavStore store = Mockito.mock(WebDavStore.class);
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        final Entity entity = Mockito.mock(Entity.class);
+        final WebDavPath path = WebDavPath.create("/item.txt");
+
+        Mockito.when(config.isReadOnly()).thenReturn(true);
+
+        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
+        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
+        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
+
+        Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(true);
         Mockito.when(store.getEntity(path)).thenReturn(entity);
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getType()).thenReturn(Entity.Type.ITEM);
 
-        final Response response = execute(method, store, path, request);
+        final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_NO_CONTENT);
         Assert.assertNull("content must be null", response.getContent());
-        final Header allow = response.getFirstHeader("Allow");
-        Assert.assertEquals("allow must match", allow.value, "GET, HEAD, OPTIONS, PROPFIND");
+        final String allow = response.getHeader("Allow");
+        Assert.assertEquals("allow must match", allow, "GET, HEAD, OPTIONS, PROPFIND");
     }
 
     @Test
     public void test01_exisitingItemWritable() throws Exception {
-        final WebDavConfig config = WebDavConfig.getInstance();
-        config.setReadOnly(false);
-
         final WebDavMethod method = new OptionsMethod();
 
-        final Path path = Path.create("/item.txt");
-        final WebDavStore store = Mockito.mock(WebDavStore.class);
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        final Entity entity = Mockito.mock(Entity.class);
+        final WebDavPath path = WebDavPath.create("/item.txt");
+
+        Mockito.when(config.isReadOnly()).thenReturn(false);
+
+        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
+        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
+        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
+
+        Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(true);
         Mockito.when(store.getEntity(path)).thenReturn(entity);
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getType()).thenReturn(Entity.Type.ITEM);
 
-        final Response response = execute(method, store, path, request);
+        final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_NO_CONTENT);
         Assert.assertNull("content must be null", response.getContent());
-        final Header allow = response.getFirstHeader("Allow");
-        Assert.assertEquals("allow must match", allow.value, "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, PUT, UNLOCK");
+        final String allow = response.getHeader("Allow");
+        Assert.assertEquals("allow must match", allow, "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, PUT, UNLOCK");
     }
 
     @Test
     public void test02_exisitingCollectionReadOnly() throws Exception {
-        final WebDavConfig config = WebDavConfig.getInstance();
-        config.setReadOnly(true);
-
         final WebDavMethod method = new OptionsMethod();
 
-        final Path path = Path.create("/collection/");
-        final WebDavStore store = Mockito.mock(WebDavStore.class);
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        final Entity entity = Mockito.mock(Entity.class);
+        final WebDavPath path = WebDavPath.create("/collection/");
 
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
+        Mockito.when(config.isReadOnly()).thenReturn(true);
+
         Mockito.when(entity.getHash()).thenReturn(Optional.empty());
         Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
         Mockito.when(entity.getPath()).thenReturn(path);
-        Mockito.when(entity.getType()).thenReturn(Entity.Type.COLLECTION);
+        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.COLLECTION);
 
-        final Response response = execute(method, store, path, request);
+        Mockito.when(request.getPath()).thenReturn(path);
+
+        Mockito.when(store.exists(path)).thenReturn(true);
+        Mockito.when(store.getEntity(path)).thenReturn(entity);
+
+        final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_NO_CONTENT);
         Assert.assertNull("content must be null", response.getContent());
-        final Header allow = response.getFirstHeader("Allow");
-        Assert.assertEquals("allow must match", allow.value, "GET, HEAD, OPTIONS, PROPFIND");
+        final String allow = response.getHeader("Allow");
+        Assert.assertEquals("allow must match", allow, "GET, HEAD, OPTIONS, PROPFIND");
     }
 
     @Test
     public void test02_exisitingCollectionWritable() throws Exception {
-        final WebDavConfig config = WebDavConfig.getInstance();
-        config.setReadOnly(false);
-
         final WebDavMethod method = new OptionsMethod();
 
-        final Path path = Path.create("/collection/");
-        final WebDavStore store = Mockito.mock(WebDavStore.class);
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        final Entity entity = Mockito.mock(Entity.class);
+        final WebDavPath path = WebDavPath.create("/collection/");
+
+        Mockito.when(config.isReadOnly()).thenReturn(false);
+
+        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
+        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
+        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.COLLECTION);
+
+        Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(true);
         Mockito.when(store.getEntity(path)).thenReturn(entity);
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getType()).thenReturn(Entity.Type.COLLECTION);
 
-        final Response response = execute(method, store, path, request);
+        final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_NO_CONTENT);
         Assert.assertNull("content must be null", response.getContent());
-        final Header allow = response.getFirstHeader("Allow");
-        Assert.assertEquals("allow must match", allow.value, "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, UNLOCK");
+        final String allow = response.getHeader("Allow");
+        Assert.assertEquals("allow must match", allow, "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, UNLOCK");
     }
 }

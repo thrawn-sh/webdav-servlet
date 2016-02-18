@@ -18,9 +18,6 @@ package de.shadowhunt.webdav;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
 public interface WebDavMethod {
 
     enum Method {
@@ -39,6 +36,6 @@ public interface WebDavMethod {
 
     Method getMethod();
 
-    WebDavResponse service(WebDavStore store, Path path, HttpServletRequest request) throws ServletException, IOException;
+    WebDavResponseFoo service(WebDavStore store, WebDavRequest request) throws IOException;
 
 }

@@ -18,13 +18,31 @@ package de.shadowhunt.webdav;
 
 public class WebDavException extends RuntimeException {
 
+    public static final int DEFAULT_HTTP_STATUS = 500;
+
     private static final long serialVersionUID = 1L;
 
+    private final int httpStatus;
+
     public WebDavException(final String message) {
+        this(message, DEFAULT_HTTP_STATUS);
+    }
+
+    public WebDavException(final String message, final int httpStatus) {
         super(message);
+        this.httpStatus = httpStatus;
     }
 
     public WebDavException(final String message, final Throwable cause) {
+        this(message, cause, DEFAULT_HTTP_STATUS);
+    }
+
+    public WebDavException(final String message, final Throwable cause, final int httpStatus) {
         super(message, cause);
+        this.httpStatus = httpStatus;
+    }
+
+    public int getHttpStatus() {
+        return httpStatus;
     }
 }

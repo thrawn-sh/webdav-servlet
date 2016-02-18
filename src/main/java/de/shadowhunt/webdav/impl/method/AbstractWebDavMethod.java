@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import de.shadowhunt.webdav.WebDavMethod;
+import de.shadowhunt.webdav.WebDavRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,9 +44,9 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
         return data;
     }
 
-    protected int determineDepth(final HttpServletRequest request) {
-        final String depth = request.getHeader("Depth");
-        if (StringUtils.isEmpty(depth) || "infinity".equalsIgnoreCase(depth)) {
+    protected int determineDepth(final WebDavRequest request) {
+        final String depth = request.getOption("Depth", "infinity");
+        if ("infinity".equalsIgnoreCase(depth)) {
             return Integer.MAX_VALUE;
         }
         return Integer.parseInt(depth);

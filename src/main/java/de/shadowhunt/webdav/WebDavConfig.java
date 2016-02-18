@@ -16,49 +16,14 @@
  */
 package de.shadowhunt.webdav;
 
-import java.io.Serializable;
+import javax.annotation.concurrent.ThreadSafe;
 
-public final class WebDavConfig implements Serializable {
+@ThreadSafe
+public interface WebDavConfig {
 
-    private static final WebDavConfig INSTANCE = new WebDavConfig();
+    boolean isAllowInfiniteDepthRequests();
 
-    private static final long serialVersionUID = 1L;
+    boolean isReadOnly();
 
-    public static WebDavConfig getInstance() {
-        return INSTANCE;
-    }
-
-    private volatile boolean allowInfiniteDepthRequests = false;
-
-    private volatile boolean readOnly = true;
-
-    private volatile boolean showCollectionListings = false;
-
-    private WebDavConfig() {
-        // prevent instantiation
-    }
-
-    public boolean isAllowInfiniteDepthRequests() {
-        return allowInfiniteDepthRequests;
-    }
-
-    public boolean isReadOnly() {
-        return readOnly;
-    }
-
-    public boolean isShowCollectionListings() {
-        return showCollectionListings;
-    }
-
-    public void setAllowInfiniteDepthRequests(final boolean allowInfiniteDepthRequests) {
-        this.allowInfiniteDepthRequests = allowInfiniteDepthRequests;
-    }
-
-    public void setReadOnly(final boolean readOnly) {
-        this.readOnly = readOnly;
-    }
-
-    public void setShowCollectionListings(final boolean showCollectionListings) {
-        this.showCollectionListings = showCollectionListings;
-    }
+    boolean isShowCollectionListings();
 }

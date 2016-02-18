@@ -16,147 +16,134 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.annotation.Nullable;
 
-import de.shadowhunt.webdav.Path;
+import de.shadowhunt.webdav.WebDavConfig;
+import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavMethod;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavResponseFoo;
 import de.shadowhunt.webdav.WebDavStore;
 
-import org.apache.commons.lang3.StringUtils;
-import org.mockito.Matchers;
+import org.junit.Before;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.mockito.MockitoAnnotations;
 
 public abstract class AbstractWebDavMethodTest {
 
-    public static class Header {
+    static class Response implements WebDavResponse {
 
-        public final String name;
+        private String characterEncoding = null;
 
-        public final String value;
+        private final ByteArrayOutputStream content = new ByteArrayOutputStream();
 
-        public Header(final String name, final String value) {
-            this.name = name;
-            this.value = value;
-        }
+        private String contentType = null;
 
-        @Override
-        public String toString() {
-            return "Header [name=" + name + ", value=" + value + "]";
-        }
-    }
+        private final Map<String, String> headers = new HashMap<>();
 
-    public static class Response {
-
-        private final StringBuilder content = new StringBuilder();
-
-        private final Collection<Header> headers = new ArrayList<>();
+        private final WebDavRequest request;
 
         private int status = -1;
 
-        public void addHeader(final String name, final String value) {
-            headers.add(new Header(name, value));
+        Response(final WebDavRequest request) {
+            this.request = request;
         }
 
+        @Override
+        public void addHeader(final String name, final String value) {
+            final String previous = headers.put(name, value);
+            // Assert.assertNotNull("header must not be defined multiple times", previous);
+        }
+
+        public String getCharacterEncoding() {
+            return characterEncoding;
+        }
+
+        @Nullable
         public String getContent() {
-            final String result = content.toString();
-            if (StringUtils.isEmpty(result)) {
+            if (content.size() == 0) {
                 return null;
             }
-            return result;
+            return new String(content.toByteArray());
         }
 
-        public Header getFirstHeader(final String name) {
-            for (final Header header : headers) {
-                if (name.equalsIgnoreCase(header.name)) {
-                    return header;
-                }
-            }
-            throw new IllegalArgumentException("no header with name: " + name + " found");
+        public String getContentType() {
+            return contentType;
         }
 
-        public Collection<Header> getHeaders() {
-            return headers;
+        public String getHeader(final String name) {
+            return headers.get(name);
+        }
+
+        @Override
+        public OutputStream getOutputStream() {
+            return content;
+        }
+
+        @Override
+        public WebDavRequest getRequest() {
+            return request;
         }
 
         public int getStatus() {
             return status;
         }
 
+        @Override
+        public void setCharacterEncoding(final String characterEncoding) {
+            this.characterEncoding = characterEncoding;
+        }
+
+        @Override
+        public void setContentType(final String contentType) {
+            this.contentType = contentType;
+        }
+
+        @Override
         public void setStatus(final int status) {
             this.status = status;
         }
-
-        public void writeContent(final int character) {
-            content.append((char) character);
-        }
     }
 
-    private HttpServletResponse createHttpServletResponseMock(final Response r) throws Exception {
-        final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        final ServletOutputStream stream = new ServletOutputStream() {
+    @Mock
+    protected WebDavConfig config;
 
-            @Override
-            public void write(final int b) throws IOException {
-                r.writeContent(b);
-            }
-        };
-        final PrintWriter writer = new PrintWriter(stream);
+    @Mock
+    protected WebDavEntity entity;
 
-        Mockito.doAnswer(new Answer<Void>() {
+    @Mock
+    protected WebDavRequest request;
 
-            @Override
-            public Void answer(final InvocationOnMock invocation) throws Throwable {
-                final Object[] arguments = invocation.getArguments();
-                r.addHeader((String) arguments[0], (String) arguments[1]);
-                return null;
-            }
-        }).when(response).addHeader(Matchers.anyString(), Matchers.anyString());
+    @Mock
+    protected WebDavStore store;
 
-        Mockito.doAnswer(new Answer<Void>() {
+    protected void assertResponse(final Response response) {
+        // FIXME
+    }
 
-            @Override
-            public Void answer(final InvocationOnMock invocation) throws Throwable {
-                final Object[] arguments = invocation.getArguments();
-                r.setStatus((int) arguments[0]);
-                return null;
-            }
-        }).when(response).sendError(Matchers.anyInt());
+    protected Response execute(final WebDavMethod method) throws Exception {
+        final Response response = new Response(request);
 
-        Mockito.doAnswer(new Answer<Void>() {
-
-            @Override
-            public Void answer(final InvocationOnMock invocation) throws Throwable {
-                final Object[] arguments = invocation.getArguments();
-                r.setStatus((int) arguments[0]);
-                return null;
-            }
-        }).when(response).setStatus(Matchers.anyInt());
-
-        Mockito.when(response.getOutputStream()).thenReturn(stream);
-        Mockito.when(response.getWriter()).thenReturn(writer);
+        final WebDavResponseFoo webdavResponse = method.service(store, request);
+        webdavResponse.write(response);
 
         return response;
     }
 
-    protected Response execute(final WebDavMethod method, final WebDavStore store, final Path path, final HttpServletRequest request) throws Exception {
-        final Response result = new Response();
-        final HttpServletResponse response = createHttpServletResponseMock(result);
+    @Before
+    public void initMock() {
+        MockitoAnnotations.initMocks(this);
 
-        final WebDavResponse webdavResponse = method.service(store, path, request);
-        webdavResponse.write(response);
-        final PrintWriter writer = response.getWriter();
-        writer.close();
+        Mockito.when(request.getConfig()).thenReturn(config);
 
-        return result;
+        Mockito.when(store.exists(WebDavPath.ROOT)).thenReturn(true);
     }
 }

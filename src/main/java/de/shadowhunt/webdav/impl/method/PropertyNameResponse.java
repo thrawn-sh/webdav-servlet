@@ -21,23 +21,23 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Path;
 import de.shadowhunt.webdav.PropertyIdentifier;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavException;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavResponse;
 
 import org.apache.commons.lang3.StringUtils;
 
 class PropertyNameResponse extends AbstractPropertiesResponse {
 
-    private final Map<Path, Collection<PropertyIdentifier>> entries;
+    private final Map<WebDavPath, Collection<PropertyIdentifier>> entries;
 
-    PropertyNameResponse(final Entity entity, final String baseUri, final Map<Path, Collection<PropertyIdentifier>> entries) {
+    PropertyNameResponse(final WebDavEntity entity, final String baseUri, final Map<WebDavPath, Collection<PropertyIdentifier>> entries) {
         super(entity, baseUri);
         this.entries = entries;
     }
@@ -67,7 +67,7 @@ class PropertyNameResponse extends AbstractPropertiesResponse {
     }
 
     @Override
-    protected void write0(final HttpServletResponse response) throws ServletException, IOException {
+    protected void write0(final WebDavResponse response) throws IOException {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/xml");
         response.setStatus(207); // FIXME constant
@@ -80,10 +80,10 @@ class PropertyNameResponse extends AbstractPropertiesResponse {
             final Map<String, String> prefixes = announceNameSpacePrefixes(writer);
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "multistatus");
             writeNameSpaceDeclarations(writer, prefixes);
-            for (final Map.Entry<Path, Collection<PropertyIdentifier>> entry : entries.entrySet()) {
+            for (final Map.Entry<WebDavPath, Collection<PropertyIdentifier>> entry : entries.entrySet()) {
                 writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "response");
                 writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "href");
-                final Path path = entry.getKey();
+                final WebDavPath path = entry.getKey();
                 writer.writeCharacters(baseUri + path.toString());
                 writer.writeEndElement();
                 writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "propstat");
@@ -109,7 +109,7 @@ class PropertyNameResponse extends AbstractPropertiesResponse {
             writer.writeCharacters("\r\n"); // required by some clients
             writer.close();
         } catch (final XMLStreamException e) {
-            throw new ServletException("can not write response", e);
+            throw new WebDavException("can not write response", e);
         }
     }
 

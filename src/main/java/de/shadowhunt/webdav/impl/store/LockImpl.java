@@ -22,13 +22,13 @@ import javax.annotation.concurrent.Immutable;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import de.shadowhunt.webdav.Lock;
-import de.shadowhunt.webdav.Property;
 import de.shadowhunt.webdav.PropertyIdentifier;
-import de.shadowhunt.webdav.impl.AbstractProperty;
+import de.shadowhunt.webdav.WebDavLock;
+import de.shadowhunt.webdav.WebDavProperty;
+import de.shadowhunt.webdav.impl.AbstractWebDavProperty;
 
 @Immutable
-public final class LockImpl implements Lock {
+final class LockImpl implements WebDavLock {
 
     private final String owner;
 
@@ -36,7 +36,7 @@ public final class LockImpl implements Lock {
 
     private final String token;
 
-    public LockImpl(final String token, final Scope scope, final String owner) {
+    LockImpl(final String token, final Scope scope, final String owner) {
         this.owner = owner;
         this.token = token;
         this.scope = scope;
@@ -88,8 +88,13 @@ public final class LockImpl implements Lock {
     }
 
     @Override
-    public Property toProperty() {
-        return new AbstractProperty(PropertyIdentifier.LOCK_IDENTIFIER) {
+    public WebDavProperty toProperty() {
+        return new AbstractWebDavProperty(PropertyIdentifier.LOCK_IDENTIFIER) {
+
+            @Override
+            public String getValue() {
+                throw new UnsupportedOperationException();
+            }
 
             @Override
             public void write(final XMLStreamWriter writer) throws XMLStreamException {
@@ -103,11 +108,6 @@ public final class LockImpl implements Lock {
                 writer.writeEndElement();
                 writer.writeEndElement();
                 writer.writeEndElement();
-            }
-
-            @Override
-            public String getValue() {
-                throw new UnsupportedOperationException();
             }
         };
     }

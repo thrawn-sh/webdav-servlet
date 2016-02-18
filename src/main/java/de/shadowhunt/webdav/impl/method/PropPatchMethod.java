@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.xpath.XPath;
@@ -30,14 +28,15 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Path;
-import de.shadowhunt.webdav.Property;
 import de.shadowhunt.webdav.PropertyIdentifier;
-import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavProperty;
+import de.shadowhunt.webdav.WebDavRequest;
+import de.shadowhunt.webdav.WebDavResponseFoo;
 import de.shadowhunt.webdav.WebDavStore;
-import de.shadowhunt.webdav.impl.AbstractProperty;
-import de.shadowhunt.webdav.impl.StringProperty;
+import de.shadowhunt.webdav.impl.AbstractWebDavProperty;
+import de.shadowhunt.webdav.impl.StringWebDavProperty;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -75,20 +74,21 @@ public class PropPatchMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponse service(final WebDavStore store, final Path path, final HttpServletRequest request) throws ServletException, IOException {
-        if (!store.exists(path)) {
+    public WebDavResponseFoo service(final WebDavStore store, final WebDavRequest request) throws IOException {
+        final WebDavPath target = request.getPath();
+        if (!store.exists(target)) {
             return AbstractBasicResponse.createNotFound();
         }
 
-        final Entity entity = store.getEntity(path);
+        final WebDavEntity entity = store.getEntity(target);
 
         final Document document = PropertiesMessageHelper.parse(request.getInputStream());
         if (document == null) {
             return AbstractBasicResponse.createBadRequest(entity);
         }
 
-        final Collection<Property> properties = new HashSet<>();
-        properties.addAll(store.getProperties(path));
+        final Collection<WebDavProperty> properties = new HashSet<>();
+        properties.addAll(store.getProperties(target));
         try {
             final NodeList nodes = (NodeList) EXPRESSION.evaluate(document, XPathConstants.NODESET);
             final int length = nodes.getLength();
@@ -101,11 +101,11 @@ public class PropPatchMethod extends AbstractWebDavMethod {
                 // DAV namespace is only for live property (can not be handled by client) => ignore silently
                 if (isSaveOrUpdate(node) && !isLiveProperty(propertyIdentifier)) {
                     final String content = StringEscapeUtils.unescapeXml(node.getTextContent());
-                    final StringProperty property = new StringProperty(propertyIdentifier, content);
+                    final StringWebDavProperty property = new StringWebDavProperty(propertyIdentifier, content);
                     properties.remove(property); // remove old entry
                     properties.add(property);
                 } else {
-                    properties.remove(new AbstractProperty(propertyIdentifier) {
+                    properties.remove(new AbstractWebDavProperty(propertyIdentifier) {
 
                         @Override
                         public String getValue() {
@@ -123,7 +123,7 @@ public class PropPatchMethod extends AbstractWebDavMethod {
             return AbstractBasicResponse.createBadRequest(entity);
         }
 
-        store.setProperties(path, properties);
+        store.setProperties(target, properties);
         return AbstractBasicResponse.createCreated(entity);
     }
 }

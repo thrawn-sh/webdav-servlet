@@ -18,13 +18,11 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import de.shadowhunt.webdav.Entity;
-import de.shadowhunt.webdav.Lock;
-import de.shadowhunt.webdav.Path;
-import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavLock;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavRequest;
+import de.shadowhunt.webdav.WebDavResponseFoo;
 import de.shadowhunt.webdav.WebDavStore;
 
 public class LockMethod extends AbstractWebDavMethod {
@@ -35,18 +33,19 @@ public class LockMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponse service(final WebDavStore store, final Path path, final HttpServletRequest request) throws ServletException, IOException {
-        if (!store.exists(path)) {
+    public WebDavResponseFoo service(final WebDavStore store, final WebDavRequest request) throws IOException {
+        final WebDavPath target = request.getPath();
+        if (!store.exists(target)) {
             return AbstractBasicResponse.createNotFound();
         }
 
-        final Entity entity = store.getEntity(path);
+        final WebDavEntity entity = store.getEntity(target);
         if (entity.isLocked()) {
             return new LockResponse(entity);
         }
 
-        final Lock lock = store.createLock();
-        store.lock(path, lock);
-        return new LockResponse(store.getEntity(path)); // refreshed entity
+        final WebDavLock lock = store.createLock();
+        store.lock(target, lock);
+        return new LockResponse(store.getEntity(target)); // refreshed entity
     }
 }

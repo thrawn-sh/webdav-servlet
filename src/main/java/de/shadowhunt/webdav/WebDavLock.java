@@ -14,21 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav.impl;
+package de.shadowhunt.webdav;
 
-import de.shadowhunt.webdav.PropertyIdentifier;
+import javax.annotation.concurrent.Immutable;
 
-public class StringProperty extends AbstractProperty {
+@Immutable
+public interface WebDavLock {
 
-    private final String value;
-
-    public StringProperty(final PropertyIdentifier identifier, final String value) {
-        super(identifier);
-        this.value = value;
+    enum Scope {
+        EXCLUSIVE, SHARED;
     }
 
-    @Override
-    public String getValue() {
-        return value;
-    }
+    String getOwner();
+
+    Scope getScope();
+
+    String getToken();
+
+    WebDavProperty toProperty();
+
 }

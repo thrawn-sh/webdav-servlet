@@ -23,11 +23,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 @Immutable
-public final class Path implements Comparable<Path> {
+public final class WebDavPath implements Comparable<WebDavPath> {
 
-    public static final Path ROOT = new Path("");
+    public static final WebDavPath ROOT = new WebDavPath("");
 
-    public static Path create(final String path) {
+    public static WebDavPath create(final String path) {
         if (StringUtils.isEmpty(path) || "/".equals(path)) {
             return ROOT;
         }
@@ -39,24 +39,24 @@ public final class Path implements Comparable<Path> {
 
         final int lastCharacterIndex = normalizedPath.length() - 1;
         if (normalizedPath.charAt(lastCharacterIndex) == '/') {
-            return new Path(normalizedPath.substring(0, lastCharacterIndex));
+            return new WebDavPath(normalizedPath.substring(0, lastCharacterIndex));
         }
-        return new Path(normalizedPath);
+        return new WebDavPath(normalizedPath);
     }
 
     private final String value;
 
-    private Path(final String value) {
+    private WebDavPath(final String value) {
         this.value = value;
     }
 
-    public Path append(final Path path) {
+    public WebDavPath append(final WebDavPath path) {
         Validate.notNull(path, "path must not be null");
-        return new Path(value + path.value);
+        return new WebDavPath(value + path.value);
     }
 
     @Override
-    public int compareTo(final Path other) {
+    public int compareTo(final WebDavPath other) {
         Validate.notNull(other, "other must not be null");
         return value.compareTo(other.value);
     }
@@ -72,16 +72,16 @@ public final class Path implements Comparable<Path> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Path other = (Path) obj;
+        final WebDavPath other = (WebDavPath) obj;
         return value.equals(other.value);
     }
 
-    public Path getChild(final String name) {
+    public WebDavPath getChild(final String name) {
         Validate.notNull(name, "name must not be null");
         if (name.indexOf('/') >= 0) {
             throw new IllegalArgumentException("name must not contain path separator: " + name);
         }
-        return new Path(value + "/" + name);
+        return new WebDavPath(value + "/" + name);
     }
 
     public String getName() {
@@ -92,13 +92,13 @@ public final class Path implements Comparable<Path> {
         return value.substring(index + 1);
     }
 
-    public Path getParent() {
+    public WebDavPath getParent() {
         if (equals(ROOT)) {
             return ROOT; // parent of root is root
         }
 
         final int indexOf = value.lastIndexOf('/');
-        return new Path(value.substring(0, indexOf));
+        return new WebDavPath(value.substring(0, indexOf));
     }
 
     public String getValue() {
