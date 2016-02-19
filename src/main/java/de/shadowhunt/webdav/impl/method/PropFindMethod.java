@@ -97,14 +97,11 @@ public class PropFindMethod extends AbstractWebDavMethod {
         }
 
         final Optional<String> hash = entity.getHash();
-        if (hash.isPresent()) {
-            result.add(new StringWebDavProperty(PropertyIdentifier.ETAG_IDENTIFIER, hash.get()));
-        }
+        hash.ifPresent(x -> result.add(new StringWebDavProperty(PropertyIdentifier.ETAG_IDENTIFIER, hash.get())));
 
-        final WebDavLock lock = entity.getLock();
-        if (lock != null) {
-            result.add(lock.toProperty());
-        }
+        final Optional<WebDavLock> lock = entity.getLock();
+        lock.ifPresent(x -> result.add(x.toProperty()));
+
         return result;
 
     }

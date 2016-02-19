@@ -51,7 +51,7 @@ public interface WebDavStore {
 
     List<WebDavPath> list(WebDavPath path) throws WebDavException;
 
-    void lock(WebDavPath path, WebDavLock lock) throws WebDavException;
+    WebDavEntity lock(WebDavPath path, WebDavLock lock) throws WebDavException;
 
     void setProperties(WebDavPath path, Collection<WebDavProperty> properties) throws WebDavException;
 

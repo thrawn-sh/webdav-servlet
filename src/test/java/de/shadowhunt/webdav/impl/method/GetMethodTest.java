@@ -78,6 +78,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
 
         final WebDavPath path = WebDavPath.create("/collection/");
 
+        Mockito.when(config.getCssForCollectionListings()).thenReturn(Optional.empty());
         Mockito.when(config.isShowCollectionListings()).thenReturn(true);
 
         Mockito.when(entity.getHash()).thenReturn(Optional.empty());

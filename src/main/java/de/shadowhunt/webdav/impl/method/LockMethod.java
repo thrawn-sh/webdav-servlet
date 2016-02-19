@@ -45,7 +45,7 @@ public class LockMethod extends AbstractWebDavMethod {
         }
 
         final WebDavLock lock = store.createLock();
-        store.lock(target, lock);
-        return new LockResponse(store.getEntity(target)); // refreshed entity
+        final WebDavEntity lockedEntity = store.lock(target, lock);
+        return new LockResponse(lockedEntity);
     }
 }

@@ -41,7 +41,7 @@ public interface WebDavEntity extends Comparable<WebDavEntity> {
 
     Date getLastModified();
 
-    WebDavLock getLock();
+    Optional<WebDavLock> getLock();
 
     String getName();
 

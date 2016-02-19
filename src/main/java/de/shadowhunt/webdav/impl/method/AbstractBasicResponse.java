@@ -232,9 +232,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         response.addHeader("MS-Author-Via", "DAV"); // MS required header
         if (entity != null) {
             final Optional<String> hash = entity.getHash();
-            if (hash.isPresent()) {
-                response.addHeader("ETag", hash.get());
-            }
+            hash.ifPresent(x -> response.addHeader("ETag", x));
 
             // response.addDateHeader("Last-Modified", entity.getLastModified().getTime()); FIXME
         }

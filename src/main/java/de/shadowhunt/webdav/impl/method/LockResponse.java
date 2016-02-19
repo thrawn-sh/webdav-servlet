@@ -18,6 +18,7 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -28,8 +29,6 @@ import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavResponse;
-
-import org.apache.commons.lang3.StringUtils;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
 class LockResponse extends AbstractBasicResponse {
@@ -40,7 +39,8 @@ class LockResponse extends AbstractBasicResponse {
 
     @Override
     protected void write0(final WebDavResponse response) throws IOException {
-        final WebDavLock lock = entity.getLock();
+        final Optional<WebDavLock> l = entity.getLock();
+        final WebDavLock lock = l.get();
 
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/xml");
@@ -75,12 +75,10 @@ class LockResponse extends AbstractBasicResponse {
             writer.writeCharacters("0");
             writer.writeEndElement();
 
-            final String owner = lock.getOwner();
-            if (StringUtils.isNotEmpty(owner)) {
-                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "owner");
-                writer.writeCharacters(owner);
-                writer.writeEndElement();
-            }
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "owner");
+            writer.writeCharacters(lock.getOwner());
+            writer.writeEndElement();
+
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktoken");
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "href");
             writer.writeCharacters(lock.getToken());

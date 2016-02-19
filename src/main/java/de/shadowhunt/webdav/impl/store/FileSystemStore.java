@@ -28,10 +28,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
-
-import javax.annotation.CheckForNull;
 
 import de.shadowhunt.webdav.PropertyIdentifier;
 import de.shadowhunt.webdav.WebDavEntity;
@@ -157,16 +156,15 @@ public class FileSystemStore implements WebDavStore {
         }
     }
 
-    @CheckForNull
-    private WebDavLock determineLock(final WebDavPath path) {
+    private Optional<WebDavLock> determineLock(final WebDavPath path) {
         synchronized (monitor) {
             final File lock = getMetaFile(path.append(LOCK_SUFFIX));
             if (!lock.exists()) {
-                return null;
+                return Optional.empty();
             }
 
             try {
-                return new LockImpl(FileUtils.readFileToString(lock), WebDavLock.Scope.EXCLUSIVE, "");
+                return Optional.of(new LockImpl(FileUtils.readFileToString(lock), WebDavLock.Scope.EXCLUSIVE, ""));
             } catch (final IOException e) {
                 throw new WebDavException("can not read lock for " + path, e);
             }
@@ -199,13 +197,13 @@ public class FileSystemStore implements WebDavStore {
             final File file = getFile(path, true);
 
             final Date lastModified = determineLastModified(file, path);
-            final WebDavLock lock = determineLock(path);
+            final Optional<WebDavLock> lock = determineLock(path);
             if (file.isFile()) {
                 final String hash = calculateMd5(file, path);
                 final long size = calculateSize(file, path);
-                return new EntiyImpl(path, Type.ITEM, hash, lastModified, size, lock);
+                return new EntiyImpl(path, Type.ITEM, Optional.of(hash), lastModified, size, lock);
             }
-            return new EntiyImpl(path, Type.COLLECTION, null, lastModified, 0L, lock);
+            return new EntiyImpl(path, Type.COLLECTION, Optional.empty(), lastModified, 0L, lock);
         }
     }
 
@@ -270,7 +268,7 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public void lock(final WebDavPath path, final WebDavLock lock) throws WebDavException {
+    public WebDavEntity lock(final WebDavPath path, final WebDavLock lock) throws WebDavException {
         synchronized (monitor) {
             final File lockFile = getMetaFile(path.append(LOCK_SUFFIX));
             try {
@@ -278,6 +276,8 @@ public class FileSystemStore implements WebDavStore {
             } catch (final Exception e) {
                 throw new WebDavException("can not write lock for " + path, e);
             }
+
+            return getEntity(path);
         }
     }
 

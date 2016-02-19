@@ -50,9 +50,9 @@ class HtmlListingResponse extends AbstractBasicResponse {
 
     @Override
     protected void write0(final WebDavResponse response) throws IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
-        // response.setCharacterEncoding("UTF-8"); FIXME
-        // response.setContentType("text/html");
+        response.setStatus(WebDavResponse.Status.SC_OK);
+        response.setCharacterEncoding("UTF-8"); // FIXME
+        response.setContentType("text/html");
 
         final PrintWriter writer = new PrintWriter(response.getOutputStream());
         writer.print("<!DOCTYPE html><html><head>");

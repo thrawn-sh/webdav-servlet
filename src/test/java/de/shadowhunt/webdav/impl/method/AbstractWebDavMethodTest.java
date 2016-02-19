@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 
 import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
@@ -121,6 +122,9 @@ public abstract class AbstractWebDavMethodTest {
     protected WebDavEntity entity;
 
     @Mock
+    protected WebDavLock lock;
+
+    @Mock
     protected WebDavRequest request;
 
     @Mock
@@ -142,6 +146,10 @@ public abstract class AbstractWebDavMethodTest {
     @Before
     public void initMock() {
         MockitoAnnotations.initMocks(this);
+
+        Mockito.when(lock.getOwner()).thenReturn("testuser");
+        Mockito.when(lock.getScope()).thenReturn(WebDavLock.Scope.EXCLUSIVE);
+        Mockito.when(lock.getToken()).thenReturn("00000000-0000-0000-0000-000000000000");
 
         Mockito.when(request.getConfig()).thenReturn(config);
 

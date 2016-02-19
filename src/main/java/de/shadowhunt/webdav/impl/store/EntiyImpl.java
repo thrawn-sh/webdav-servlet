@@ -19,8 +19,6 @@ package de.shadowhunt.webdav.impl.store;
 import java.util.Date;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
-
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavPath;
@@ -39,13 +37,13 @@ class EntiyImpl implements WebDavEntity {
 
     private final Type type;
 
-    EntiyImpl(final WebDavPath path, final Type type, @Nullable final String hash, final Date lastModified, final long size, @Nullable final WebDavLock lock) {
+    EntiyImpl(final WebDavPath path, final Type type, final Optional<String> hash, final Date lastModified, final long size, final Optional<WebDavLock> lock) {
         this.path = path;
         this.type = type;
-        this.hash = hash;
+        this.hash = hash.orElse(null);
         this.lastModified = new Date(lastModified.getTime());
         this.size = size;
-        this.lock = lock;
+        this.lock = lock.orElse(null);
     }
 
     @Override
@@ -93,8 +91,8 @@ class EntiyImpl implements WebDavEntity {
     }
 
     @Override
-    public WebDavLock getLock() {
-        return lock;
+    public Optional<WebDavLock> getLock() {
+        return Optional.ofNullable(lock);
     }
 
     @Override
