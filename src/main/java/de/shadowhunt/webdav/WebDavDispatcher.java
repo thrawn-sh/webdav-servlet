@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import de.shadowhunt.webdav.WebDavMethod.Method;
+import de.shadowhunt.webdav.precondition.Precondition;
 
 public final class WebDavDispatcher {
 
@@ -72,6 +73,11 @@ public final class WebDavDispatcher {
         }
 
         try {
+            if (!Precondition.verify(store, request)) {
+                response.setStatus(WebDavResponse.Status.SC_PRECONDITION_FAILED);
+                return;
+            }
+
             final WebDavResponseFoo webDavResponse = dispatch.service(store, request);
             webDavResponse.write(response);
         } catch (final WebDavException e) {

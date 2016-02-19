@@ -32,6 +32,11 @@ public final class HttpServletConfig implements WebDavConfig, Serializable {
     private volatile boolean showCollectionListings = false;
 
     @Override
+    public Optional<String> getCssForCollectionListings() {
+        return Optional.of("/style.css"); // FIXME
+    }
+
+    @Override
     public boolean isAllowInfiniteDepthRequests() {
         return allowInfiniteDepthRequests;
     }
@@ -56,10 +61,5 @@ public final class HttpServletConfig implements WebDavConfig, Serializable {
 
     public void setShowCollectionListings(final boolean showCollectionListings) {
         this.showCollectionListings = showCollectionListings;
-    }
-
-    @Override
-    public Optional<String> getCssForCollectionListings() {
-        return Optional.of("/style.css"); // FIXME
     }
 }

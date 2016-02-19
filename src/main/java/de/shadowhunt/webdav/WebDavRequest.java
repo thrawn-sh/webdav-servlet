@@ -18,6 +18,7 @@ package de.shadowhunt.webdav;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavMethod.Method;
@@ -37,4 +38,6 @@ public interface WebDavRequest {
     String getOption(String name, String defaultValue);
 
     WebDavPath getPath();
+
+    Optional<WebDavPath> toPath(String resource);
 }

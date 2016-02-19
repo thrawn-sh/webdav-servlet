@@ -18,7 +18,10 @@ package de.shadowhunt.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -86,6 +89,49 @@ public class HttpServletRequestWrapper implements WebDavRequest {
             return WebDavPath.ROOT;
         }
         return WebDavPath.create(pathInfo);
+    }
+
+    private boolean isLocalUri(final URI uri) throws URISyntaxException {
+        final URI requestURI = new URI(request.getRequestURI());
+        if (!requestURI.getScheme().equalsIgnoreCase(uri.getScheme())) {
+            return false;
+        }
+
+        if (!requestURI.getHost().equalsIgnoreCase(uri.getHost())) {
+            return false;
+        }
+
+        if (requestURI.getPort() != uri.getPort()) {
+            return false;
+        }
+
+        if (!uri.getPath().startsWith(getBase())) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Optional<WebDavPath> toPath(final String resource) {
+        final String base = getBase();
+        if (resource.startsWith("/")) {
+            final String relativePath = StringUtils.removeStart(resource, base);
+            return Optional.of(WebDavPath.create(relativePath));
+        }
+
+        try {
+            final URI uri = new URI(resource);
+            if (!isLocalUri(uri)) {
+                return Optional.empty();
+            }
+
+            final String path = uri.getPath();
+            final String relativePath = StringUtils.removeStart(path, base);
+            return Optional.of(WebDavPath.create(relativePath));
+        } catch (final URISyntaxException e) {
+            // TODO logging
+            return Optional.empty();
+        }
     }
 
 }
