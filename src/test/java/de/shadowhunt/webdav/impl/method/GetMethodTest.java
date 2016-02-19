@@ -63,9 +63,9 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(path);
 
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
         Mockito.when(store.exists(path)).thenReturn(true);
         Mockito.when(store.getContent(path)).thenReturn(new ByteArrayInputStream(content.getBytes()));
+        Mockito.when(store.getEntity(path)).thenReturn(entity);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_OK);

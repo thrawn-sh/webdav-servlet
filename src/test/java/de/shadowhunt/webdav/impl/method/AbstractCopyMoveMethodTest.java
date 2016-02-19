@@ -63,10 +63,10 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
         Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
-        Mockito.when(request.getPath()).thenReturn(source);
-        Mockito.when(request.getOption(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item.txt");
-        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("infinity");
         Mockito.when(request.getBase()).thenReturn("/webdav");
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("infinity");
+        Mockito.when(request.getOption(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item.txt");
+        Mockito.when(request.getPath()).thenReturn(source);
 
         Mockito.when(store.exists(source)).thenReturn(true);
         Mockito.when(store.exists(target)).thenReturn(false);
@@ -88,11 +88,11 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
         Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
-        Mockito.when(request.getPath()).thenReturn(source);
-        Mockito.when(request.getOption(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item.txt");
-        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("infinity");
-        Mockito.when(request.getOption(Matchers.eq("Overwrite"), Matchers.anyString())).thenReturn("F");
         Mockito.when(request.getBase()).thenReturn("/webdav");
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("infinity");
+        Mockito.when(request.getOption(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item.txt");
+        Mockito.when(request.getOption(Matchers.eq("Overwrite"), Matchers.anyString())).thenReturn("F");
+        Mockito.when(request.getPath()).thenReturn(source);
 
         Mockito.when(store.exists(source)).thenReturn(true);
         Mockito.when(store.exists(target)).thenReturn(true);
@@ -114,11 +114,11 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
         Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
-        Mockito.when(request.getPath()).thenReturn(source);
-        Mockito.when(request.getOption(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item.txt");
-        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("infinity");
-        Mockito.when(request.getOption(Matchers.eq("Overwrite"), Matchers.anyString())).thenReturn("T");
         Mockito.when(request.getBase()).thenReturn("/webdav");
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("infinity");
+        Mockito.when(request.getOption(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item.txt");
+        Mockito.when(request.getOption(Matchers.eq("Overwrite"), Matchers.anyString())).thenReturn("T");
+        Mockito.when(request.getPath()).thenReturn(source);
 
         Mockito.when(store.exists(source)).thenReturn(true);
         Mockito.when(store.exists(target)).thenReturn(true);
