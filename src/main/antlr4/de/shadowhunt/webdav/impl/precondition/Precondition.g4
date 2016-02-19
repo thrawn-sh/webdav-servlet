@@ -24,18 +24,19 @@ tagList: resourceTag (list)+;
 list: '(' (condition)+ ')';
 resourceTag: '<' URL '>';
 
-condition: (NOT)? ( STATE_TOKEN | entityTag);
+condition: (NOT)? ( '<' STATE_TOKEN '>' | entityTag);
 
 entityTag: '[' STRING ']';
 
 NOT: [Nn] [Oo] [Tt];
 
-STATE_TOKEN: (DIGIT | LETTER)+;
+STATE_TOKEN: (DIGIT | LETTER | STATE_SPECIAL)+;
 STRING: (DIGIT | LETTER)+;
 URL: (DIGIT | LETTER | URL_SPECIAL)+;
 
 DIGIT: ('0' .. '9');
 LETTER: ('a' .. 'z') | ('A' .. 'Z');
 URL_SPECIAL: '$' | '-' | '_' | '.' | '+' | '!' | '*' | '\'' | '(' | ')' | ',';
+STATE_SPECIAL: '-' | ':';
 
 WS: [ \r\n\t]+ -> channel (HIDDEN);
