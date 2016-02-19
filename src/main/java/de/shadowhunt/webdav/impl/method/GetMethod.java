@@ -60,7 +60,7 @@ public class GetMethod extends AbstractWebDavMethod {
         final WebDavConfig config = request.getConfig();
         if (config.isShowCollectionListings()) {
             final List<WebDavEntity> entities = getEntities(store, target);
-            return new HtmlListingResponse(entity, entities, "/style.css"); // FIXME
+            return new HtmlListingResponse(entity, entities, config.getCssForCollectionListings());
         }
 
         return AbstractBasicResponse.createForbidden(entity);

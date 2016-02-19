@@ -16,10 +16,14 @@
  */
 package de.shadowhunt.webdav;
 
+import java.util.Optional;
+
 import javax.annotation.concurrent.ThreadSafe;
 
 @ThreadSafe
 public interface WebDavConfig {
+
+    Optional<String> getCssForCollectionListings();
 
     boolean isAllowInfiniteDepthRequests();
 

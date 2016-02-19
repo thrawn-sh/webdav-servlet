@@ -25,9 +25,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavPath;
@@ -44,10 +42,10 @@ class HtmlListingResponse extends AbstractBasicResponse {
 
     private final List<WebDavEntity> entities;
 
-    HtmlListingResponse(final WebDavEntity root, final List<WebDavEntity> entities, @Nullable final String cssPath) {
+    HtmlListingResponse(final WebDavEntity root, final List<WebDavEntity> entities, final Optional<String> cssPath) {
         super(root);
         this.entities = entities;
-        this.cssPath = cssPath;
+        this.cssPath = cssPath.orElse(null);
     }
 
     @Override
