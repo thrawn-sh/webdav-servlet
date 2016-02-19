@@ -23,20 +23,20 @@ public interface WebDavResponse {
 
     enum Status {
 
-        SC_BAD_REQUEST(0), //
-        SC_CONFLICT(0), //
-        SC_CREATED(0), //
+        SC_BAD_REQUEST(400), //
+        SC_CONFLICT(409), //
+        SC_CREATED(201), //
         SC_FORBIDDEN(403), //
         SC_INTERNAL_SERVER_ERROR(500), //
         SC_LOCKED(423), //
-        SC_METHOD_NOT_ALLOWED(0), //
+        SC_METHOD_NOT_ALLOWED(405), //
         SC_MULTISTATUS(207), //
-        SC_NO_CONTENT(0), //
+        SC_NO_CONTENT(204), //
         SC_NOT_FOUND(404), //
-        SC_NOT_IMPLEMENTED(0), //
+        SC_NOT_IMPLEMENTED(501), //
         SC_OK(200), //
-        SC_PRECONDITION_FAILED(0), //
-        SC_UNSUPPORTED_MEDIA_TYPE(0);
+        SC_PRECONDITION_FAILED(412), //
+        SC_UNSUPPORTED_MEDIA_TYPE(415);
 
         public final int value;
 
