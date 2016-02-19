@@ -22,8 +22,8 @@ import java.util.Optional;
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavResponse.Status;
 
-import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(store.exists(path)).thenReturn(false);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_CREATED);
+        Assert.assertEquals("status must match", response.getStatus(), Status.SC_CREATED);
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -65,7 +65,7 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(store.getEntity(path)).thenReturn(entity);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_CREATED);
+        Assert.assertEquals("status must match", response.getStatus(), Status.SC_CREATED);
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -86,7 +86,7 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(store.getEntity(path)).thenReturn(entity);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_METHOD_NOT_ALLOWED);
+        Assert.assertEquals("status must match", response.getStatus(), Status.SC_METHOD_NOT_ALLOWED);
         Assert.assertNull("content must be null", response.getContent());
     }
 }

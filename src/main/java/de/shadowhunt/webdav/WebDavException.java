@@ -16,33 +16,35 @@
  */
 package de.shadowhunt.webdav;
 
+import de.shadowhunt.webdav.WebDavResponse.Status;
+
 public class WebDavException extends RuntimeException {
 
     public static final int DEFAULT_HTTP_STATUS = 500;
 
     private static final long serialVersionUID = 1L;
 
-    private final int httpStatus;
+    private final Status status;
 
     public WebDavException(final String message) {
-        this(message, DEFAULT_HTTP_STATUS);
+        this(message, Status.SC_INTERNAL_SERVER_ERROR);
     }
 
-    public WebDavException(final String message, final int httpStatus) {
+    public WebDavException(final String message, final Status status) {
         super(message);
-        this.httpStatus = httpStatus;
+        this.status = status;
     }
 
     public WebDavException(final String message, final Throwable cause) {
-        this(message, cause, DEFAULT_HTTP_STATUS);
+        this(message, cause, Status.SC_INTERNAL_SERVER_ERROR);
     }
 
-    public WebDavException(final String message, final Throwable cause, final int httpStatus) {
+    public WebDavException(final String message, final Throwable cause, final Status status) {
         super(message, cause);
-        this.httpStatus = httpStatus;
+        this.status = status;
     }
 
-    public int getHttpStatus() {
-        return httpStatus;
+    public Status getStatus() {
+        return status;
     }
 }

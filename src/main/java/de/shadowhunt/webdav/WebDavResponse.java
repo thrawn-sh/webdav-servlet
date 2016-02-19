@@ -21,6 +21,30 @@ import java.io.OutputStream;
 
 public interface WebDavResponse {
 
+    enum Status {
+
+        SC_BAD_REQUEST(0), //
+        SC_CONFLICT(0), //
+        SC_CREATED(0), //
+        SC_FORBIDDEN(403), //
+        SC_INTERNAL_SERVER_ERROR(500), //
+        SC_LOCKED(423), //
+        SC_METHOD_NOT_ALLOWED(0), //
+        SC_MULTISTATUS(207), //
+        SC_NO_CONTENT(0), //
+        SC_NOT_FOUND(404), //
+        SC_NOT_IMPLEMENTED(0), //
+        SC_OK(200), //
+        SC_PRECONDITION_FAILED(0), //
+        SC_UNSUPPORTED_MEDIA_TYPE(0);
+
+        public final int value;
+
+        Status(final int value) {
+            this.value = value;
+        }
+    }
+
     void addHeader(final String name, final String value);
 
     OutputStream getOutputStream() throws IOException;
@@ -31,5 +55,5 @@ public interface WebDavResponse {
 
     void setContentType(String contentType);
 
-    void setStatus(int status);
+    void setStatus(Status status);
 }

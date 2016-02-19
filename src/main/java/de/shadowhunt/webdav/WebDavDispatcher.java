@@ -24,7 +24,6 @@ import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import de.shadowhunt.webdav.WebDavMethod.Method;
 
@@ -55,20 +54,20 @@ public final class WebDavDispatcher {
     public void service(final WebDavStore store, final WebDavRequest request, final WebDavResponse response) throws ServletException, IOException {
         final UUID requestId = response.getRequest().getId();
         if (!request.getId().equals(requestId)) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(WebDavResponse.Status.SC_INTERNAL_SERVER_ERROR);
             return;
         }
 
         final Method method = request.getMethod();
         final WebDavMethod dispatch = dispatcher.get(method);
         if (dispatch == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
+            response.setStatus(WebDavResponse.Status.SC_NOT_IMPLEMENTED);
             return;
         }
 
         final WebDavConfig config = request.getConfig();
         if (config.isReadOnly() && !method.isReadOnly()) {
-            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            response.setStatus(WebDavResponse.Status.SC_METHOD_NOT_ALLOWED);
             return;
         }
 
@@ -76,7 +75,7 @@ public final class WebDavDispatcher {
             final WebDavResponseFoo webDavResponse = dispatch.service(store, request);
             webDavResponse.write(response);
         } catch (final WebDavException e) {
-            response.setStatus(e.getHttpStatus());
+            response.setStatus(e.getStatus());
         }
     }
 }

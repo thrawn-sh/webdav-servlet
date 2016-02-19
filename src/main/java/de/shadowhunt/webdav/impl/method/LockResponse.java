@@ -30,6 +30,7 @@ import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import de.shadowhunt.webdav.WebDavResponse.Status;
 
 class LockResponse extends AbstractBasicResponse {
 
@@ -44,7 +45,7 @@ class LockResponse extends AbstractBasicResponse {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/xml");
         response.addHeader("Lock-Token", "<" + lock.getToken() + ">");
-        // response.setStatus(207); // FIXME
+        response.setStatus(Status.SC_MULTISTATUS);
 
         try {
             final XMLOutputFactory factory = XMLOutputFactory.newFactory();

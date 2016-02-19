@@ -52,7 +52,7 @@ public abstract class AbstractWebDavMethodTest {
 
         private final WebDavRequest request;
 
-        private int status = -1;
+        private Status status = null;
 
         Response(final WebDavRequest request) {
             this.request = request;
@@ -94,7 +94,7 @@ public abstract class AbstractWebDavMethodTest {
             return request;
         }
 
-        public int getStatus() {
+        public Status getStatus() {
             return status;
         }
 
@@ -109,7 +109,7 @@ public abstract class AbstractWebDavMethodTest {
         }
 
         @Override
-        public void setStatus(final int status) {
+        public void setStatus(final Status status) {
             this.status = status;
         }
     }

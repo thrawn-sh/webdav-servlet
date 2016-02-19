@@ -70,7 +70,7 @@ class PropertyNameResponse extends AbstractPropertiesResponse {
     protected void write0(final WebDavResponse response) throws IOException {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/xml");
-        response.setStatus(207); // FIXME constant
+        response.setStatus(WebDavResponse.Status.SC_MULTISTATUS);
 
         try {
             final XMLOutputFactory factory = XMLOutputFactory.newFactory();

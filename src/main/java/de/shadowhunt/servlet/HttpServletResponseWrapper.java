@@ -61,8 +61,8 @@ public class HttpServletResponseWrapper implements WebDavResponse {
     }
 
     @Override
-    public void setStatus(final int status) {
-        response.setStatus(status);
+    public void setStatus(final Status status) {
+        response.setStatus(status.value);
     }
 
 }

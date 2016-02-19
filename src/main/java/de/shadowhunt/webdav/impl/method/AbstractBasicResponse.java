@@ -23,7 +23,6 @@ import java.util.TreeSet;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletResponse;
 
 import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavEntity;
@@ -92,7 +91,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.setStatus(WebDavResponse.Status.SC_BAD_REQUEST);
             }
         };
     }
@@ -102,7 +101,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(HttpServletResponse.SC_CONFLICT);
+                response.setStatus(WebDavResponse.Status.SC_CONFLICT);
             }
         };
     }
@@ -112,7 +111,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(HttpServletResponse.SC_CREATED);
+                response.setStatus(WebDavResponse.Status.SC_CREATED);
             }
         };
     }
@@ -122,7 +121,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setStatus(WebDavResponse.Status.SC_FORBIDDEN);
             }
         };
     }
@@ -132,7 +131,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(423);
+                response.setStatus(WebDavResponse.Status.SC_LOCKED);
             }
         };
     }
@@ -142,7 +141,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                response.setStatus(WebDavResponse.Status.SC_METHOD_NOT_ALLOWED);
             }
         };
     }
@@ -152,7 +151,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                response.setStatus(WebDavResponse.Status.SC_METHOD_NOT_ALLOWED);
             }
         };
     }
@@ -162,7 +161,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                response.setStatus(WebDavResponse.Status.SC_NO_CONTENT);
             }
         };
     }
@@ -172,7 +171,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(WebDavResponse.Status.SC_NOT_FOUND);
             }
         };
     }
@@ -182,7 +181,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(HttpServletResponse.SC_OK);
+                response.setStatus(WebDavResponse.Status.SC_OK);
             }
         };
     }
@@ -192,7 +191,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+                response.setStatus(WebDavResponse.Status.SC_PRECONDITION_FAILED);
             }
         };
     }
@@ -202,7 +201,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+                response.setStatus(WebDavResponse.Status.SC_UNSUPPORTED_MEDIA_TYPE);
             }
         };
     }

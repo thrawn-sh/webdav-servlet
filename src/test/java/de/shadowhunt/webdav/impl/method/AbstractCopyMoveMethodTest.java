@@ -22,8 +22,8 @@ import java.util.Optional;
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavResponse.Status;
 
-import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(store.exists(source)).thenReturn(false);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_NOT_FOUND);
+        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NOT_FOUND);
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -73,7 +73,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(store.getEntity(source)).thenReturn(entity);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_CREATED);
+        Assert.assertEquals("status must match", response.getStatus(), Status.SC_CREATED);
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -99,7 +99,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(store.getEntity(source)).thenReturn(entity);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_PRECONDITION_FAILED);
+        Assert.assertEquals("status must match", response.getStatus(), Status.SC_PRECONDITION_FAILED);
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -125,7 +125,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(store.getEntity(source)).thenReturn(entity);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), HttpStatus.SC_NO_CONTENT);
+        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NO_CONTENT);
         Assert.assertNull("content must be null", response.getContent());
     }
 
