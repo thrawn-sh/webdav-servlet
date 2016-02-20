@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.UUID;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import de.shadowhunt.webdav.WebDavMethod.Method;
@@ -52,7 +51,7 @@ public final class WebDavDispatcher {
         return WebDavPath.create(pathInfo);
     }
 
-    public void service(final WebDavStore store, final WebDavRequest request, final WebDavResponse response) throws ServletException, IOException {
+    public void service(final WebDavStore store, final WebDavRequest request, final WebDavResponse response) throws IOException {
         final UUID requestId = response.getRequest().getId();
         if (!request.getId().equals(requestId)) {
             response.setStatus(WebDavResponse.Status.SC_INTERNAL_SERVER_ERROR);
