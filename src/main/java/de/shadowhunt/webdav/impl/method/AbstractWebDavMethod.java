@@ -20,17 +20,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavRequest;
 
-import org.apache.commons.lang3.StringUtils;
-
 abstract class AbstractWebDavMethod implements WebDavMethod {
 
-    protected boolean consume(@Nullable final InputStream inputStream) throws IOException {
+    protected boolean consume(@CheckForNull final InputStream inputStream) throws IOException {
         if (inputStream == null) {
             return false;
         }
@@ -50,16 +46,5 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
             return Integer.MAX_VALUE;
         }
         return Integer.parseInt(depth);
-    }
-
-    @CheckForNull
-    protected String determineLockToken(final HttpServletRequest request, final String headerName) {
-        final String tokenHeader = request.getHeader(headerName);
-        if (tokenHeader != null) {
-            final int index = Math.max(0, tokenHeader.indexOf("opaquelocktoken:"));
-            final String token = tokenHeader.substring(index);
-            return StringUtils.replaceChars(token, "(<>)", null);
-        }
-        return null;
     }
 }
