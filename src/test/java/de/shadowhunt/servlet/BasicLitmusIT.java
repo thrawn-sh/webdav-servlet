@@ -30,10 +30,12 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.entity.StringEntity;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-//Tests are independent from each other but go from simple to more complex
+@Ignore
+// Tests are independent from each other but go from simple to more complex
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BasicLitmusIT extends AbstractLitmusIT {
 
