@@ -151,7 +151,6 @@ public final class Precondition {
             return true;
         }
 
-        System.out.println("PRECOND:" + precondition);
         final CharStream stream = new ANTLRInputStream(precondition);
         final TokenSource lexer = new PreconditionLexer(stream);
 
