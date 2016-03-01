@@ -29,11 +29,11 @@ import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavMethod.Method;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
-import de.shadowhunt.webdav.WebDavResponseFoo;
+import de.shadowhunt.webdav.WebDavResponseWriter;
 
 import org.apache.commons.lang3.StringUtils;
 
-abstract class AbstractBasicResponse implements WebDavResponseFoo {
+abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
     private static final String COLLECTION;
 
@@ -86,7 +86,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         COLLECTION = StringUtils.join(collectionOperations, ", ");
     }
 
-    public static final WebDavResponseFoo createBadRequest(@Nullable final WebDavEntity entity) {
+    public static final WebDavResponseWriter createBadRequest(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
@@ -96,7 +96,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         };
     }
 
-    public static final WebDavResponseFoo createConflict(@Nullable final WebDavEntity entity) {
+    public static final WebDavResponseWriter createConflict(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
@@ -106,7 +106,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         };
     }
 
-    public static final WebDavResponseFoo createCreated(@Nullable final WebDavEntity entity) {
+    public static final WebDavResponseWriter createCreated(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
@@ -116,7 +116,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         };
     }
 
-    public static final WebDavResponseFoo createForbidden(@Nullable final WebDavEntity entity) {
+    public static final WebDavResponseWriter createForbidden(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
@@ -126,7 +126,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         };
     }
 
-    public static final WebDavResponseFoo createLocked(@Nullable final WebDavEntity entity) {
+    public static final WebDavResponseWriter createLocked(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
@@ -136,7 +136,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         };
     }
 
-    public static final WebDavResponseFoo createMessageNodeAllowed(@Nullable final WebDavEntity entity) {
+    public static final WebDavResponseWriter createMessageNodeAllowed(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
@@ -146,7 +146,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         };
     }
 
-    public static WebDavResponseFoo createMethodNotAllowed(@Nullable final WebDavEntity entity) {
+    public static WebDavResponseWriter createMethodNotAllowed(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
@@ -156,7 +156,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         };
     }
 
-    public static final WebDavResponseFoo createNoContent(@Nullable final WebDavEntity entity) {
+    public static final WebDavResponseWriter createNoContent(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
@@ -166,7 +166,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         };
     }
 
-    public static final WebDavResponseFoo createNotFound() {
+    public static final WebDavResponseWriter createNotFound() {
         return new AbstractBasicResponse(null) {
 
             @Override
@@ -176,7 +176,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         };
     }
 
-    public static WebDavResponseFoo createOk(@Nullable final WebDavEntity entity) {
+    public static WebDavResponseWriter createOk(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
@@ -186,7 +186,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         };
     }
 
-    public static final WebDavResponseFoo createPreconditionFailed(@Nullable final WebDavEntity entity) {
+    public static final WebDavResponseWriter createPreconditionFailed(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override
@@ -196,7 +196,7 @@ abstract class AbstractBasicResponse implements WebDavResponseFoo {
         };
     }
 
-    public static final WebDavResponseFoo createUnsupportedMediaType(@Nullable final WebDavEntity entity) {
+    public static final WebDavResponseWriter createUnsupportedMediaType(@Nullable final WebDavEntity entity) {
         return new AbstractBasicResponse(entity) {
 
             @Override

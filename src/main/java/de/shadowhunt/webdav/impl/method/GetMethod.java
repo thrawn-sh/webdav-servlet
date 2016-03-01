@@ -24,7 +24,7 @@ import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavResponseFoo;
+import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.WebDavStore;
 
 public class GetMethod extends AbstractWebDavMethod {
@@ -44,7 +44,7 @@ public class GetMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponseFoo service(final WebDavStore store, final WebDavRequest request) {
+    public WebDavResponseWriter service(final WebDavStore store, final WebDavRequest request) {
         final WebDavPath target = request.getPath();
         if (!store.exists(target)) {
             return AbstractBasicResponse.createNotFound();

@@ -21,7 +21,7 @@ import java.io.IOException;
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavResponseFoo;
+import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.WebDavStore;
 
 public class PutMethod extends AbstractWebDavMethod {
@@ -32,7 +32,7 @@ public class PutMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponseFoo service(final WebDavStore store, final WebDavRequest request) throws IOException {
+    public WebDavResponseWriter service(final WebDavStore store, final WebDavRequest request) throws IOException {
         final WebDavPath target = request.getPath();
         if (store.exists(target)) {
             final WebDavEntity entity = store.getEntity(target);

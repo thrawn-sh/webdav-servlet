@@ -30,7 +30,7 @@ import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
-import de.shadowhunt.webdav.WebDavResponseFoo;
+import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.WebDavStore;
 
 import org.junit.Assert;
@@ -137,7 +137,7 @@ public abstract class AbstractWebDavMethodTest {
     protected Response execute(final WebDavMethod method) throws Exception {
         final Response response = new Response(request);
 
-        final WebDavResponseFoo webdavResponse = method.service(store, request);
+        final WebDavResponseWriter webdavResponse = method.service(store, request);
         webdavResponse.write(response);
 
         return response;

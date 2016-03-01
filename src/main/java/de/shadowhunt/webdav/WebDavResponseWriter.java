@@ -18,7 +18,7 @@ package de.shadowhunt.webdav;
 
 import java.io.IOException;
 
-public interface WebDavResponseFoo {
+public interface WebDavResponseWriter {
 
     void write(final WebDavResponse response) throws IOException;
 }

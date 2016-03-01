@@ -77,7 +77,7 @@ public final class WebDavDispatcher {
                 return;
             }
 
-            final WebDavResponseFoo webDavResponse = dispatch.service(store, request);
+            final WebDavResponseWriter webDavResponse = dispatch.service(store, request);
             webDavResponse.write(response);
         } catch (final WebDavException e) {
             response.setStatus(e.getStatus());

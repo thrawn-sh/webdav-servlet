@@ -24,7 +24,7 @@ import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavProperty;
 import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavResponseFoo;
+import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.WebDavStore;
 
 public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
@@ -69,7 +69,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
     }
 
     @Override
-    public WebDavResponseFoo service(final WebDavStore store, final WebDavRequest request) throws IOException {
+    public WebDavResponseWriter service(final WebDavStore store, final WebDavRequest request) throws IOException {
         final WebDavPath source = request.getPath();
         if (!store.exists(source)) {
             return AbstractBasicResponse.createNotFound();

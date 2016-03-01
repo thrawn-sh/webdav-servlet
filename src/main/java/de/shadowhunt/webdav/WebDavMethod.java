@@ -36,6 +36,6 @@ public interface WebDavMethod {
 
     Method getMethod();
 
-    WebDavResponseFoo service(WebDavStore store, WebDavRequest request) throws IOException;
+    WebDavResponseWriter service(WebDavStore store, WebDavRequest request) throws IOException;
 
 }
