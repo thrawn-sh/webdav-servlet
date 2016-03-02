@@ -33,12 +33,15 @@ import de.shadowhunt.webdav.WebDavResponse;
 
 import org.apache.commons.lang3.StringUtils;
 
-class PropertyNameResponse extends AbstractPropertiesResponse {
+class PropertyNameResponse extends AbstractBasicResponse {
+
+    private final String baseUri;
 
     private final Map<WebDavPath, Collection<PropertyIdentifier>> entries;
 
     PropertyNameResponse(final WebDavEntity entity, final String baseUri, final Map<WebDavPath, Collection<PropertyIdentifier>> entries) {
-        super(entity, baseUri);
+        super(entity);
+        this.baseUri = baseUri;
         this.entries = entries;
     }
 
