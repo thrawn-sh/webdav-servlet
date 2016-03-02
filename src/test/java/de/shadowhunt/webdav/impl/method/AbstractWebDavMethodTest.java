@@ -155,6 +155,7 @@ public abstract class AbstractWebDavMethodTest {
         Mockito.when(lock.getScope()).thenReturn(WebDavLock.Scope.EXCLUSIVE);
         Mockito.when(lock.getToken()).thenReturn("00000000-0000-0000-0000-000000000000");
 
+        Mockito.when(request.getBase()).thenReturn("");
         Mockito.when(request.getConfig()).thenReturn(config);
 
         Mockito.when(store.exists(WebDavPath.ROOT)).thenReturn(true);
