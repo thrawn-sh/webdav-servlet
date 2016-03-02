@@ -17,15 +17,17 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.CheckForNull;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.xpath.XPath;
@@ -52,6 +54,24 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class PropFindMethod extends AbstractWebDavMethod {
+
+    private static final Set<PropertyIdentifier> ALL = new AbstractSet<PropertyIdentifier>() {
+
+        @Override
+        public boolean contains(final Object o) {
+            return true;
+        }
+
+        @Override
+        public Iterator<PropertyIdentifier> iterator() {
+            return Collections.emptyIterator();
+        }
+
+        @Override
+        public int size() {
+            return Integer.MAX_VALUE;
+        }
+    };
 
     private static final XPathExpression ALL_EXPRESSION;
 
@@ -106,6 +126,15 @@ public class PropFindMethod extends AbstractWebDavMethod {
 
     }
 
+    private boolean allProperties(final Document document) {
+        try {
+            final NodeList nodeList = (NodeList) ALL_EXPRESSION.evaluate(document, XPathConstants.NODESET);
+            return (nodeList.getLength() > 0);
+        } catch (final XPathExpressionException e) {
+            return false;
+        }
+    }
+
     private void collectProperties(final WebDavStore store, final WebDavPath path, final int depth, final Map<WebDavPath, Collection<WebDavProperty>> map) {
         if (depth < 0) {
             return;
@@ -114,7 +143,8 @@ public class PropFindMethod extends AbstractWebDavMethod {
         final WebDavEntity entity = store.getEntity(path);
         final Collection<WebDavProperty> liveProperties = entityToProperties(entity);
         final Collection<WebDavProperty> deadProperties = store.getProperties(path);
-        map.put(path, merge(liveProperties, deadProperties));
+        final Collection<WebDavProperty> merged = merge(liveProperties, deadProperties);
+        map.put(path, merged);
         for (final WebDavPath child : store.list(path)) {
             collectProperties(store, child, depth - 1, map);
         }
@@ -148,7 +178,6 @@ public class PropFindMethod extends AbstractWebDavMethod {
         return result;
     }
 
-    @CheckForNull
     private Set<PropertyIdentifier> getRequestedProperties(final Document document) {
         try {
             final NodeList nodes = (NodeList) PROPERTIES_EXPRESSION.evaluate(document, XPathConstants.NODESET);
@@ -159,8 +188,8 @@ public class PropFindMethod extends AbstractWebDavMethod {
                 properties.add(new PropertyIdentifier(StringUtils.trimToEmpty(node.getNamespaceURI()), node.getLocalName()));
             }
             return properties;
-        } catch (final Exception e) {
-            return null;
+        } catch (final XPathExpressionException e) {
+            return Collections.emptySet();
         }
     }
 
@@ -204,8 +233,14 @@ public class PropFindMethod extends AbstractWebDavMethod {
             return new PropertyNameResponse(entity, request.getBase(), result);
         }
 
-        final Set<PropertyIdentifier> requested = getRequestedProperties(document);
-        if (requested == null) {
+        final Set<PropertyIdentifier> requested;
+        if (allProperties(document)) {
+            requested = ALL;
+        } else {
+            requested = getRequestedProperties(document);
+        }
+
+        if (requested.isEmpty()) {
             return AbstractBasicResponse.createBadRequest(entity);
         }
 
