@@ -130,8 +130,12 @@ public abstract class AbstractWebDavMethodTest {
     @Mock
     protected WebDavStore store;
 
-    protected void assertResponse(final Response response) {
-        // FIXME
+    protected String concat(final String... input) {
+        final StringBuilder sb = new StringBuilder();
+        for (final String i : input) {
+            sb.append(i);
+        }
+        return sb.toString();
     }
 
     protected Response execute(final WebDavMethod method) throws Exception {
