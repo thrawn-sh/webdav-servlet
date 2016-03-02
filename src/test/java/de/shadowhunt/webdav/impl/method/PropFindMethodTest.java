@@ -36,6 +36,7 @@ import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -69,7 +70,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
         Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
-        Mockito.when(request.getOption("Depth", PropFindMethod.INFINITY)).thenReturn(PropFindMethod.INFINITY);
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(PropFindMethod.INFINITY);
         Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(true);
@@ -90,7 +91,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
         Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
-        Mockito.when(request.getOption("Depth", PropFindMethod.INFINITY)).thenReturn("0");
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(true);
@@ -115,7 +116,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"/>".getBytes()));
-        Mockito.when(request.getOption("Depth", PropFindMethod.INFINITY)).thenReturn("0");
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(true);
@@ -141,7 +142,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><prop xmlns:t=\"test\"><t:foo/></prop></propfind>".getBytes()));
-        Mockito.when(request.getOption("Depth", PropFindMethod.INFINITY)).thenReturn("0");
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(true);
@@ -179,7 +180,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><prop xmlns:t=\"test\"><t:foo/></prop></propfind>".getBytes()));
-        Mockito.when(request.getOption("Depth", PropFindMethod.INFINITY)).thenReturn("0");
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(true);
@@ -228,7 +229,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><allprop/></propfind>".getBytes()));
-        Mockito.when(request.getOption("Depth", PropFindMethod.INFINITY)).thenReturn("0");
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(true);
@@ -282,7 +283,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><propname/></propfind>".getBytes()));
-        Mockito.when(request.getOption("Depth", PropFindMethod.INFINITY)).thenReturn("0");
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(path)).thenReturn(true);
@@ -348,7 +349,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.COLLECTION);
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><allprop/></propfind>".getBytes()));
-        Mockito.when(request.getOption("Depth", PropFindMethod.INFINITY)).thenReturn("1");
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("1");
         Mockito.when(request.getPath()).thenReturn(path);
 
         Mockito.when(store.exists(child)).thenReturn(true);
