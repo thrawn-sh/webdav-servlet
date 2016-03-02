@@ -54,8 +54,6 @@ public interface WebDavEntity extends Comparable<WebDavEntity> {
     @Override
     int hashCode();
 
-    boolean isLocked();
-
     @Override
     String toString();
 

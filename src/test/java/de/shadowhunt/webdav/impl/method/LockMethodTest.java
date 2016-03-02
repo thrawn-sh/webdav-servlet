@@ -78,7 +78,6 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 Mockito.when(mock.getLastModified()).thenReturn(new Date(0L));
                 Mockito.when(mock.getLock()).thenReturn(Optional.of(suppliedLock));
                 Mockito.when(mock.getType()).thenReturn(WebDavEntity.Type.ITEM);
-                Mockito.when(mock.isLocked()).thenReturn(true);
                 return mock;
             }
         });
@@ -100,7 +99,6 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(entity.getLock()).thenReturn(Optional.of(lock));
         Mockito.when(entity.getPath()).thenReturn(path);
         Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
-        Mockito.when(entity.isLocked()).thenReturn(true);
 
         Mockito.when(request.getPath()).thenReturn(path);
 

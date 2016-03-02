@@ -17,6 +17,7 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavLock;
@@ -40,12 +41,13 @@ public class LockMethod extends AbstractWebDavMethod {
         }
 
         final WebDavEntity entity = store.getEntity(target);
-        if (entity.isLocked()) {
+        final Optional<WebDavLock> lock = entity.getLock();
+        if (lock.isPresent()) {
             return new LockResponse(entity);
         }
 
-        final WebDavLock lock = store.createLock();
-        final WebDavEntity lockedEntity = store.lock(target, lock);
+        final WebDavLock newlock = store.createLock();
+        final WebDavEntity lockedEntity = store.lock(target, newlock);
         return new LockResponse(lockedEntity);
     }
 }

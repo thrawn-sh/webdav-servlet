@@ -125,11 +125,6 @@ class EntiyImpl implements WebDavEntity {
     }
 
     @Override
-    public boolean isLocked() {
-        return (lock != null);
-    }
-
-    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Entity{");
         sb.append("hash='").append(hash).append('\'');
