@@ -26,6 +26,8 @@ import de.shadowhunt.webdav.WebDavRequest;
 
 abstract class AbstractWebDavMethod implements WebDavMethod {
 
+    public static final String INFINITY = "infinity";
+
     protected boolean consume(@CheckForNull final InputStream inputStream) throws IOException {
         if (inputStream == null) {
             return false;
@@ -41,8 +43,8 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
     }
 
     protected int determineDepth(final WebDavRequest request) {
-        final String depth = request.getOption("Depth", "infinity");
-        if ("infinity".equalsIgnoreCase(depth)) {
+        final String depth = request.getOption("Depth", INFINITY);
+        if (INFINITY.equalsIgnoreCase(depth)) {
             return Integer.MAX_VALUE;
         }
         return Integer.parseInt(depth);
