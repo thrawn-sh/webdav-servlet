@@ -17,10 +17,7 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.ByteArrayInputStream;
-import java.util.Date;
-import java.util.Optional;
 
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
@@ -39,11 +36,7 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new MkColMethod();
 
-        final WebDavPath path = WebDavPath.create("/collection/");
-
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(false);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_CREATED);
@@ -55,12 +48,8 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
         final WebDavMethod method = new MkColMethod();
 
         final WebDavPath path = WebDavPath.create("/parent/collection/");
-        final WebDavPath parent = path.getParent();
 
         Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(parent)).thenReturn(false);
-        Mockito.when(store.exists(path)).thenReturn(false);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_CONFLICT);
@@ -71,16 +60,7 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
     public void test02_exisitingItem() throws Exception {
         final WebDavMethod method = new MkColMethod();
 
-        final WebDavPath path = WebDavPath.create("/item.txt");
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
-
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_METHOD_NOT_ALLOWED);
@@ -91,17 +71,7 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
     public void test03_exisitingCollection() throws Exception {
         final WebDavMethod method = new MkColMethod();
 
-        final WebDavPath path = WebDavPath.create("/collection/");
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getPath()).thenReturn(path);
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.COLLECTION);
-
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_METHOD_NOT_ALLOWED);
@@ -112,18 +82,8 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
     public void test04_withContent() throws Exception {
         final WebDavMethod method = new MkColMethod();
 
-        final WebDavPath path = WebDavPath.create("/collection/");
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getPath()).thenReturn(path);
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.COLLECTION);
-
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("test".getBytes()));
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_UNSUPPORTED_MEDIA_TYPE);

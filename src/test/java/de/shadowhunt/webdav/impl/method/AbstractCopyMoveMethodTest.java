@@ -16,15 +16,12 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
-import java.util.Date;
-import java.util.Optional;
-
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -35,17 +32,20 @@ import org.mockito.Mockito;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTest {
 
+    protected static final WebDavPath SOURCE_ITEM = WebDavPath.create("/source_item.txt");
+
     protected abstract WebDavMethod createMethod();
+
+    @Before
+    public void fillStore() {
+        createItem(SOURCE_ITEM, "test", false);
+    }
 
     @Test
     public void test00_missingSource() throws Exception {
         final WebDavMethod method = createMethod();
 
-        final WebDavPath source = WebDavPath.create("/source_item.txt");
-
-        Mockito.when(request.getPath()).thenReturn(source);
-
-        Mockito.when(store.exists(source)).thenReturn(false);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_NOT_FOUND);
@@ -56,21 +56,9 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
     public void test01_exisitingSourceItem_missingTargetItem() throws Exception {
         final WebDavMethod method = createMethod();
 
-        final WebDavPath source = WebDavPath.create("/source_item.txt");
-        final WebDavPath target = WebDavPath.create("/target_item.txt");
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
-
-        Mockito.when(request.getBase()).thenReturn("/webdav");
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
         Mockito.when(request.getOption(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item.txt");
-        Mockito.when(request.getPath()).thenReturn(source);
-
-        Mockito.when(store.exists(source)).thenReturn(true);
-        Mockito.when(store.exists(target)).thenReturn(false);
-        Mockito.when(store.getEntity(source)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_CREATED);
@@ -81,22 +69,10 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
     public void test02_exisitingSourceItem_exisitingTargetItem_noOverride() throws Exception {
         final WebDavMethod method = createMethod();
 
-        final WebDavPath source = WebDavPath.create("/source_item.txt");
-        final WebDavPath target = WebDavPath.create("/target_item.txt");
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
-
-        Mockito.when(request.getBase()).thenReturn("/webdav");
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
         Mockito.when(request.getOption(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item.txt");
         Mockito.when(request.getOption(Matchers.eq("Overwrite"), Matchers.anyString())).thenReturn("F");
-        Mockito.when(request.getPath()).thenReturn(source);
-
-        Mockito.when(store.exists(source)).thenReturn(true);
-        Mockito.when(store.exists(target)).thenReturn(true);
-        Mockito.when(store.getEntity(source)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_PRECONDITION_FAILED);
@@ -107,30 +83,13 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
     public void test03_exisitingSourceItem_exisitingTargetItem_override() throws Exception {
         final WebDavMethod method = createMethod();
 
-        final WebDavPath source = WebDavPath.create("/source_item.txt");
-        final WebDavPath target = WebDavPath.create("/target_item.txt");
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
-
-        Mockito.when(request.getBase()).thenReturn("/webdav");
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
         Mockito.when(request.getOption(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item.txt");
         Mockito.when(request.getOption(Matchers.eq("Overwrite"), Matchers.anyString())).thenReturn("T");
-        Mockito.when(request.getPath()).thenReturn(source);
-
-        Mockito.when(store.exists(source)).thenReturn(true);
-        Mockito.when(store.exists(target)).thenReturn(true);
-        Mockito.when(store.getEntity(source)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_NO_CONTENT);
         Assert.assertNull("content must be null", response.getContent());
     }
-
-    // FIXME target parent non existing
-    // copy/move collection
-    // merge collections ???
-    // copy/move item to collection (with override) ???
 }

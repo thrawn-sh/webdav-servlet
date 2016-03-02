@@ -16,15 +16,19 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import de.shadowhunt.webdav.PropertyIdentifier;
 import de.shadowhunt.webdav.WebDavConfig;
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
@@ -32,9 +36,14 @@ import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.WebDavStore;
+import de.shadowhunt.webdav.impl.StringWebDavProperty;
+import de.shadowhunt.webdav.impl.store.FileSystemStore;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -71,10 +80,24 @@ public abstract class AbstractWebDavMethodTest {
 
         @Nullable
         public String getContent() {
+            return getContent(false);
+        }
+
+        @Nullable
+        public String getContent(final boolean normalize) {
             if (content.size() == 0) {
                 return null;
             }
-            return new String(content.toByteArray());
+
+            if (!normalize) {
+                return new String(content.toByteArray());
+            }
+
+            String result = new String(content.toByteArray());
+            int before = result.length();
+            result = result.replaceAll("<D:getlastmodified>... ... \\d{2} \\d{2}:\\d{2}:\\d{2} [^ ]* \\d{4}</D:getlastmodified>", "<D:getlastmodified>Thu Jan 01 01:00:00 CET 1970</D:getlastmodified>");
+            int after = result.length();
+            return result;
         }
 
         public String getContentType() {
@@ -115,20 +138,75 @@ public abstract class AbstractWebDavMethodTest {
         }
     }
 
+    protected static final WebDavPath EXISITING_COLLECTION = WebDavPath.create("/collection");
+
+    protected static final WebDavPath EXISITING_ITEM = WebDavPath.create("/item.txt");
+
+    protected static final WebDavPath NON_EXISITING = WebDavPath.create("/non_exisiting.txt");
+
+    private static File root;
+
+    private static WebDavStore store;
+
+    protected static void createCollection(final WebDavPath path, final boolean locked) {
+        createCollection0(path, locked);
+        setProperties(path);
+    }
+
+    private static void setProperties(final WebDavPath path) {
+        store.setProperties(path,
+                Arrays.asList( //
+                        new StringWebDavProperty(new PropertyIdentifier("foo", "foo"), "foo_foo_content"), //
+                        new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo_bar_content"), //
+                        new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar_foo_content") //
+        ));
+    }
+
+    protected static void createCollection0(final WebDavPath path, final boolean locked) {
+        if (WebDavPath.ROOT.equals(path)) {
+            return;
+        }
+
+        createCollection0(path.getParent(), false);
+        if (!store.exists(path)) {
+            store.createCollection(path);
+        }
+
+        if (locked) {
+            final WebDavLock lock = store.createLock();
+            store.lock(path, lock);
+        }
+    }
+
+    protected static void createItem(final WebDavPath path, final String content, final boolean locked) {
+        createCollection0(path.getParent(), false);
+        store.createItem(path, new ByteArrayInputStream(content.getBytes()));
+        if (locked) {
+            final WebDavLock lock = store.createLock();
+            store.lock(path, lock);
+        }
+        setProperties(path);
+    }
+
+    @AfterClass
+    public static void destroyStore() {
+        FileUtils.deleteQuietly(root);
+    }
+
+    @BeforeClass
+    public static void initStore() {
+        root = new File(new File(FileUtils.getTempDirectory(), "webdav-servlet"), UUID.randomUUID().toString());
+        store = new FileSystemStore(root);
+
+        createCollection(EXISITING_COLLECTION, false);
+        createItem(EXISITING_ITEM, "example", false);
+    }
+
     @Mock
     protected WebDavConfig config;
 
     @Mock
-    protected WebDavEntity entity;
-
-    @Mock
-    protected WebDavLock lock;
-
-    @Mock
     protected WebDavRequest request;
-
-    @Mock
-    protected WebDavStore store;
 
     protected String concat(final String... input) {
         final StringBuilder sb = new StringBuilder();
@@ -151,13 +229,7 @@ public abstract class AbstractWebDavMethodTest {
     public void initMock() {
         MockitoAnnotations.initMocks(this);
 
-        Mockito.when(lock.getOwner()).thenReturn("testuser");
-        Mockito.when(lock.getScope()).thenReturn(WebDavLock.Scope.EXCLUSIVE);
-        Mockito.when(lock.getToken()).thenReturn("00000000-0000-0000-0000-000000000000");
-
-        Mockito.when(request.getBase()).thenReturn("");
+        Mockito.when(request.getBase()).thenReturn("/webdav");
         Mockito.when(request.getConfig()).thenReturn(config);
-
-        Mockito.when(store.exists(WebDavPath.ROOT)).thenReturn(true);
     }
 }

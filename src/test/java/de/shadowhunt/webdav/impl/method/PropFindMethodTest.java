@@ -17,43 +17,34 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
-import de.shadowhunt.webdav.PropertyIdentifier;
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
-import de.shadowhunt.webdav.WebDavProperty;
 import de.shadowhunt.webdav.WebDavResponse.Status;
-import de.shadowhunt.webdav.impl.StringWebDavProperty;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 //Tests are independent from each other but go from simple to more complex
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
+    @BeforeClass
+    public static void fillStore() {
+        createItem(EXISITING_COLLECTION.append(WebDavPath.create("/item.txt")), "test", true);
+        createCollection(EXISITING_COLLECTION.append(WebDavPath.create("/level1/level2")), false);
+    }
+
     @Test
     public void test00_missing() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        final WebDavPath path = WebDavPath.create("/item.txt");
-
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(false);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_NOT_FOUND);
@@ -64,17 +55,8 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
     public void test01_infinity_not_supported() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        final WebDavPath path = WebDavPath.create("/item.txt");
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
-
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(PropFindMethod.INFINITY);
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_FORBIDDEN);
@@ -85,17 +67,8 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
     public void test02_missing_request_body() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        final WebDavPath path = WebDavPath.create("/item.txt");
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
-
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_BAD_REQUEST);
@@ -106,21 +79,11 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
     public void test03_no_properties() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        final WebDavPath path = WebDavPath.create("/item.txt");
-
         Mockito.when(config.isAllowInfiniteDepthRequests()).thenReturn(true);
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getLock()).thenReturn(Optional.empty());
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"/>".getBytes()));
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_BAD_REQUEST);
@@ -131,182 +94,106 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
     public void test04_missing_selected_properties() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        final WebDavPath path = WebDavPath.create("/item.txt");
-
         Mockito.when(config.isAllowInfiniteDepthRequests()).thenReturn(true);
 
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getLock()).thenReturn(Optional.empty());
-        Mockito.when(entity.getName()).thenReturn("item.txt");
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
-
-        Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><prop xmlns:t=\"test\"><t:foo/></prop></propfind>".getBytes()));
+        Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><prop xmlns:t=\"missing\"><t:foo/></prop></propfind>".getBytes()));
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_MULTISTATUS);
 
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
-                "<D:multistatus xmlns:ns1=\"test\" xmlns:D=\"DAV:\">", //
+                "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:ns3=\"missing\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
-                "<D:href>/item.txt</D:href>", //
+                "<D:href>/webdav/item.txt</D:href>", //
                 "<D:propstat>", //
                 "<D:prop>", //
-                "<ns1:foo/>", //
+                "<ns3:foo/>", //
                 "</D:prop>", //
                 "<D:status>HTTP/1.1 404 Not Found</D:status>", //
                 "</D:propstat>", //
                 "</D:response>", //
                 "</D:multistatus>", //
                 "\r\n");
-        Assert.assertEquals("content must match", response.getContent(), expected);
+        Assert.assertEquals("content must match", expected, response.getContent());
     }
 
     @Test
-    public void test04_selected_properties() throws Exception {
+    public void test05_selected_properties() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        final WebDavPath path = WebDavPath.create("/item.txt");
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getLock()).thenReturn(Optional.empty());
-        Mockito.when(entity.getName()).thenReturn("item.txt");
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
-
-        Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><prop xmlns:t=\"test\"><t:foo/></prop></propfind>".getBytes()));
+        Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><prop xmlns:t=\"foo\"><t:foo/></prop></propfind>".getBytes()));
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
-        Mockito.when(store.getProperties(path)).thenAnswer(new Answer<Collection<WebDavProperty>>() {
-
-            @Override
-            public Collection<WebDavProperty> answer(final InvocationOnMock invocation) throws Throwable {
-                final List<WebDavProperty> properties = new ArrayList<>();
-                properties.add(new StringWebDavProperty(new PropertyIdentifier("test", "bar"), "bar_content"));
-                properties.add(new StringWebDavProperty(new PropertyIdentifier("test", "foo"), "foo_content"));
-                properties.add(new StringWebDavProperty(new PropertyIdentifier("other", "foo"), "other_foo_content"));
-                return properties;
-            }
-        });
+        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_MULTISTATUS);
 
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
-                "<D:multistatus xmlns:ns2=\"other\" xmlns:ns1=\"test\" xmlns:D=\"DAV:\">", //
+                "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
-                "<D:href>/item.txt</D:href>", //
+                "<D:href>/webdav/item.txt</D:href>", //
                 "<D:propstat>", //
                 "<D:prop>", //
-                "<ns1:foo>foo_content</ns1:foo>", //
+                "<ns1:foo>foo_foo_content</ns1:foo>", //
                 "</D:prop>", //
                 "<D:status>HTTP/1.1 200 OK</D:status>", //
                 "</D:propstat>", //
                 "</D:response>", //
                 "</D:multistatus>", //
                 "\r\n");
-        Assert.assertEquals("content must match", response.getContent(), expected);
+        Assert.assertEquals("content must match", expected, response.getContent());
     }
 
     @Test
-    public void test05_all_properties() throws Exception {
+    public void test06_all_properties() throws Exception {
         final WebDavMethod method = new PropFindMethod();
-
-        final WebDavPath path = WebDavPath.create("/item.txt");
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getLock()).thenReturn(Optional.empty());
-        Mockito.when(entity.getName()).thenReturn("item.txt");
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><allprop/></propfind>".getBytes()));
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
-        Mockito.when(store.getProperties(path)).thenAnswer(new Answer<Collection<WebDavProperty>>() {
-
-            @Override
-            public Collection<WebDavProperty> answer(final InvocationOnMock invocation) throws Throwable {
-                final List<WebDavProperty> properties = new ArrayList<>();
-                properties.add(new StringWebDavProperty(new PropertyIdentifier("test", "bar"), "bar_content"));
-                properties.add(new StringWebDavProperty(new PropertyIdentifier("test", "foo"), "foo_content"));
-                properties.add(new StringWebDavProperty(new PropertyIdentifier("other", "foo"), "other_foo_content"));
-                return properties;
-            }
-        });
+        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_MULTISTATUS);
 
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
-                "<D:multistatus xmlns:ns2=\"other\" xmlns:ns1=\"test\" xmlns:D=\"DAV:\">", //
+                "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
-                "<D:href>/item.txt</D:href>", //
+                "<D:href>/webdav/item.txt</D:href>", //
                 "<D:propstat>", //
                 "<D:prop>", //
                 "<D:displayname>item.txt</D:displayname>", //
-                "<D:getcontentlength>0</D:getcontentlength>", //
+                "<D:getcontentlength>7</D:getcontentlength>", //
                 "<D:getlastmodified>Thu Jan 01 01:00:00 CET 1970</D:getlastmodified>", //
-                "<ns1:bar>bar_content</ns1:bar>", //
-                "<ns1:foo>foo_content</ns1:foo>", //
-                "<ns2:foo>other_foo_content</ns2:foo>", //
+                "<D:getetag>1a79a4d60de6718e8e5b326e338ae533</D:getetag>", //
+                "<ns1:foo>foo_foo_content</ns1:foo>", //
+                "<ns1:bar>foo_bar_content</ns1:bar>", //
+                "<ns2:foo>bar_foo_content</ns2:foo>", //
                 "</D:prop>", //
                 "<D:status>HTTP/1.1 200 OK</D:status>", //
                 "</D:propstat>", //
                 "</D:response>", //
                 "</D:multistatus>", //
                 "\r\n");
-        Assert.assertEquals("content must match", response.getContent(), expected);
+        Assert.assertEquals("content must match", expected, response.getContent(true));
     }
 
     @Test
-    public void test06_property_names() throws Exception {
+    public void test07_property_names() throws Exception {
         final WebDavMethod method = new PropFindMethod();
-
-        final WebDavPath path = WebDavPath.create("/item.txt");
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getLock()).thenReturn(Optional.empty());
-        Mockito.when(entity.getName()).thenReturn("item.txt");
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><propname/></propfind>".getBytes()));
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
-        Mockito.when(store.getProperties(path)).thenAnswer(new Answer<Collection<WebDavProperty>>() {
-
-            @Override
-            public Collection<WebDavProperty> answer(final InvocationOnMock invocation) throws Throwable {
-                final List<WebDavProperty> properties = new ArrayList<>();
-                properties.add(new StringWebDavProperty(new PropertyIdentifier("test", "bar"), "bar_content"));
-                properties.add(new StringWebDavProperty(new PropertyIdentifier("test", "foo"), "foo_content"));
-                properties.add(new StringWebDavProperty(new PropertyIdentifier("other", "foo"), "other_foo_content"));
-                return properties;
-            }
-        });
+        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_MULTISTATUS);
 
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
-                "<D:multistatus xmlns:ns1=\"other\" xmlns:ns2=\"test\" xmlns:D=\"DAV:\">", //
+                "<D:multistatus xmlns:ns1=\"bar\" xmlns:ns2=\"foo\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
-                "<D:href>/item.txt</D:href>", //
+                "<D:href>/webdav/item.txt</D:href>", //
                 "<D:propstat>", //
                 "<D:prop>", //
                 "<D:displayname/>", //
@@ -324,58 +211,24 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:response>", //
                 "</D:multistatus>", //
                 "\r\n");
-        Assert.assertEquals("content must match", response.getContent(), expected);
+        Assert.assertEquals("content must match", expected, response.getContent());
     }
 
     @Test
-    public void test07_all_collection() throws Exception {
+    public void test08_all_collection() throws Exception {
         final WebDavMethod method = new PropFindMethod();
-
-        final WebDavPath path = WebDavPath.create("/collection");
-        final WebDavPath child = WebDavPath.create("/collection/item.txt");
-
-        final WebDavEntity childEntity = Mockito.mock(WebDavEntity.class);
-
-        Mockito.when(childEntity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(childEntity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(childEntity.getLock()).thenReturn(Optional.empty());
-        Mockito.when(childEntity.getName()).thenReturn("item.txt");
-        Mockito.when(childEntity.getType()).thenReturn(WebDavEntity.Type.ITEM);
-
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getLock()).thenReturn(Optional.empty());
-        Mockito.when(entity.getName()).thenReturn("collection");
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.COLLECTION);
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><allprop/></propfind>".getBytes()));
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("1");
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(child)).thenReturn(true);
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(child)).thenReturn(childEntity);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
-        Mockito.when(store.getProperties(Mockito.any())).thenAnswer(new Answer<Collection<WebDavProperty>>() {
-
-            @Override
-            public Collection<WebDavProperty> answer(final InvocationOnMock invocation) throws Throwable {
-                final List<WebDavProperty> properties = new ArrayList<>();
-                properties.add(new StringWebDavProperty(new PropertyIdentifier("test", "bar"), "bar_content"));
-                properties.add(new StringWebDavProperty(new PropertyIdentifier("test", "foo"), "foo_content"));
-                properties.add(new StringWebDavProperty(new PropertyIdentifier("other", "foo"), "other_foo_content"));
-                return properties;
-            }
-        });
-        Mockito.when(store.list(path)).thenReturn(Arrays.asList(child));
+        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_MULTISTATUS);
 
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
-                "<D:multistatus xmlns:ns2=\"other\" xmlns:ns1=\"test\" xmlns:D=\"DAV:\">", //
+                "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
-                "<D:href>/collection</D:href>", //
+                "<D:href>/webdav/collection</D:href>", //
                 "<D:propstat>", //
                 "<D:prop>", //
                 "<D:displayname>collection</D:displayname>", //
@@ -384,29 +237,54 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:resourcetype>", //
                 "<D:collection/>", //
                 "</D:resourcetype>", //
-                "<ns1:bar>bar_content</ns1:bar>", //
-                "<ns1:foo>foo_content</ns1:foo>", //
-                "<ns2:foo>other_foo_content</ns2:foo>", //
+                "<ns1:foo>foo_foo_content</ns1:foo>", //
+                "<ns1:bar>foo_bar_content</ns1:bar>", //
+                "<ns2:foo>bar_foo_content</ns2:foo>", //
                 "</D:prop>", //
                 "<D:status>HTTP/1.1 200 OK</D:status>", //
                 "</D:propstat>", //
                 "</D:response>", //
                 "<D:response>", //
-                "<D:href>/collection/item.txt</D:href>", //
+                "<D:href>/webdav/collection/item.txt</D:href>", //
                 "<D:propstat>", //
                 "<D:prop>", //
                 "<D:displayname>item.txt</D:displayname>", //
+                "<D:getcontentlength>4</D:getcontentlength>", //
+                "<D:getlastmodified>Thu Jan 01 01:00:00 CET 1970</D:getlastmodified>", //
+                "<D:getetag>098f6bcd4621d373cade4e832627b4f6</D:getetag>", //
+                "<D:supportedlock>", //
+                "<D:lockentry>", //
+                "<D:lockscope>", //
+                "<D:exclusive/>", //
+                "</D:lockscope>", //
+                "<D:locktype>", //
+                "<D:write/>", //
+                "</D:locktype>", //
+                "</D:lockentry>", //
+                "</D:supportedlock>", //
+                "<ns1:foo>foo_foo_content</ns1:foo>", //
+                "<ns1:bar>foo_bar_content</ns1:bar>", //
+                "<ns2:foo>bar_foo_content</ns2:foo>", //
+                "</D:prop>", //
+                "<D:status>HTTP/1.1 200 OK</D:status>", //
+                "</D:propstat>", //
+                "</D:response>", //
+                "<D:response>", //
+                "<D:href>/webdav/collection/level1</D:href>", //
+                "<D:propstat>", //
+                "<D:prop>", //
+                "<D:displayname>level1</D:displayname>", //
                 "<D:getcontentlength>0</D:getcontentlength>", //
                 "<D:getlastmodified>Thu Jan 01 01:00:00 CET 1970</D:getlastmodified>", //
-                "<ns1:bar>bar_content</ns1:bar>", //
-                "<ns1:foo>foo_content</ns1:foo>", //
-                "<ns2:foo>other_foo_content</ns2:foo>", //
+                "<D:resourcetype>", //
+                "<D:collection/>", //
+                "</D:resourcetype>", //
                 "</D:prop>", //
                 "<D:status>HTTP/1.1 200 OK</D:status>", //
                 "</D:propstat>", //
                 "</D:response>", //
                 "</D:multistatus>", //
                 "\r\n");
-        Assert.assertEquals("content must match", response.getContent(), expected);
+        Assert.assertEquals("content must match", expected, response.getContent(true));
     }
 }

@@ -120,7 +120,7 @@ public class FileSystemStore implements WebDavStore {
 
     @Override
     public WebDavLock createLock() {
-        return new LockImpl("opaquelocktoken:" + UUID.randomUUID().toString(), WebDavLock.Scope.EXCLUSIVE, "");
+        return new LockImpl("opaquelocktoken:" + UUID.randomUUID().toString(), WebDavLock.Scope.EXCLUSIVE, ""); // FIXME lock owner
     }
 
     private PropertyIdentifier createPropertyIdentifier(final String elementName) {

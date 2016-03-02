@@ -70,7 +70,7 @@ public class PropPatchMethod extends AbstractWebDavMethod {
 
     private boolean isSaveOrUpdate(final Node node) {
         final Node parent = node.getParentNode().getParentNode(); // ... (<D:set>|<D:remove>)<prop> ...
-        return "set".equals(parent.getLocalName());
+        return "set".equalsIgnoreCase(parent.getLocalName());
     }
 
     @Override

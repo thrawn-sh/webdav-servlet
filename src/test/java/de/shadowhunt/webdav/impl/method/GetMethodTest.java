@@ -16,13 +16,9 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
-import java.io.ByteArrayInputStream;
-import java.util.Date;
 import java.util.Optional;
 
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavMethod;
-import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
 import org.junit.Assert;
@@ -39,11 +35,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new GetMethod();
 
-        final WebDavPath path = WebDavPath.create("/item.txt");
-
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(false);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_NOT_FOUND);
@@ -55,17 +47,8 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         final WebDavMethod method = new GetMethod();
 
         final String content = "example";
-        final WebDavPath path = WebDavPath.create("/item.txt");
 
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.ITEM);
-
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getContent(path)).thenReturn(new ByteArrayInputStream(content.getBytes()));
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_OK);
@@ -76,20 +59,10 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
     public void test02_exisitingCollectionListing() throws Exception {
         final WebDavMethod method = new GetMethod();
 
-        final WebDavPath path = WebDavPath.create("/collection/");
-
         Mockito.when(config.getCssForCollectionListings()).thenReturn(Optional.empty());
         Mockito.when(config.isShowCollectionListings()).thenReturn(true);
 
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getPath()).thenReturn(path);
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.COLLECTION);
-
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_OK);
@@ -100,19 +73,9 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
     public void test02_exisitingCollectionNoListing() throws Exception {
         final WebDavMethod method = new GetMethod();
 
-        final WebDavPath path = WebDavPath.create("/collection/");
-
         Mockito.when(config.isShowCollectionListings()).thenReturn(false);
 
-        Mockito.when(entity.getHash()).thenReturn(Optional.empty());
-        Mockito.when(entity.getLastModified()).thenReturn(new Date(0L));
-        Mockito.when(entity.getPath()).thenReturn(path);
-        Mockito.when(entity.getType()).thenReturn(WebDavEntity.Type.COLLECTION);
-
-        Mockito.when(request.getPath()).thenReturn(path);
-
-        Mockito.when(store.exists(path)).thenReturn(true);
-        Mockito.when(store.getEntity(path)).thenReturn(entity);
+        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_FORBIDDEN);
