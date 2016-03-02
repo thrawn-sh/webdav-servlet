@@ -57,6 +57,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", response.getStatus(), Status.SC_MULTISTATUS);
+        Assert.assertNotNull("content must not be null", response.getContent());
     }
 
     @Test
