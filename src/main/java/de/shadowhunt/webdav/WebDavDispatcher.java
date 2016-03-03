@@ -44,6 +44,26 @@ public final class WebDavDispatcher {
         }
     }
 
+    void checkAuthorization(final WebDavStore store, final WebDavRequest request) {
+        final Access access = store.grantAccess(request.getPath(), request.getPrincipal());
+        if (access == Access.DENY) {
+            throw new WebDavException("user not authorized", WebDavResponse.Status.SC_FORBIDDEN);
+        }
+
+        if (access == Access.REQUIRE_AUTHENTICATION) {
+            throw new WebDavException("user must authorized", WebDavResponse.Status.SC_UNAUTHORIZED);
+        }
+    }
+
+    WebDavMethod determineWebDavMethod(final WebDavRequest request) {
+        final Method method = request.getMethod();
+        final WebDavMethod dispatch = dispatcher.get(method);
+        if (dispatch == null) {
+            throw new WebDavException("unsupported method", WebDavResponse.Status.SC_NOT_IMPLEMENTED);
+        }
+        return dispatch;
+    }
+
     WebDavPath getResource(final HttpServletRequest request) {
         final String pathInfo = request.getPathInfo();
         if (pathInfo == null) {
@@ -53,46 +73,42 @@ public final class WebDavDispatcher {
     }
 
     public void service(final WebDavStore store, final WebDavRequest request, final WebDavResponse response) throws IOException {
-        final UUID requestId = response.getRequest().getId();
-        if (!request.getId().equals(requestId)) {
-            response.setStatus(WebDavResponse.Status.SC_INTERNAL_SERVER_ERROR);
-            return;
-        }
-
-        final Access access = store.grantAccess(request.getPath(), request.getPrincipal());
-        if (access == Access.DENY) {
-            response.setStatus(WebDavResponse.Status.SC_FORBIDDEN);
-            return;
-        }
-
-        if (access == Access.REQUIRE_AUTHENTICATION) {
-            response.setStatus(WebDavResponse.Status.SC_UNAUTHORIZED);
-            return;
-        }
-
-        final Method method = request.getMethod();
-        final WebDavMethod dispatch = dispatcher.get(method);
-        if (dispatch == null) {
-            response.setStatus(WebDavResponse.Status.SC_NOT_IMPLEMENTED);
-            return;
-        }
-
-        final WebDavConfig config = request.getConfig();
-        if (config.isReadOnly() && !method.isReadOnly()) {
-            response.setStatus(WebDavResponse.Status.SC_METHOD_NOT_ALLOWED);
-            return;
-        }
-
         try {
-            if (!Precondition.verify(store, request)) {
-                response.setStatus(WebDavResponse.Status.SC_PRECONDITION_FAILED);
-                return;
-            }
+            checkAuthorization(store, request);
 
-            final WebDavResponseWriter webDavResponse = dispatch.service(store, request);
+            final WebDavMethod method = determineWebDavMethod(request);
+
+            verifyMethod(method.getMethod(), request.getConfig());
+
+            verifyPrecondition(store, request);
+
+            verifyConsistency(request, response);
+
+            final WebDavResponseWriter webDavResponse = method.service(store, request);
             webDavResponse.write(response);
         } catch (final WebDavException e) {
             response.setStatus(e.getStatus());
+        } catch (final RuntimeException e) {
+            response.setStatus(WebDavResponse.Status.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    void verifyConsistency(final WebDavRequest request, final WebDavResponse response) {
+        final UUID requestId = response.getRequest().getId();
+        if (!request.getId().equals(requestId)) {
+            throw new WebDavException("response does not belong to the request", WebDavResponse.Status.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    void verifyMethod(final Method method, final WebDavConfig config) {
+        if (config.isReadOnly() && !method.isReadOnly()) {
+            throw new WebDavException("store is read-only", WebDavResponse.Status.SC_METHOD_NOT_ALLOWED);
+        }
+    }
+
+    void verifyPrecondition(final WebDavStore store, final WebDavRequest request) {
+        if (!Precondition.verify(store, request)) {
+            throw new WebDavException("precondition not satisfaid", WebDavResponse.Status.SC_PRECONDITION_FAILED);
         }
     }
 }
