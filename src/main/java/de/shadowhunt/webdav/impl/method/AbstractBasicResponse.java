@@ -36,7 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 
 abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
-    public static final String UTF_8 = StandardCharsets.UTF_8.name();
+    public static final String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
 
     public static final String ALLOW_HEADER = "Allow";
 

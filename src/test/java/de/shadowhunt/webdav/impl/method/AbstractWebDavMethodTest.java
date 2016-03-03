@@ -155,8 +155,6 @@ public abstract class AbstractWebDavMethodTest {
 
     private static WebDavStore store;
 
-    public static final String UTF_8 = "UTF-8";
-
     protected static void createCollection(final WebDavPath path, final boolean locked) {
         createCollection0(path, locked);
         setProperties(path);

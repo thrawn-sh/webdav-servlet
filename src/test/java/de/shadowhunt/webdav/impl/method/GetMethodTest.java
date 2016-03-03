@@ -83,7 +83,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         final Response response = execute(method);
         assertBasicRequirements(response, Status.SC_OK);
         Assert.assertEquals("contentType must match", "text/html", response.getContentType());
-        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
+        Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String expected = concat("<!DOCTYPE html>", //
                 "<html>", //
                 "<head>", //

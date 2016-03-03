@@ -51,7 +51,7 @@ class HtmlListingResponse extends AbstractBasicResponse {
     @Override
     protected void write0(final WebDavResponse response) throws IOException {
         response.setStatus(WebDavResponse.Status.SC_OK);
-        response.setCharacterEncoding(UTF_8);
+        response.setCharacterEncoding(DEFAULT_ENCODING);
         response.setContentType("text/html");
 
         final PrintWriter writer = new PrintWriter(response.getOutputStream());
@@ -78,7 +78,7 @@ class HtmlListingResponse extends AbstractBasicResponse {
         Collections.sort(entities);
         for (final WebDavEntity entity : entities) {
             final String entityName = entity.getName();
-            final String link = URLEncoder.encode(entityName, UTF_8);
+            final String link = URLEncoder.encode(entityName, DEFAULT_ENCODING);
             final String entityNameHtml = StringEscapeUtils.escapeHtml4(entityName);
             if (WebDavEntity.Type.COLLECTION == entity.getType()) {
                 writer.print("<tr class=\"folder\"><td colspan=\"3\"><a href=\"./");
