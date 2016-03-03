@@ -48,7 +48,7 @@ public class HeadMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_OK, response.getStatus());
-        Assert.assertNull("content must match", response.getContent());
+        Assert.assertNull("content must be null", response.getContent());
     }
 
     @Test
@@ -59,6 +59,6 @@ public class HeadMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_OK, response.getStatus());
-        Assert.assertNull("content must match", response.getContent());
+        Assert.assertNull("content must be null", response.getContent());
     }
 }

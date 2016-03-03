@@ -57,7 +57,7 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_BAD_REQUEST, response.getStatus());
-        Assert.assertNull("content must not null", response.getContent());
+        Assert.assertNull("content must be null", response.getContent());
     }
 
     @Test
