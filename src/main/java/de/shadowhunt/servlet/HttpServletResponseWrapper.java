@@ -21,6 +21,7 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
 
@@ -62,7 +63,16 @@ public class HttpServletResponseWrapper implements WebDavResponse {
 
     @Override
     public void setStatus(final Status status) {
-        response.setStatus(status.value);
+        final int statusCode = status.value;
+        if ((statusCode >= 200) && (statusCode < 300)) {
+            response.setStatus(statusCode);
+        } else {
+            try {
+                response.sendError(statusCode);
+            } catch (final IOException e) {
+                throw new WebDavException("can not send error page", e);
+            }
+        }
     }
 
 }
