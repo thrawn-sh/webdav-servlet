@@ -45,7 +45,7 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NOT_FOUND);
+        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -56,7 +56,7 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_BAD_REQUEST);
+        Assert.assertEquals("status must match", Status.SC_BAD_REQUEST, response.getStatus());
         Assert.assertNull("content must not null", response.getContent());
     }
 
@@ -69,7 +69,7 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NO_CONTENT);
+        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
     }
 }

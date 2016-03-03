@@ -45,7 +45,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NOT_FOUND);
+        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -56,8 +56,8 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_MULTISTATUS);
-        Assert.assertNotNull("content must not be null", response.getContent());
+        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertNotNull("content must not be null", response.getContent()); // FIXME
     }
 
     @Test
@@ -69,7 +69,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_MULTISTATUS);
-        Assert.assertNotNull("content must not be null", response.getContent());
+        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertNotNull("content must not be null", response.getContent()); // FIXME
     }
 }

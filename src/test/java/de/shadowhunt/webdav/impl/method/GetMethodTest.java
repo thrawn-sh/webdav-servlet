@@ -38,7 +38,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NOT_FOUND);
+        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -51,8 +51,8 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_OK);
-        Assert.assertEquals("content must match", response.getContent(), content);
+        Assert.assertEquals("status must match", Status.SC_OK, response.getStatus());
+        Assert.assertEquals("content must match", content, response.getContent());
     }
 
     @Test
@@ -65,8 +65,8 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_OK);
-        Assert.assertNotNull("content must not be null", response.getContent());
+        Assert.assertEquals("status must match", Status.SC_OK, response.getStatus());
+        Assert.assertNotNull("content must not be null", response.getContent()); // FIXME
     }
 
     @Test
@@ -78,7 +78,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_FORBIDDEN);
+        Assert.assertEquals("status must match", Status.SC_FORBIDDEN, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
     }
 }

@@ -48,7 +48,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NOT_FOUND);
+        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -61,7 +61,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_CREATED);
+        Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -75,7 +75,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_PRECONDITION_FAILED);
+        Assert.assertEquals("status must match", Status.SC_PRECONDITION_FAILED, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -89,7 +89,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NO_CONTENT);
+        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
     }
 }

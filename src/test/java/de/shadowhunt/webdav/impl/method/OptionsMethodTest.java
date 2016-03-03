@@ -38,10 +38,9 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NO_CONTENT);
+        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
-        final String allow = response.getHeader("Allow");
-        Assert.assertEquals("allow must match", allow, "OPTIONS");
+        Assert.assertEquals("allow must match", "OPTIONS", response.getHeader("Allow"));
     }
 
     @Test
@@ -53,10 +52,9 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NO_CONTENT);
+        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
-        final String allow = response.getHeader("Allow");
-        Assert.assertEquals("allow must match", allow, "MKCOL, OPTIONS, PUT");
+        Assert.assertEquals("allow must match", "MKCOL, OPTIONS, PUT", response.getHeader("Allow"));
     }
 
     @Test
@@ -68,10 +66,9 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NO_CONTENT);
+        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
-        final String allow = response.getHeader("Allow");
-        Assert.assertEquals("allow must match", allow, "GET, HEAD, OPTIONS, PROPFIND");
+        Assert.assertEquals("allow must match", "GET, HEAD, OPTIONS, PROPFIND", response.getHeader("Allow"));
     }
 
     @Test
@@ -83,10 +80,9 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NO_CONTENT);
+        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
-        final String allow = response.getHeader("Allow");
-        Assert.assertEquals("allow must match", allow, "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, PUT, UNLOCK");
+        Assert.assertEquals("allow must match", "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, PUT, UNLOCK", response.getHeader("Allow"));
     }
 
     @Test
@@ -98,10 +94,9 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NO_CONTENT);
+        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
-        final String allow = response.getHeader("Allow");
-        Assert.assertEquals("allow must match", allow, "GET, HEAD, OPTIONS, PROPFIND");
+        Assert.assertEquals("allow must match", "GET, HEAD, OPTIONS, PROPFIND", response.getHeader("Allow"));
     }
 
     @Test
@@ -113,9 +108,8 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", response.getStatus(), Status.SC_NO_CONTENT);
+        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
         Assert.assertNull("content must be null", response.getContent());
-        final String allow = response.getHeader("Allow");
-        Assert.assertEquals("allow must match", allow, "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, UNLOCK");
+        Assert.assertEquals("allow must match", "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, UNLOCK", response.getHeader("Allow"));
     }
 }
