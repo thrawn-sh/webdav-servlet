@@ -58,8 +58,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
     @Test
@@ -69,7 +68,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        assertBasicRequirements(response, Status.SC_MULTISTATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
         final String content = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
@@ -105,7 +104,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        assertBasicRequirements(response, Status.SC_MULTISTATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
         final String content = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //

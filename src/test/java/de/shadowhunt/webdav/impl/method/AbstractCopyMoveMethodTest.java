@@ -20,7 +20,6 @@ import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -34,11 +33,14 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
 
     protected static final WebDavPath SOURCE_ITEM = WebDavPath.create("/source_item.txt");
 
+    protected static final WebDavPath TARGET_ITEM = WebDavPath.create("/target_item.txt");
+
     protected abstract WebDavMethod createMethod();
 
     @Before
     public void fillStore() {
         createItem(SOURCE_ITEM, "test", false);
+        createItem(TARGET_ITEM, "test", false);
     }
 
     @Test
@@ -48,8 +50,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
     @Test
@@ -57,12 +58,11 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         final WebDavMethod method = createMethod();
 
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
-        Mockito.when(request.getOption(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item.txt");
+        Mockito.when(request.getOption(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/non_exisiting.txt");
         Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_CREATED);
     }
 
     @Test
@@ -75,8 +75,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_PRECONDITION_FAILED, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_PRECONDITION_FAILED);
     }
 
     @Test
@@ -89,7 +88,6 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_NO_CONTENT);
     }
 }

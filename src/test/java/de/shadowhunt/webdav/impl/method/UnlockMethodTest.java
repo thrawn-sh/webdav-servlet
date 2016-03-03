@@ -20,7 +20,6 @@ import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -45,8 +44,7 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
     @Test
@@ -56,8 +54,7 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_BAD_REQUEST, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_BAD_REQUEST);
     }
 
     @Test
@@ -69,7 +66,6 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_NO_CONTENT);
     }
 }

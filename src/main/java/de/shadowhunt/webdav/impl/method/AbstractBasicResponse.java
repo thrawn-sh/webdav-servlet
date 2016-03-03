@@ -41,7 +41,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
     private static final String COLLECTION_READ_ONLY;
 
-    private static final String DAV_HEADER = "DAV";
+    public static final String DAV_HEADER = "DAV";
 
     private static final String ITEM;
 
@@ -235,7 +235,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
         response.addHeader(ALLOW_HEADER, getAllowedMethods(entity, config));
         response.addHeader(DAV_HEADER, "1,2");
-        response.addHeader(MS_AUTHOR_HEADER, AbstractBasicResponse.DAV_HEADER); // MS required header
+        response.addHeader(MS_AUTHOR_HEADER, "DAV"); // MS required header
         if (entity != null) {
             final Optional<String> hash = entity.getHash();
             hash.ifPresent(x -> response.addHeader("ETag", x));

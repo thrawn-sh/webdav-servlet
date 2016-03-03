@@ -20,7 +20,6 @@ import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
-import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -37,8 +36,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
     @Test
@@ -48,8 +46,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_NO_CONTENT);
     }
 
     @Test
@@ -59,8 +56,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_NO_CONTENT);
     }
 
     @Test
@@ -72,7 +68,6 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(WebDavPath.ROOT);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_FORBIDDEN, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_FORBIDDEN);
     }
 }

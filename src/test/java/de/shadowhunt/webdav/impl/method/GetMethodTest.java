@@ -53,8 +53,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
     @Test
@@ -66,7 +65,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_OK, response.getStatus());
+        assertBasicRequirements(response, Status.SC_OK);
         // Assert.assertEquals("contentType must match", "", response.getContentType()); // FIXME
         Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
         Assert.assertEquals("content must match", content, response.getContent());
@@ -82,7 +81,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(WebDavPath.ROOT);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_OK, response.getStatus());
+        assertBasicRequirements(response, Status.SC_OK);
         Assert.assertEquals("contentType must match", "text/html", response.getContentType());
         Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
         final String expected = concat("<!DOCTYPE html>", //
@@ -133,7 +132,6 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_FORBIDDEN, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_FORBIDDEN);
     }
 }

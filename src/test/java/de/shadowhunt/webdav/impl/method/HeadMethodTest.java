@@ -19,7 +19,6 @@ package de.shadowhunt.webdav.impl.method;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
-import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -36,8 +35,7 @@ public class HeadMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
     @Test
@@ -47,8 +45,7 @@ public class HeadMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_OK, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_OK);
     }
 
     @Test
@@ -58,7 +55,6 @@ public class HeadMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final Response response = execute(method);
-        Assert.assertEquals("status must match", Status.SC_OK, response.getStatus());
-        assertNoContent(response);
+        assertNoContent(response, Status.SC_OK);
     }
 }

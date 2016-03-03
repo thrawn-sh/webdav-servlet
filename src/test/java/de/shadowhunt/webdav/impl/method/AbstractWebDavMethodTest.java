@@ -35,6 +35,7 @@ import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.WebDavResponse.Status;
 import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.impl.StringWebDavProperty;
@@ -216,7 +217,15 @@ public abstract class AbstractWebDavMethodTest {
     @Mock
     protected WebDavRequest request;
 
-    protected final void assertNoContent(final Response response) {
+    protected final void assertBasicRequirements(final Response response, final Status expectedStatus) {
+        Assert.assertEquals("status must match", expectedStatus, response.getStatus());
+        Assert.assertNotNull("allow header must not be null", response.getHeader(AbstractBasicResponse.ALLOW_HEADER));
+        Assert.assertEquals("dav header must match", "1,2", response.getHeader(AbstractBasicResponse.DAV_HEADER));
+        Assert.assertEquals("ms-author header must match", "DAV", response.getHeader(AbstractBasicResponse.MS_AUTHOR_HEADER));
+    }
+
+    protected final void assertNoContent(final Response response, final Status expectedStatus) {
+        assertBasicRequirements(response, expectedStatus);
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
         Assert.assertNull("content must be null", response.getContent());
