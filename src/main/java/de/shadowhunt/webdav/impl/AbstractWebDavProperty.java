@@ -61,6 +61,11 @@ public abstract class AbstractWebDavProperty implements WebDavProperty {
     }
 
     @Override
+    public final String toString() {
+        return "WebDavProperty [identifier=" + identifier + ", value=" + getValue() + "]";
+    }
+
+    @Override
     public void write(final XMLStreamWriter writer) throws XMLStreamException {
         final String nameSpace = identifier.getNameSpace();
         final String name = identifier.getName();
