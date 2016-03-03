@@ -16,6 +16,7 @@
  */
 package de.shadowhunt.servlet;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -42,7 +43,7 @@ public class WebDavServlet extends HttpServlet {
         config.setReadOnly(false);
         config.setShowCollectionListings(true);
 
-        final WebDavStore store = new FileSystemStore(FileUtils.getTempDirectory());
+        final WebDavStore store = new FileSystemStore(new File(FileUtils.getTempDirectory(), "webdav-servlet-repo"));
         final WebDavRequest webDavRequest = new HttpServletRequestWrapper(request, config);
         final WebDavResponse webDavResponse = new HttpServletResponseWrapper(response, webDavRequest);
 
