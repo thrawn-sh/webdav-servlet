@@ -49,6 +49,7 @@ import de.shadowhunt.webdav.impl.AbstractWebDavProperty;
 import de.shadowhunt.webdav.impl.StringWebDavProperty;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -93,6 +94,8 @@ public class PropFindMethod extends AbstractWebDavMethod {
 
     private static final XPathExpression ALL_EXPRESSION;
 
+    private static final FastDateFormat ISO_DATE_FORMATTER = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
+
     public static final String METHOD = "PROPFIND";
 
     private static final XPathExpression NAME_EXPRESSION;
@@ -116,13 +119,13 @@ public class PropFindMethod extends AbstractWebDavMethod {
         final Collection<WebDavProperty> result = new ArrayList<>();
         result.add(new StringWebDavProperty(PropertyIdentifier.DISPLAY_NAME_IDENTIFIER, entity.getName()));
         result.add(new StringWebDavProperty(PropertyIdentifier.CONTENT_LENGTH_IDENTIFIER, Long.toString(entity.getSize())));
-        result.add(new StringWebDavProperty(PropertyIdentifier.LAST_MODIFIED_IDENTIFIER, entity.getLastModified().toString())); // FIXME
+        result.add(new StringWebDavProperty(PropertyIdentifier.LAST_MODIFIED_IDENTIFIER, ISO_DATE_FORMATTER.format(entity.getLastModified())));
         if (entity.getType() == WebDavEntity.Type.COLLECTION) {
             result.add(new CollectionProperty());
         }
 
-        final Optional<String> hash = entity.getHash();
-        hash.ifPresent(x -> result.add(new StringWebDavProperty(PropertyIdentifier.ETAG_IDENTIFIER, hash.get())));
+        final Optional<String> etag = entity.getEtag();
+        etag.ifPresent(x -> result.add(new StringWebDavProperty(PropertyIdentifier.ETAG_IDENTIFIER, etag.get())));
 
         final Optional<WebDavLock> lock = entity.getLock();
         lock.ifPresent(x -> result.add(x.toProperty()));

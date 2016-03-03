@@ -36,15 +36,37 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
     private static final Normalizer LAST_MODIFIED_NORMALIZER = new Normalizer() {
 
-        private static final String REGEX = "<D:getlastmodified>... ... \\d{2} \\d{2}:\\d{2}:\\d{2} [^ ]* \\d{4}</D:getlastmodified>";
+        private static final String REGEX = "<D:getlastmodified>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}</D:getlastmodified>";
 
-        private static final String REPLACEMENT = "<D:getlastmodified>Thu Jan 01 01:00:00 CET 1970</D:getlastmodified>";
+        private static final String REPLACEMENT = "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>";
 
         @Override
         public String normalize(final String content) {
             return content.replaceAll(REGEX, REPLACEMENT);
         }
 
+    };
+
+    private static final Normalizer ETAG_NORMALIZER = new Normalizer() {
+
+        private static final String REGEX = "<D:getetag>[^<]*</D:getetag>";
+
+        private static final String REPLACEMENT = "<D:getetag>0000000000</D:getetag>";
+
+        @Override
+        public String normalize(final String content) {
+            return content.replaceAll(REGEX, REPLACEMENT);
+        }
+
+    };
+
+    private static final Normalizer COMBINED_NORMALIZER = new Normalizer() {
+
+        @Override
+        public String normalize(String content) {
+            String lastModified = LAST_MODIFIED_NORMALIZER.normalize(content);
+            return ETAG_NORMALIZER.normalize(lastModified);
+        }
     };
 
     @BeforeClass
@@ -177,8 +199,8 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop>", //
                 "<D:displayname>item.txt</D:displayname>", //
                 "<D:getcontentlength>7</D:getcontentlength>", //
-                "<D:getlastmodified>Thu Jan 01 01:00:00 CET 1970</D:getlastmodified>", //
-                "<D:getetag>1a79a4d60de6718e8e5b326e338ae533</D:getetag>", //
+                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
+                "<D:getetag>0000000000</D:getetag>", //
                 "<ns1:foo>foo_foo_content</ns1:foo>", //
                 "<ns1:bar>foo_bar_content</ns1:bar>", //
                 "<ns2:foo>bar_foo_content</ns2:foo>", //
@@ -188,7 +210,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:response>", //
                 "</D:multistatus>", //
                 "\r\n");
-        Assert.assertEquals("content must match", expected, response.getContent(LAST_MODIFIED_NORMALIZER));
+        Assert.assertEquals("content must match", expected, response.getContent(COMBINED_NORMALIZER));
     }
 
     @Test
@@ -247,7 +269,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop>", //
                 "<D:displayname>collection</D:displayname>", //
                 "<D:getcontentlength>0</D:getcontentlength>", //
-                "<D:getlastmodified>Thu Jan 01 01:00:00 CET 1970</D:getlastmodified>", //
+                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
                 "<D:resourcetype>", //
                 "<D:collection/>", //
                 "</D:resourcetype>", //
@@ -264,8 +286,8 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop>", //
                 "<D:displayname>item.txt</D:displayname>", //
                 "<D:getcontentlength>4</D:getcontentlength>", //
-                "<D:getlastmodified>Thu Jan 01 01:00:00 CET 1970</D:getlastmodified>", //
-                "<D:getetag>098f6bcd4621d373cade4e832627b4f6</D:getetag>", //
+                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
+                "<D:getetag>0000000000</D:getetag>", //
                 "<D:supportedlock>", //
                 "<D:lockentry>", //
                 "<D:lockscope>", //
@@ -289,7 +311,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop>", //
                 "<D:displayname>level1</D:displayname>", //
                 "<D:getcontentlength>0</D:getcontentlength>", //
-                "<D:getlastmodified>Thu Jan 01 01:00:00 CET 1970</D:getlastmodified>", //
+                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
                 "<D:resourcetype>", //
                 "<D:collection/>", //
                 "</D:resourcetype>", //
@@ -299,6 +321,6 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:response>", //
                 "</D:multistatus>", //
                 "\r\n");
-        Assert.assertEquals("content must match", expected, response.getContent(LAST_MODIFIED_NORMALIZER));
+        Assert.assertEquals("content must match", expected, response.getContent(COMBINED_NORMALIZER));
     }
 }
