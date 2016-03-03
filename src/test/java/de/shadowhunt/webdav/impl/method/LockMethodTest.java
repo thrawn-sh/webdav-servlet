@@ -31,6 +31,19 @@ import org.mockito.Mockito;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class LockMethodTest extends AbstractWebDavMethodTest {
 
+    private static final Normalizer LOCK_TOKEN_NORMALIZER = new Normalizer() {
+
+        private static final String REGEX = "<D:href>opaquelocktoken:........-....-....-....-............</D:href>";
+
+        private static final String REPLACEMENT = "<D:href>opaquelocktoken:00000000-0000-0000-0000-000000000000</D:href>";
+
+        @Override
+        public String normalize(final String content) {
+            return content.replaceAll(REGEX, REPLACEMENT);
+        }
+
+    };
+
     protected static final WebDavPath LOCKED_ITEM = WebDavPath.create("/locked_item.txt");
 
     @BeforeClass
@@ -57,7 +70,28 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
-        Assert.assertNotNull("content must not be null", response.getContent()); // FIXME
+        final String content = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
+                "<D:prop xmlns:D=\"DAV:\">", //
+                "<D:lockdiscovery>", //
+                "<D:activelock>", //
+                "<D:lockscope>", //
+                "<D:exclusive/>", //
+                "</D:lockscope>", //
+                "<D:locktype>", //
+                "<D:write/>", //
+                "</D:locktype>", //
+                "<D:timeout>Seconds-3600</D:timeout>", //
+                "<D:depth>0</D:depth>", //
+                "<D:owner>", //
+                "</D:owner>", //
+                "<D:locktoken>", //
+                "<D:href>opaquelocktoken:00000000-0000-0000-0000-000000000000</D:href>", //
+                "</D:locktoken>", //
+                "</D:activelock>", //
+                "</D:lockdiscovery>", //
+                "</D:prop>", //
+                "\r\n");
+        Assert.assertEquals("content must match", content, response.getContent(LOCK_TOKEN_NORMALIZER));
     }
 
     @Test
@@ -70,6 +104,27 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
-        Assert.assertNotNull("content must not be null", response.getContent()); // FIXME
+        final String content = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
+                "<D:prop xmlns:D=\"DAV:\">", //
+                "<D:lockdiscovery>", //
+                "<D:activelock>", //
+                "<D:lockscope>", //
+                "<D:exclusive/>", //
+                "</D:lockscope>", //
+                "<D:locktype>", //
+                "<D:write/>", //
+                "</D:locktype>", //
+                "<D:timeout>Seconds-3600</D:timeout>", //
+                "<D:depth>0</D:depth>", //
+                "<D:owner>", //
+                "</D:owner>", //
+                "<D:locktoken>", //
+                "<D:href>opaquelocktoken:00000000-0000-0000-0000-000000000000</D:href>", //
+                "</D:locktoken>", //
+                "</D:activelock>", //
+                "</D:lockdiscovery>", //
+                "</D:prop>", //
+                "\r\n");
+        Assert.assertEquals("content must match", content, response.getContent(LOCK_TOKEN_NORMALIZER));
     }
 }
