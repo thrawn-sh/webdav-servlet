@@ -193,7 +193,7 @@ public abstract class AbstractWebDavMethodTest {
 
     @BeforeClass
     public static void initStore() {
-        root = new File(new File(FileUtils.getTempDirectory(), "webdav-servlet"), UUID.randomUUID().toString());
+        root = new File(new File(FileUtils.getTempDirectory(), "webdav-servlet-test"), UUID.randomUUID().toString());
         store = new FileSystemStore(root);
 
         createCollection(EXISITING_COLLECTION, false);
