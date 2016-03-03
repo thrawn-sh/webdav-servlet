@@ -36,16 +36,16 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 class HtmlListingResponse extends AbstractBasicResponse {
 
-    private final String cssPath;
+    private final String css;
 
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
     private final List<WebDavEntity> entities;
 
-    HtmlListingResponse(final WebDavEntity root, final List<WebDavEntity> entities, final Optional<String> cssPath) {
+    HtmlListingResponse(final WebDavEntity root, final List<WebDavEntity> entities, final Optional<String> css) {
         super(root);
         this.entities = entities;
-        this.cssPath = cssPath.orElse(null);
+        this.css = css.orElse(null);
     }
 
     @Override
@@ -61,10 +61,10 @@ class HtmlListingResponse extends AbstractBasicResponse {
         writer.print(StringEscapeUtils.escapeHtml4(path.getValue()));
         writer.print("</title>");
 
-        if (cssPath != null) {
-            writer.print("<link rel=\"stylesheet\" type=\"text/css\" href=\"");
-            writer.print(cssPath);
-            writer.print("\"/>");
+        if (css != null) {
+            writer.print("<style>");
+            writer.print(css);
+            writer.print("</style>");
         }
 
         writer.print("</head><body><table><thead><tr><th class=\"name\">Name</th><th class=\"size\">Size</th><th class=\"modified\">Modified</th></tr></thead><tbody>");
