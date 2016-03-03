@@ -72,7 +72,7 @@ class PropertyNameResponse extends AbstractBasicResponse {
     @Override
     protected void write0(final WebDavResponse response) throws IOException {
         response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/xml");
+        response.setContentType("application/xml");
         response.setStatus(WebDavResponse.Status.SC_MULTISTATUS);
 
         try {

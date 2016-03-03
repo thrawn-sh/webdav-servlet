@@ -115,7 +115,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
-
+        Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:ns3=\"missing\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
@@ -142,7 +142,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
-
+        Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
@@ -169,7 +169,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
-
+        Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
@@ -202,7 +202,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
-
+        Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:ns1=\"bar\" xmlns:ns2=\"foo\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
@@ -237,7 +237,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
-
+        Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //

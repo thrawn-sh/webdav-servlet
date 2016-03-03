@@ -70,6 +70,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String content = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:prop xmlns:D=\"DAV:\">", //
                 "<D:lockdiscovery>", //
@@ -104,6 +105,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String content = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:prop xmlns:D=\"DAV:\">", //
                 "<D:lockdiscovery>", //

@@ -43,7 +43,7 @@ class LockResponse extends AbstractBasicResponse {
         final WebDavLock lock = l.get();
 
         response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/xml");
+        response.setContentType("application/xml");
         response.addHeader("Lock-Token", "<" + lock.getToken() + ">");
         response.setStatus(Status.SC_MULTISTATUS);
 
