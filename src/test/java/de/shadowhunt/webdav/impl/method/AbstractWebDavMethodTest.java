@@ -216,6 +216,12 @@ public abstract class AbstractWebDavMethodTest {
     @Mock
     protected WebDavRequest request;
 
+    protected final void assertNoContent(final Response response) {
+        Assert.assertNull("contentType must be null", response.getContentType());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
+        Assert.assertNull("content must be null", response.getContent());
+    }
+
     protected String concat(final String... input) {
         final StringBuilder sb = new StringBuilder();
         for (final String i : input) {

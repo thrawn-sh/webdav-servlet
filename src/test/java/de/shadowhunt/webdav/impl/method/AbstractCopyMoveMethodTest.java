@@ -49,9 +49,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
-        Assert.assertNull("contentType must be null", response.getContentType());
-        Assert.assertNull("content must be null", response.getContent());
-        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
+        assertNoContent(response);
     }
 
     @Test
@@ -64,9 +62,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
-        Assert.assertNull("contentType must be null", response.getContentType());
-        Assert.assertNull("content must be null", response.getContent());
-        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
+        assertNoContent(response);
     }
 
     @Test
@@ -80,9 +76,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_PRECONDITION_FAILED, response.getStatus());
-        Assert.assertNull("contentType must be null", response.getContentType());
-        Assert.assertNull("content must be null", response.getContent());
-        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
+        assertNoContent(response);
     }
 
     @Test
@@ -96,8 +90,6 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
-        Assert.assertNull("contentType must be null", response.getContentType());
-        Assert.assertNull("content must be null", response.getContent());
-        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
+        assertNoContent(response);
     }
 }

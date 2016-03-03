@@ -61,9 +61,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
-        Assert.assertNull("contentType must be null", response.getContentType());
-        Assert.assertNull("content must be null", response.getContent());
-        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
+        assertNoContent(response);
     }
 
     @Test
@@ -75,9 +73,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_FORBIDDEN, response.getStatus());
-        Assert.assertNull("contentType must be null", response.getContentType());
-        Assert.assertNull("content must be null", response.getContent());
-        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
+        assertNoContent(response);
     }
 
     @Test
@@ -89,9 +85,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_BAD_REQUEST, response.getStatus());
-        Assert.assertNull("contentType must be null", response.getContentType());
-        Assert.assertNull("content must be null", response.getContent());
-        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
+        assertNoContent(response);
     }
 
     @Test
@@ -106,9 +100,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_BAD_REQUEST, response.getStatus());
-        Assert.assertNull("contentType must be null", response.getContentType());
-        Assert.assertNull("content must be null", response.getContent());
-        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
+        assertNoContent(response);
     }
 
     @Test
@@ -124,6 +116,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
+        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:ns3=\"missing\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
@@ -138,7 +131,6 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:multistatus>", //
                 "\r\n");
         Assert.assertEquals("content must match", expected, response.getContent());
-        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
     }
 
     @Test
@@ -152,6 +144,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
+        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
@@ -166,7 +159,6 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:multistatus>", //
                 "\r\n");
         Assert.assertEquals("content must match", expected, response.getContent());
-        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
     }
 
     @Test
@@ -180,6 +172,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
+        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
@@ -200,7 +193,6 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:multistatus>", //
                 "\r\n");
         Assert.assertEquals("content must match", expected, response.getContent(LAST_MODIFIED_NORMALIZER));
-        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
     }
 
     @Test
@@ -214,6 +206,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
+        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:ns1=\"bar\" xmlns:ns2=\"foo\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
@@ -236,7 +229,6 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:multistatus>", //
                 "\r\n");
         Assert.assertEquals("content must match", expected, response.getContent());
-        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
     }
 
     @Test
@@ -250,6 +242,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
+        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:D=\"DAV:\">", //
                 "<D:response>", //
@@ -311,6 +304,5 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:multistatus>", //
                 "\r\n");
         Assert.assertEquals("content must match", expected, response.getContent(LAST_MODIFIED_NORMALIZER));
-        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
     }
 }

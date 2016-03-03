@@ -236,7 +236,6 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             // response.addDateHeader("Last-Modified", entity.getLastModified().getTime()); FIXME
         }
-        // response.setCharacterEncoding("UTF-8"); FIXME
         write0(response);
     }
 
