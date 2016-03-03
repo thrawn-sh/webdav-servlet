@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,10 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public abstract class AbstractWebDavMethodTest {
+
+    interface Normalizer {
+        String normalize(final String content);
+    }
 
     static class Response implements WebDavResponse {
 
@@ -80,24 +85,16 @@ public abstract class AbstractWebDavMethodTest {
 
         @Nullable
         public String getContent() {
-            return getContent(false);
+            return getContent(DUMMY);
         }
 
         @Nullable
-        public String getContent(final boolean normalize) {
+        public String getContent(final Normalizer replacer) {
             if (content.size() == 0) {
                 return null;
             }
 
-            if (!normalize) {
-                return new String(content.toByteArray());
-            }
-
-            String result = new String(content.toByteArray());
-            int before = result.length();
-            result = result.replaceAll("<D:getlastmodified>... ... \\d{2} \\d{2}:\\d{2}:\\d{2} [^ ]* \\d{4}</D:getlastmodified>", "<D:getlastmodified>Thu Jan 01 01:00:00 CET 1970</D:getlastmodified>");
-            int after = result.length();
-            return result;
+            return replacer.normalize(new String(content.toByteArray(), StandardCharsets.UTF_8));
         }
 
         public String getContentType() {
@@ -138,6 +135,15 @@ public abstract class AbstractWebDavMethodTest {
         }
     }
 
+    private static final Normalizer DUMMY = new Normalizer() {
+
+        @Override
+        public String normalize(final String content) {
+            return content;
+        }
+
+    };
+
     protected static final WebDavPath EXISITING_COLLECTION = WebDavPath.create("/collection");
 
     protected static final WebDavPath EXISITING_ITEM = WebDavPath.create("/item.txt");
@@ -151,15 +157,6 @@ public abstract class AbstractWebDavMethodTest {
     protected static void createCollection(final WebDavPath path, final boolean locked) {
         createCollection0(path, locked);
         setProperties(path);
-    }
-
-    private static void setProperties(final WebDavPath path) {
-        store.setProperties(path,
-                Arrays.asList( //
-                        new StringWebDavProperty(new PropertyIdentifier("foo", "foo"), "foo_foo_content"), //
-                        new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo_bar_content"), //
-                        new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar_foo_content") //
-        ));
     }
 
     protected static void createCollection0(final WebDavPath path, final boolean locked) {
@@ -200,6 +197,15 @@ public abstract class AbstractWebDavMethodTest {
 
         createCollection(EXISITING_COLLECTION, false);
         createItem(EXISITING_ITEM, "example", false);
+    }
+
+    private static void setProperties(final WebDavPath path) {
+        store.setProperties(path,
+                Arrays.asList( //
+                        new StringWebDavProperty(new PropertyIdentifier("foo", "foo"), "foo_foo_content"), //
+                        new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo_bar_content"), //
+                        new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar_foo_content") //
+        ));
     }
 
     @Mock

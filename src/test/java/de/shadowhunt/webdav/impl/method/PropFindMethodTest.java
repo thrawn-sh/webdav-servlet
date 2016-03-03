@@ -34,6 +34,19 @@ import org.mockito.Mockito;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
+    private static final Normalizer LAST_MODIFIED_NORMALIZER = new Normalizer() {
+
+        private static final String REGEX = "<D:getlastmodified>... ... \\d{2} \\d{2}:\\d{2}:\\d{2} [^ ]* \\d{4}</D:getlastmodified>";
+
+        private static final String REPLACEMENT = "<D:getlastmodified>Thu Jan 01 01:00:00 CET 1970</D:getlastmodified>";
+
+        @Override
+        public String normalize(final String content) {
+            return content.replaceAll(REGEX, REPLACEMENT);
+        }
+
+    };
+
     @BeforeClass
     public static void fillStore() {
         createItem(EXISITING_COLLECTION.append(WebDavPath.create("/item.txt")), "test", true);
@@ -176,7 +189,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:response>", //
                 "</D:multistatus>", //
                 "\r\n");
-        Assert.assertEquals("content must match", expected, response.getContent(true));
+        Assert.assertEquals("content must match", expected, response.getContent(LAST_MODIFIED_NORMALIZER));
     }
 
     @Test
@@ -285,6 +298,6 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:response>", //
                 "</D:multistatus>", //
                 "\r\n");
-        Assert.assertEquals("content must match", expected, response.getContent(true));
+        Assert.assertEquals("content must match", expected, response.getContent(LAST_MODIFIED_NORMALIZER));
     }
 }
