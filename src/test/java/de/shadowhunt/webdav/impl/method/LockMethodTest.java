@@ -16,6 +16,8 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
+import java.util.Optional;
+
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
@@ -66,6 +68,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         final WebDavMethod method = new LockMethod();
 
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPrincipal()).thenReturn(Optional.empty());
 
         final Response response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
@@ -102,6 +105,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(config.isShowCollectionListings()).thenReturn(true);
 
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
+        Mockito.when(request.getPrincipal()).thenReturn(Optional.empty());
 
         final Response response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
