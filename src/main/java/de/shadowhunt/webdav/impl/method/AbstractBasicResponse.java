@@ -35,13 +35,19 @@ import org.apache.commons.lang3.StringUtils;
 
 abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
+    public static final String ALLOW_HEADER = "Allow";
+
     private static final String COLLECTION;
 
     private static final String COLLECTION_READ_ONLY;
 
+    private static final String DAV_HEADER = "DAV";
+
     private static final String ITEM;
 
     private static final String ITEM_READ_ONLY;
+
+    public static final String MS_AUTHOR_HEADER = "MS-Author-Via";
 
     private static final String NON_EXISTING;
 
@@ -227,9 +233,9 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
         final WebDavRequest request = response.getRequest();
         final WebDavConfig config = request.getConfig();
 
-        response.addHeader("Allow", getAllowedMethods(entity, config));
-        response.addHeader("DAV", "1,2");
-        response.addHeader("MS-Author-Via", "DAV"); // MS required header
+        response.addHeader(ALLOW_HEADER, getAllowedMethods(entity, config));
+        response.addHeader(DAV_HEADER, "1,2");
+        response.addHeader(MS_AUTHOR_HEADER, AbstractBasicResponse.DAV_HEADER); // MS required header
         if (entity != null) {
             final Optional<String> hash = entity.getHash();
             hash.ifPresent(x -> response.addHeader("ETag", x));

@@ -39,7 +39,7 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
-        Assert.assertEquals("allow must match", "OPTIONS", response.getHeader("Allow"));
+        Assert.assertEquals("allow must match", "OPTIONS", response.getHeader(AbstractBasicResponse.ALLOW_HEADER));
         assertNoContent(response);
     }
 
@@ -53,7 +53,7 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
-        Assert.assertEquals("allow must match", "MKCOL, OPTIONS, PUT", response.getHeader("Allow"));
+        Assert.assertEquals("allow must match", "MKCOL, OPTIONS, PUT", response.getHeader(AbstractBasicResponse.ALLOW_HEADER));
         assertNoContent(response);
     }
 
@@ -67,7 +67,7 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
-        Assert.assertEquals("allow must match", "GET, HEAD, OPTIONS, PROPFIND", response.getHeader("Allow"));
+        Assert.assertEquals("allow must match", "GET, HEAD, OPTIONS, PROPFIND", response.getHeader(AbstractBasicResponse.ALLOW_HEADER));
         assertNoContent(response);
     }
 
@@ -81,7 +81,7 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
-        Assert.assertEquals("allow must match", "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, PUT, UNLOCK", response.getHeader("Allow"));
+        Assert.assertEquals("allow must match", "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, PUT, UNLOCK", response.getHeader(AbstractBasicResponse.ALLOW_HEADER));
         assertNoContent(response);
     }
 
@@ -95,7 +95,7 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
-        Assert.assertEquals("allow must match", "GET, HEAD, OPTIONS, PROPFIND", response.getHeader("Allow"));
+        Assert.assertEquals("allow must match", "GET, HEAD, OPTIONS, PROPFIND", response.getHeader(AbstractBasicResponse.ALLOW_HEADER));
         assertNoContent(response);
     }
 
@@ -109,7 +109,7 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
-        Assert.assertEquals("allow must match", "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, UNLOCK", response.getHeader("Allow"));
+        Assert.assertEquals("allow must match", "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, UNLOCK", response.getHeader(AbstractBasicResponse.ALLOW_HEADER));
         assertNoContent(response);
     }
 }
