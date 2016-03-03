@@ -33,12 +33,9 @@ import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavResponseWriter;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 
 abstract class AbstractBasicResponse implements WebDavResponseWriter {
-
-    private static final String ETAG_HEADER = "ETag";
-
-    public static final String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
 
     public static final String ALLOW_HEADER = "Allow";
 
@@ -47,6 +44,12 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
     private static final String COLLECTION_READ_ONLY;
 
     public static final String DAV_HEADER = "DAV";
+
+    public static final String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
+
+    private static final String ETAG_HEADER = "ETag";
+
+    private static final FastDateFormat HTTP_DATE_FORMATER = FastDateFormat.getInstance("EEE, dd MMM yyyy HH:mm:ss zzz");
 
     private static final String ITEM;
 
@@ -245,7 +248,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
             final Optional<String> etag = entity.getEtag();
             etag.ifPresent(x -> response.addHeader(ETAG_HEADER, x));
 
-            // response.addDateHeader("Last-Modified", entity.getLastModified().getTime()); FIXME
+            response.addHeader("Last-Modified", HTTP_DATE_FORMATER.format(entity.getLastModified()));
         }
         write0(response);
     }
