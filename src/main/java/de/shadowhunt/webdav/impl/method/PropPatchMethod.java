@@ -18,7 +18,6 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -45,6 +44,22 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class PropPatchMethod extends AbstractWebDavMethod {
+
+    private static final class DummyProperty extends AbstractWebDavProperty {
+        private DummyProperty(final PropertyIdentifier identifier) {
+            super(identifier);
+        }
+
+        @Override
+        public String getValue() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void write(final XMLStreamWriter writer) throws XMLStreamException {
+            // nothing to do
+        }
+    }
 
     private static final XPathExpression EXPRESSION;
 
@@ -87,8 +102,7 @@ public class PropPatchMethod extends AbstractWebDavMethod {
             return AbstractBasicResponse.createBadRequest(entity);
         }
 
-        final Collection<WebDavProperty> properties = new HashSet<>();
-        properties.addAll(store.getProperties(target));
+        final Collection<WebDavProperty> properties = store.getProperties(target);
         try {
             final NodeList nodes = (NodeList) EXPRESSION.evaluate(document, XPathConstants.NODESET);
             final int length = nodes.getLength();
@@ -105,18 +119,7 @@ public class PropPatchMethod extends AbstractWebDavMethod {
                     properties.remove(property); // remove old entry
                     properties.add(property);
                 } else {
-                    properties.remove(new AbstractWebDavProperty(propertyIdentifier) {
-
-                        @Override
-                        public String getValue() {
-                            throw new UnsupportedOperationException();
-                        }
-
-                        @Override
-                        public void write(final XMLStreamWriter writer) throws XMLStreamException {
-                            // nothing to do
-                        }
-                    });
+                    properties.remove(new DummyProperty(propertyIdentifier));
                 }
             }
         } catch (final Exception e) {

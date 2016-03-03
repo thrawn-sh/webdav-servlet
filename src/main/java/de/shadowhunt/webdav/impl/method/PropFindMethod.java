@@ -55,6 +55,24 @@ import org.w3c.dom.NodeList;
 
 public class PropFindMethod extends AbstractWebDavMethod {
 
+    private static final class CollectionProperty extends AbstractWebDavProperty {
+        private CollectionProperty() {
+            super(PropertyIdentifier.RESOURCE_TYPE_IDENTIFIER);
+        }
+
+        @Override
+        public String getValue() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void write(final XMLStreamWriter writer) throws XMLStreamException {
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.RESOURCE_TYPE_IDENTIFIER.getName());
+            writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, "collection");
+            writer.writeEndElement();
+        }
+    }
+
     private static final Set<PropertyIdentifier> ALL = new AbstractSet<PropertyIdentifier>() {
 
         @Override
@@ -100,20 +118,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
         result.add(new StringWebDavProperty(PropertyIdentifier.CONTENT_LENGTH_IDENTIFIER, Long.toString(entity.getSize())));
         result.add(new StringWebDavProperty(PropertyIdentifier.LAST_MODIFIED_IDENTIFIER, entity.getLastModified().toString())); // FIXME
         if (entity.getType() == WebDavEntity.Type.COLLECTION) {
-            result.add(new AbstractWebDavProperty(PropertyIdentifier.RESOURCE_TYPE_IDENTIFIER) {
-
-                @Override
-                public String getValue() {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public void write(final XMLStreamWriter writer) throws XMLStreamException {
-                    writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.RESOURCE_TYPE_IDENTIFIER.getName());
-                    writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, "collection");
-                    writer.writeEndElement();
-                }
-            });
+            result.add(new CollectionProperty());
         }
 
         final Optional<String> hash = entity.getHash();

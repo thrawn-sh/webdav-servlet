@@ -30,6 +30,31 @@ import de.shadowhunt.webdav.impl.AbstractWebDavProperty;
 @Immutable
 final class LockImpl implements WebDavLock {
 
+    private final class LockProperty extends AbstractWebDavProperty {
+        private LockProperty() {
+            super(PropertyIdentifier.LOCK_IDENTIFIER);
+        }
+
+        @Override
+        public String getValue() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void write(final XMLStreamWriter writer) throws XMLStreamException {
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.LOCK_IDENTIFIER.getName());
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "lockentry");
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "lockscope");
+            writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, getScope().name().toLowerCase(Locale.US));
+            writer.writeEndElement();
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktype");
+            writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, "write"); // FIXME
+            writer.writeEndElement();
+            writer.writeEndElement();
+            writer.writeEndElement();
+        }
+    }
+
     private final String owner;
 
     private final Scope scope;
@@ -89,27 +114,7 @@ final class LockImpl implements WebDavLock {
 
     @Override
     public WebDavProperty toProperty() {
-        return new AbstractWebDavProperty(PropertyIdentifier.LOCK_IDENTIFIER) {
-
-            @Override
-            public String getValue() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void write(final XMLStreamWriter writer) throws XMLStreamException {
-                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.LOCK_IDENTIFIER.getName());
-                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "lockentry");
-                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "lockscope");
-                writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, getScope().name().toLowerCase(Locale.US));
-                writer.writeEndElement();
-                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktype");
-                writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, "write"); // FIXME
-                writer.writeEndElement();
-                writer.writeEndElement();
-                writer.writeEndElement();
-            }
-        };
+        return new LockProperty();
     }
 
     @Override
