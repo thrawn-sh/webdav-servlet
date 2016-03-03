@@ -260,6 +260,11 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
+    public Access grantAccess(final WebDavPath path, final Optional<Principal> principal) {
+        return Access.ALLOW; // TODO
+    }
+
+    @Override
     public List<WebDavPath> list(final WebDavPath path) throws WebDavException {
         synchronized (monitor) {
             final File file = getFile(path, true);

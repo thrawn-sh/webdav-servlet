@@ -27,6 +27,10 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public interface WebDavStore {
 
+    enum Access {
+        ALLOW, DENY, REQUIRE_AUTHENTICATION;
+    }
+
     void createCollection(WebDavPath path) throws WebDavException;
 
     void createItem(WebDavPath path, InputStream content) throws WebDavException;
@@ -49,6 +53,8 @@ public interface WebDavStore {
     }
 
     Collection<WebDavProperty> getProperties(WebDavPath path) throws WebDavException;
+
+    Access grantAccess(WebDavPath path, Optional<Principal> principal);
 
     List<WebDavPath> list(WebDavPath path) throws WebDavException;
 

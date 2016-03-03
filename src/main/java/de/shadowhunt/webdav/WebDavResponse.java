@@ -36,6 +36,7 @@ public interface WebDavResponse {
         SC_NOT_IMPLEMENTED(501), //
         SC_OK(200), //
         SC_PRECONDITION_FAILED(412), //
+        SC_UNAUTHORIZED(401), //
         SC_UNSUPPORTED_MEDIA_TYPE(415);
 
         public final int value;

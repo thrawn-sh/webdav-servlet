@@ -25,6 +25,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import de.shadowhunt.webdav.WebDavMethod.Method;
+import de.shadowhunt.webdav.WebDavStore.Access;
 import de.shadowhunt.webdav.precondition.Precondition;
 
 public final class WebDavDispatcher {
@@ -55,6 +56,17 @@ public final class WebDavDispatcher {
         final UUID requestId = response.getRequest().getId();
         if (!request.getId().equals(requestId)) {
             response.setStatus(WebDavResponse.Status.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        final Access access = store.grantAccess(request.getPath(), request.getPrincipal());
+        if (access == Access.DENY) {
+            response.setStatus(WebDavResponse.Status.SC_FORBIDDEN);
+            return;
+        }
+
+        if (access == Access.REQUIRE_AUTHENTICATION) {
+            response.setStatus(WebDavResponse.Status.SC_UNAUTHORIZED);
             return;
         }
 

@@ -37,6 +37,7 @@ public class WebDavResponseTest {
         Assert.assertEquals("status code must match", HttpStatus.SC_NO_CONTENT, WebDavResponse.Status.SC_NO_CONTENT.value);
         Assert.assertEquals("status code must match", HttpStatus.SC_OK, WebDavResponse.Status.SC_OK.value);
         Assert.assertEquals("status code must match", HttpStatus.SC_PRECONDITION_FAILED, WebDavResponse.Status.SC_PRECONDITION_FAILED.value);
+        Assert.assertEquals("status code must match", HttpStatus.SC_UNAUTHORIZED, WebDavResponse.Status.SC_UNAUTHORIZED.value);
         Assert.assertEquals("status code must match", HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE, WebDavResponse.Status.SC_UNSUPPORTED_MEDIA_TYPE.value);
     }
 }
