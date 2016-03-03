@@ -68,7 +68,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
     public void test01_infinity_not_supported() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(PropFindMethod.INFINITY);
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final Response response = execute(method);
