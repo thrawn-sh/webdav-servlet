@@ -36,6 +36,8 @@ import org.apache.commons.lang3.StringUtils;
 
 abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
+    private static final String ETAG_HEADER = "ETag";
+
     public static final String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
 
     public static final String ALLOW_HEADER = "Allow";
@@ -240,8 +242,8 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
         response.addHeader(DAV_HEADER, "1,2");
         response.addHeader(MS_AUTHOR_HEADER, "DAV"); // MS required header
         if (entity != null) {
-            final Optional<String> hash = entity.getHash();
-            hash.ifPresent(x -> response.addHeader("ETag", x));
+            final Optional<String> etag = entity.getEtag();
+            etag.ifPresent(x -> response.addHeader(ETAG_HEADER, x));
 
             // response.addDateHeader("Last-Modified", entity.getLastModified().getTime()); FIXME
         }

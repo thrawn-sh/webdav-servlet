@@ -25,6 +25,8 @@ import de.shadowhunt.webdav.WebDavPath;
 
 class EntiyImpl implements WebDavEntity {
 
+    private final String etag;
+
     private final String hash;
 
     private final Date lastModified;
@@ -37,13 +39,14 @@ class EntiyImpl implements WebDavEntity {
 
     private final Type type;
 
-    EntiyImpl(final WebDavPath path, final Type type, final Optional<String> hash, final Date lastModified, final long size, final Optional<WebDavLock> lock) {
+    EntiyImpl(final WebDavPath path, final Type type, final Optional<String> hash, final Date lastModified, final long size, final Optional<WebDavLock> lock, final Optional<String> etag) {
         this.path = path;
         this.type = type;
         this.hash = hash.orElse(null);
         this.lastModified = new Date(lastModified.getTime());
         this.size = size;
         this.lock = lock.orElse(null);
+        this.etag = etag.orElse(null);
     }
 
     @Override
@@ -78,6 +81,11 @@ class EntiyImpl implements WebDavEntity {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public Optional<String> getEtag() {
+        return Optional.ofNullable(etag);
     }
 
     @Override

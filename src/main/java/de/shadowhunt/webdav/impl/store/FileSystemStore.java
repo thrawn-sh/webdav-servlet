@@ -70,6 +70,14 @@ public class FileSystemStore implements WebDavStore {
         }
     }
 
+    private String calculateEtag(final WebDavPath path) {
+        final File content = getFile(path, false);
+        final File meta = getMetaFile(path);
+
+        final long modified = Math.max(content.lastModified(), meta.lastModified());
+        return Long.toString(modified, Character.MAX_RADIX);
+    }
+
     private String calculateMd5(final File file, final WebDavPath path) {
         try (final FileInputStream fis = new FileInputStream(file)) {
             return DigestUtils.md5Hex(fis);
@@ -201,9 +209,10 @@ public class FileSystemStore implements WebDavStore {
             if (file.isFile()) {
                 final String hash = calculateMd5(file, path);
                 final long size = calculateSize(file, path);
-                return new EntiyImpl(path, Type.ITEM, Optional.of(hash), lastModified, size, lock);
+                final String etag = calculateEtag(path);
+                return new EntiyImpl(path, Type.ITEM, Optional.of(hash), lastModified, size, lock, Optional.of(etag));
             }
-            return new EntiyImpl(path, Type.COLLECTION, Optional.empty(), lastModified, 0L, lock);
+            return new EntiyImpl(path, Type.COLLECTION, Optional.empty(), lastModified, 0L, lock, Optional.empty());
         }
     }
 

@@ -37,6 +37,8 @@ public interface WebDavEntity extends Comparable<WebDavEntity> {
     @Override
     boolean equals(Object o);
 
+    Optional<String> getEtag();
+
     Optional<String> getHash();
 
     Date getLastModified();
@@ -56,5 +58,4 @@ public interface WebDavEntity extends Comparable<WebDavEntity> {
 
     @Override
     String toString();
-
 }
