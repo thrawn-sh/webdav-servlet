@@ -42,7 +42,7 @@ class LockResponse extends AbstractBasicResponse {
         final Optional<WebDavLock> l = entity.getLock();
         final WebDavLock lock = l.get();
 
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding(UTF_8);
         response.setContentType("application/xml");
         response.addHeader("Lock-Token", "<" + lock.getToken() + ">");
         response.setStatus(Status.SC_MULTISTATUS);
@@ -50,8 +50,8 @@ class LockResponse extends AbstractBasicResponse {
         try {
             final XMLOutputFactory factory = XMLOutputFactory.newFactory();
 
-            final XMLStreamWriter writer = factory.createXMLStreamWriter(response.getOutputStream(), "UTF-8");
-            writer.writeStartDocument("UTF-8", "1.0");
+            final XMLStreamWriter writer = factory.createXMLStreamWriter(response.getOutputStream(), UTF_8);
+            writer.writeStartDocument(UTF_8, "1.0");
             writer.setPrefix(PropertyIdentifier.DEFAULT_DAV_PREFIX, PropertyIdentifier.DAV_NAMESPACE);
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "prop");
             writer.writeNamespace(PropertyIdentifier.DEFAULT_DAV_PREFIX, PropertyIdentifier.DAV_NAMESPACE);

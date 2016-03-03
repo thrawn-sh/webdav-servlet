@@ -107,15 +107,15 @@ class PropertiesResponse extends AbstractBasicResponse {
 
     @Override
     protected void write0(final WebDavResponse response) throws IOException {
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding(UTF_8);
         response.setContentType("application/xml");
         response.setStatus(WebDavResponse.Status.SC_MULTISTATUS);
 
         try {
             final XMLOutputFactory factory = XMLOutputFactory.newFactory();
 
-            final XMLStreamWriter writer = factory.createXMLStreamWriter(response.getOutputStream(), "UTF-8");
-            writer.writeStartDocument("UTF-8", "1.0");
+            final XMLStreamWriter writer = factory.createXMLStreamWriter(response.getOutputStream(), UTF_8);
+            writer.writeStartDocument(UTF_8, "1.0");
             final Map<String, String> prefixes = announceNameSpacePrefixes(writer);
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "multistatus");
             writeNameSpaceDeclarations(writer, prefixes);

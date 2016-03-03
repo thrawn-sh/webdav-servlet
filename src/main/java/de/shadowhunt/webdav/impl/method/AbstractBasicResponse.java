@@ -17,6 +17,7 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -34,6 +35,8 @@ import de.shadowhunt.webdav.WebDavResponseWriter;
 import org.apache.commons.lang3.StringUtils;
 
 abstract class AbstractBasicResponse implements WebDavResponseWriter {
+
+    public static final String UTF_8 = StandardCharsets.UTF_8.name();
 
     public static final String ALLOW_HEADER = "Allow";
 
