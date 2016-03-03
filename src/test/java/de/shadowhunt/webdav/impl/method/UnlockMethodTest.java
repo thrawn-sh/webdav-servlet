@@ -16,6 +16,7 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
+import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
@@ -43,7 +44,7 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
@@ -53,7 +54,7 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_BAD_REQUEST);
     }
 
@@ -65,7 +66,7 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NO_CONTENT);
     }
 }

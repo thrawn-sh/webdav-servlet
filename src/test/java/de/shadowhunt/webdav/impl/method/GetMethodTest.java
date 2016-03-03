@@ -18,6 +18,8 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.util.Optional;
 
+import de.shadowhunt.ContentNormalizer;
+import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
@@ -33,7 +35,7 @@ import org.mockito.Mockito;
 public class GetMethodTest extends AbstractWebDavMethodTest {
 
     //
-    private static final Normalizer LAST_MODIFIED_NORMALIZER = new Normalizer() {
+    private static final ContentNormalizer LAST_MODIFIED_NORMALIZER = new ContentNormalizer() {
 
         private static final String REGEX = "<td class=\"modified\">\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d</td>";
 
@@ -52,7 +54,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
@@ -64,7 +66,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_OK);
         // Assert.assertEquals("contentType must match", "", response.getContentType()); // FIXME
         Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
@@ -80,7 +82,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(WebDavPath.ROOT);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_OK);
         Assert.assertEquals("contentType must match", "text/html", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
@@ -131,7 +133,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_FORBIDDEN);
     }
 }

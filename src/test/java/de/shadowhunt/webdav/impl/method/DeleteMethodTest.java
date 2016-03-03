@@ -16,6 +16,7 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
+import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
@@ -35,7 +36,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
@@ -45,7 +46,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NO_CONTENT);
     }
 
@@ -55,7 +56,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NO_CONTENT);
     }
 
@@ -67,7 +68,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(WebDavPath.ROOT);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_FORBIDDEN);
     }
 }

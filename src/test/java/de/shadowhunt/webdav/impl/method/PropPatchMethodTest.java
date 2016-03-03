@@ -19,6 +19,7 @@ package de.shadowhunt.webdav.impl.method;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
+import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
@@ -37,7 +38,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
@@ -47,7 +48,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_BAD_REQUEST);
     }
 
@@ -67,7 +68,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CREATED);
     }
 
@@ -87,7 +88,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CREATED);
     }
 
@@ -107,7 +108,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CREATED);
     }
 
@@ -127,7 +128,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CREATED);
     }
 }

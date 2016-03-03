@@ -18,6 +18,7 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.ByteArrayInputStream;
 
+import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
@@ -37,7 +38,7 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CREATED);
     }
 
@@ -49,7 +50,7 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(path);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CONFLICT);
     }
 
@@ -59,7 +60,7 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_METHOD_NOT_ALLOWED);
     }
 
@@ -69,7 +70,7 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_METHOD_NOT_ALLOWED);
     }
 
@@ -80,7 +81,7 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("test".getBytes()));
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_UNSUPPORTED_MEDIA_TYPE);
     }
 }

@@ -17,25 +17,18 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
-
+import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.PropertyIdentifier;
 import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.WebDavStore;
@@ -52,99 +45,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public abstract class AbstractWebDavMethodTest {
-
-    interface Normalizer {
-        String normalize(final String content);
-    }
-
-    static class Response implements WebDavResponse {
-
-        private String characterEncoding = null;
-
-        private final ByteArrayOutputStream content = new ByteArrayOutputStream();
-
-        private String contentType = null;
-
-        private final Map<String, String> headers = new HashMap<>();
-
-        private final WebDavRequest request;
-
-        private Status status = null;
-
-        Response(final WebDavRequest request) {
-            this.request = request;
-        }
-
-        @Override
-        public void addHeader(final String name, final String value) {
-            final String previous = headers.put(name, value);
-            Assert.assertNull("header '" + name + "' must not be defined multiple times", previous);
-        }
-
-        public String getCharacterEncoding() {
-            return characterEncoding;
-        }
-
-        @Nullable
-        public String getContent() {
-            return getContent(DUMMY);
-        }
-
-        @Nullable
-        public String getContent(final Normalizer replacer) {
-            if (content.size() == 0) {
-                return null;
-            }
-
-            return replacer.normalize(new String(content.toByteArray(), StandardCharsets.UTF_8));
-        }
-
-        public String getContentType() {
-            return contentType;
-        }
-
-        public String getHeader(final String name) {
-            return headers.get(name);
-        }
-
-        @Override
-        public OutputStream getOutputStream() {
-            return content;
-        }
-
-        @Override
-        public WebDavRequest getRequest() {
-            return request;
-        }
-
-        public Status getStatus() {
-            return status;
-        }
-
-        @Override
-        public void setCharacterEncoding(final String characterEncoding) {
-            this.characterEncoding = characterEncoding;
-        }
-
-        @Override
-        public void setContentType(final String contentType) {
-            this.contentType = contentType;
-        }
-
-        @Override
-        public void setStatus(final Status status) {
-            this.status = status;
-        }
-    }
-
-    private static final Normalizer DUMMY = new Normalizer() {
-
-        @Override
-        public String normalize(final String content) {
-            return content;
-        }
-
-    };
 
     protected static final WebDavPath EXISITING_COLLECTION = WebDavPath.create("/collection");
 
@@ -216,14 +116,14 @@ public abstract class AbstractWebDavMethodTest {
     @Mock
     protected WebDavRequest request;
 
-    protected final void assertBasicRequirements(final Response response, final Status expectedStatus) {
+    protected final void assertBasicRequirements(final TestResponse response, final Status expectedStatus) {
         Assert.assertEquals("status must match", expectedStatus, response.getStatus());
         Assert.assertNotNull("allow header must not be null", response.getHeader(AbstractBasicResponse.ALLOW_HEADER));
         Assert.assertEquals("dav header must match", "1,2", response.getHeader(AbstractBasicResponse.DAV_HEADER));
         Assert.assertEquals("ms-author header must match", "DAV", response.getHeader(AbstractBasicResponse.MS_AUTHOR_HEADER));
     }
 
-    protected final void assertNoContent(final Response response, final Status expectedStatus) {
+    protected final void assertNoContent(final TestResponse response, final Status expectedStatus) {
         assertBasicRequirements(response, expectedStatus);
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
@@ -238,8 +138,8 @@ public abstract class AbstractWebDavMethodTest {
         return sb.toString();
     }
 
-    protected Response execute(final WebDavMethod method) throws Exception {
-        final Response response = new Response(request);
+    protected TestResponse execute(final WebDavMethod method) throws Exception {
+        final TestResponse response = new TestResponse(request);
 
         final WebDavResponseWriter webdavResponse = method.service(store, request);
         webdavResponse.write(response);

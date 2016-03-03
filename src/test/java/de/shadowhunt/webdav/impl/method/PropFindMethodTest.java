@@ -18,6 +18,8 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.ByteArrayInputStream;
 
+import de.shadowhunt.ContentNormalizer;
+import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
@@ -34,7 +36,7 @@ import org.mockito.Mockito;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
-    private static final Normalizer COMBINED_NORMALIZER = new Normalizer() {
+    private static final ContentNormalizer COMBINED_NORMALIZER = new ContentNormalizer() {
 
         @Override
         public String normalize(final String content) {
@@ -43,7 +45,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         }
     };
 
-    private static final Normalizer ETAG_NORMALIZER = new Normalizer() {
+    private static final ContentNormalizer ETAG_NORMALIZER = new ContentNormalizer() {
 
         private static final String REGEX = "<D:getetag>[^<]*</D:getetag>";
 
@@ -56,7 +58,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
     };
 
-    private static final Normalizer LAST_MODIFIED_NORMALIZER = new Normalizer() {
+    private static final ContentNormalizer LAST_MODIFIED_NORMALIZER = new ContentNormalizer() {
 
         private static final String REGEX = "<D:getlastmodified>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}</D:getlastmodified>";
 
@@ -81,7 +83,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
@@ -92,7 +94,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_FORBIDDEN);
     }
 
@@ -103,7 +105,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_BAD_REQUEST);
     }
 
@@ -117,7 +119,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_BAD_REQUEST);
     }
 
@@ -131,7 +133,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
@@ -159,7 +161,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
@@ -187,7 +189,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
@@ -221,7 +223,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
@@ -257,7 +259,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("1");
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());

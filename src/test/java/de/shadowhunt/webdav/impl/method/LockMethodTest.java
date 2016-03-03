@@ -18,6 +18,8 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.util.Optional;
 
+import de.shadowhunt.ContentNormalizer;
+import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
@@ -33,7 +35,7 @@ import org.mockito.Mockito;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class LockMethodTest extends AbstractWebDavMethodTest {
 
-    private static final Normalizer LOCK_TOKEN_NORMALIZER = new Normalizer() {
+    private static final ContentNormalizer LOCK_TOKEN_NORMALIZER = new ContentNormalizer() {
 
         private static final String REGEX = "<D:href>opaquelocktoken:........-....-....-....-............</D:href>";
 
@@ -59,7 +61,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
@@ -70,7 +72,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
         Mockito.when(request.getPrincipal()).thenReturn(Optional.empty());
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
@@ -107,7 +109,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
         Mockito.when(request.getPrincipal()).thenReturn(Optional.empty());
 
-        final Response response = execute(method);
+        final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
