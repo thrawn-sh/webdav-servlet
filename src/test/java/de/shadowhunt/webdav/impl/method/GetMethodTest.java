@@ -54,6 +54,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
+        Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -132,6 +133,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_FORBIDDEN, response.getStatus());
+        Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
     }
 }

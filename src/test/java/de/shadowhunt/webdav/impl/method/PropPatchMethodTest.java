@@ -51,6 +51,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_BAD_REQUEST, response.getStatus());
+        Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -72,6 +73,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
     }
 
@@ -135,6 +137,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
     }
 }
