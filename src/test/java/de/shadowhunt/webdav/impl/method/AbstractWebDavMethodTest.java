@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -171,7 +172,7 @@ public abstract class AbstractWebDavMethodTest {
         }
 
         if (locked) {
-            final WebDavLock lock = store.createLock();
+            final WebDavLock lock = store.createLock(Optional.empty());
             store.lock(path, lock);
         }
     }
@@ -180,7 +181,7 @@ public abstract class AbstractWebDavMethodTest {
         createCollection0(path.getParent(), false);
         store.createItem(path, new ByteArrayInputStream(content.getBytes()));
         if (locked) {
-            final WebDavLock lock = store.createLock();
+            final WebDavLock lock = store.createLock(Optional.empty());
             store.lock(path, lock);
         }
         setProperties(path);

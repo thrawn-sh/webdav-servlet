@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.Principal;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -89,6 +90,11 @@ public class HttpServletRequestWrapper implements WebDavRequest {
             return WebDavPath.ROOT;
         }
         return WebDavPath.create(pathInfo);
+    }
+
+    @Override
+    public Optional<Principal> getPrincipal() {
+        return Optional.ofNullable(request.getUserPrincipal());
     }
 
     private boolean isLocalUri(final URI uri) throws URISyntaxException {

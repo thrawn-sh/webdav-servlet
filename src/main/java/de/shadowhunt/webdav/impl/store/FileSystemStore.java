@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -127,8 +128,9 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public WebDavLock createLock() {
-        return new LockImpl("opaquelocktoken:" + UUID.randomUUID().toString(), WebDavLock.Scope.EXCLUSIVE, ""); // FIXME lock owner
+    public WebDavLock createLock(final Optional<Principal> principal) {
+        final String username = principal.map(Principal::getName).orElse("");
+        return new LockImpl("opaquelocktoken:" + UUID.randomUUID().toString(), WebDavLock.Scope.EXCLUSIVE, username);
     }
 
     private PropertyIdentifier createPropertyIdentifier(final String elementName) {

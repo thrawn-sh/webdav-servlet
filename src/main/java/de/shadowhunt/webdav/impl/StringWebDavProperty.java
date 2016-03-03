@@ -31,4 +31,5 @@ public class StringWebDavProperty extends AbstractWebDavProperty {
     public String getValue() {
         return value;
     }
+
 }

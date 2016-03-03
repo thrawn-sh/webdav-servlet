@@ -17,6 +17,7 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Optional;
 
 import de.shadowhunt.webdav.WebDavEntity;
@@ -46,7 +47,8 @@ public class LockMethod extends AbstractWebDavMethod {
             return new LockResponse(entity);
         }
 
-        final WebDavLock newlock = store.createLock();
+        final Optional<Principal> principal = request.getPrincipal();
+        final WebDavLock newlock = store.createLock(principal);
         final WebDavEntity lockedEntity = store.lock(target, newlock);
         return new LockResponse(lockedEntity);
     }

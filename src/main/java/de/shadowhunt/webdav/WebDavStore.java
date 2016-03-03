@@ -17,6 +17,7 @@
 package de.shadowhunt.webdav;
 
 import java.io.InputStream;
+import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,7 @@ public interface WebDavStore {
 
     void createItem(WebDavPath path, InputStream content) throws WebDavException;
 
-    WebDavLock createLock() throws WebDavException;
+    WebDavLock createLock(Optional<Principal> principal) throws WebDavException;
 
     void delete(WebDavPath path) throws WebDavException;
 
