@@ -34,17 +34,13 @@ import org.mockito.Mockito;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
-    private static final Normalizer LAST_MODIFIED_NORMALIZER = new Normalizer() {
-
-        private static final String REGEX = "<D:getlastmodified>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}</D:getlastmodified>";
-
-        private static final String REPLACEMENT = "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>";
+    private static final Normalizer COMBINED_NORMALIZER = new Normalizer() {
 
         @Override
         public String normalize(final String content) {
-            return content.replaceAll(REGEX, REPLACEMENT);
+            String lastModified = LAST_MODIFIED_NORMALIZER.normalize(content);
+            return ETAG_NORMALIZER.normalize(lastModified);
         }
-
     };
 
     private static final Normalizer ETAG_NORMALIZER = new Normalizer() {
@@ -60,13 +56,17 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
     };
 
-    private static final Normalizer COMBINED_NORMALIZER = new Normalizer() {
+    private static final Normalizer LAST_MODIFIED_NORMALIZER = new Normalizer() {
+
+        private static final String REGEX = "<D:getlastmodified>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}</D:getlastmodified>";
+
+        private static final String REPLACEMENT = "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>";
 
         @Override
-        public String normalize(String content) {
-            String lastModified = LAST_MODIFIED_NORMALIZER.normalize(content);
-            return ETAG_NORMALIZER.normalize(lastModified);
+        public String normalize(final String content) {
+            return content.replaceAll(REGEX, REPLACEMENT);
         }
+
     };
 
     @BeforeClass
