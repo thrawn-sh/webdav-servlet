@@ -61,6 +61,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 
     @Test
@@ -94,6 +95,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "</D:prop>", //
                 "\r\n");
         Assert.assertEquals("content must match", content, response.getContent(LOCK_TOKEN_NORMALIZER));
+        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
     }
 
     @Test
@@ -129,5 +131,6 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "</D:prop>", //
                 "\r\n");
         Assert.assertEquals("content must match", content, response.getContent(LOCK_TOKEN_NORMALIZER));
+        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
     }
 }

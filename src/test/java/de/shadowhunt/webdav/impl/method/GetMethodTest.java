@@ -56,6 +56,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 
     @Test
@@ -70,6 +71,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_OK, response.getStatus());
         // Assert.assertEquals("contentType must match", "", response.getContentType()); // FIXME
         Assert.assertEquals("content must match", content, response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 
     @Test
@@ -121,6 +123,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
                 "</body>", //
                 "</html>");
         Assert.assertEquals("content must match", expected, response.getContent(LAST_MODIFIED_NORMALIZER));
+        Assert.assertEquals("characterEncoding must match", UTF_8, response.getCharacterEncoding());
     }
 
     @Test
@@ -135,5 +138,6 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_FORBIDDEN, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 }

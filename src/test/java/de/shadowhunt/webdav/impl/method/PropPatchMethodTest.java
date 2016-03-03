@@ -53,6 +53,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_BAD_REQUEST, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 
     @Test
@@ -75,6 +76,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 
     @Test
@@ -95,7 +97,9 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 
     @Test
@@ -116,7 +120,9 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
 
         final Response response = execute(method);
         Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 
     @Test
@@ -139,5 +145,6 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 }

@@ -40,6 +40,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 
     @Test
@@ -52,6 +53,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 
     @Test
@@ -64,6 +66,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 
     @Test
@@ -78,5 +81,6 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_FORBIDDEN, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 }

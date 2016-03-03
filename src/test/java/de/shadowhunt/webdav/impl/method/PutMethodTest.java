@@ -42,6 +42,7 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 
     @Test
@@ -55,6 +56,7 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 
     @Test
@@ -67,5 +69,6 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("status must match", Status.SC_METHOD_NOT_ALLOWED, response.getStatus());
         Assert.assertNull("contentType must be null", response.getContentType());
         Assert.assertNull("content must be null", response.getContent());
+        Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
     }
 }
