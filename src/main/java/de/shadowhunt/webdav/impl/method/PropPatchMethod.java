@@ -113,13 +113,15 @@ public class PropPatchMethod extends AbstractWebDavMethod {
                 final PropertyIdentifier propertyIdentifier = new PropertyIdentifier(nameSpace, name);
 
                 // DAV namespace is only for live property (can not be handled by client) => ignore silently
-                if (isSaveOrUpdate(node) && !isLiveProperty(propertyIdentifier)) {
-                    final String content = StringEscapeUtils.unescapeXml(node.getTextContent());
-                    final StringWebDavProperty property = new StringWebDavProperty(propertyIdentifier, content);
-                    properties.remove(property); // remove old entry
-                    properties.add(property);
-                } else {
-                    properties.remove(new DummyProperty(propertyIdentifier));
+                if (!isLiveProperty(propertyIdentifier)) {
+                    if (isSaveOrUpdate(node)) {
+                        final String content = StringEscapeUtils.unescapeXml(node.getTextContent());
+                        final StringWebDavProperty property = new StringWebDavProperty(propertyIdentifier, content);
+                        properties.remove(property); // remove old entry
+                        properties.add(property);
+                    } else {
+                        properties.remove(new DummyProperty(propertyIdentifier));
+                    }
                 }
             }
         } catch (final Exception e) {
