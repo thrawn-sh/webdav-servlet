@@ -34,81 +34,81 @@ public class BasicLitmusTest extends AbstractLitmusTest {
 
     @Test
     public void test_02_options() throws Exception {
-        final TestResponse response = execute(new File(ROOT, "02.xml"));
+        final TestResponse response = execute(new File(ROOT, "02-01.xml"));
         Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
     }
 
     @Test
     public void test_03_put_get() throws Exception {
-        final TestResponse put_response = execute(new File(ROOT, "03-1.xml"));
+        final TestResponse put_response = execute(new File(ROOT, "03-01.xml"));
         Assert.assertEquals("status must match", Status.SC_CREATED, put_response.getStatus());
 
-        final TestResponse get_response = execute(new File(ROOT, "03-2.xml"));
+        final TestResponse get_response = execute(new File(ROOT, "03-02.xml"));
         Assert.assertEquals("status must match", Status.SC_OK, get_response.getStatus());
         Assert.assertEquals("content must match", "This is\na test file.\nfor litmus\ntesting.\n", get_response.getContent());
     }
 
     @Test
     public void test_04_put_get_utf8_segment() throws Exception {
-        final TestResponse put_response = execute(new File(ROOT, "04-1.xml"));
+        final TestResponse put_response = execute(new File(ROOT, "04-01.xml"));
         Assert.assertEquals("status must match", Status.SC_CREATED, put_response.getStatus());
 
-        final TestResponse get_response = execute(new File(ROOT, "04-2.xml"));
+        final TestResponse get_response = execute(new File(ROOT, "04-02.xml"));
         Assert.assertEquals("status must match", Status.SC_OK, get_response.getStatus());
         Assert.assertEquals("content must match", "This is\na test file.\nfor litmus\ntesting.\n", get_response.getContent());
     }
 
     @Test
     public void test_05_put_no_parent() throws Exception {
-        final TestResponse response = execute(new File(ROOT, "05.xml"));
+        final TestResponse response = execute(new File(ROOT, "05-01.xml"));
         Assert.assertEquals("status must match", Status.SC_CONFLICT, response.getStatus());
     }
 
     @Test
     public void test_06_mkcol_over_plain() throws Exception {
-        final TestResponse response = execute(new File(ROOT, "06.xml"));
+        final TestResponse response = execute(new File(ROOT, "06-01.xml"));
         Assert.assertEquals("status must match", Status.SC_METHOD_NOT_ALLOWED, response.getStatus());
     }
 
     @Test
     public void test_07_delete() throws Exception {
-        final TestResponse response = execute(new File(ROOT, "07.xml"));
+        final TestResponse response = execute(new File(ROOT, "07-01.xml"));
         Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
     }
 
     @Test
     public void test_08_delete_null() throws Exception {
-        final TestResponse response = execute(new File(ROOT, "08.xml"));
+        final TestResponse response = execute(new File(ROOT, "08-01.xml"));
         Assert.assertEquals("status must match", Status.SC_NOT_FOUND, response.getStatus());
     }
 
     @Test
     public void test_10_mkcol() throws Exception {
-        final TestResponse response = execute(new File(ROOT, "10.xml"));
+        final TestResponse response = execute(new File(ROOT, "10-01.xml"));
         Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
     }
 
     @Test
     public void test_11_mkcol_again() throws Exception {
-        final TestResponse response = execute(new File(ROOT, "11.xml"));
+        final TestResponse response = execute(new File(ROOT, "11-01.xml"));
         Assert.assertEquals("status must match", Status.SC_METHOD_NOT_ALLOWED, response.getStatus());
     }
 
     @Test
     public void test_12_delete_coll() throws Exception {
-        final TestResponse response = execute(new File(ROOT, "12.xml"));
+        final TestResponse response = execute(new File(ROOT, "12-01.xml"));
         Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
     }
 
     @Test
     public void test_13_mkcol_no_parent() throws Exception {
-        final TestResponse response = execute(new File(ROOT, "13.xml"));
+        final TestResponse response = execute(new File(ROOT, "13-01.xml"));
         Assert.assertEquals("status must match", Status.SC_CONFLICT, response.getStatus());
     }
 
     @Test
     public void test_14_mkcol_with_body() throws Exception {
-        final TestResponse response = execute(new File(ROOT, "14.xml"));
+        final TestResponse response = execute(new File(ROOT, "14-01.xml"));
         Assert.assertEquals("status must match", Status.SC_UNSUPPORTED_MEDIA_TYPE, response.getStatus());
     }
 
