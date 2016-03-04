@@ -40,7 +40,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         @Override
         public String normalize(final String content) {
-            String lastModified = LAST_MODIFIED_NORMALIZER.normalize(content);
+            final String lastModified = LAST_MODIFIED_NORMALIZER.normalize(content);
             return ETAG_NORMALIZER.normalize(lastModified);
         }
     };

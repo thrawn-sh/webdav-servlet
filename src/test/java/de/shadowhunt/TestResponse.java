@@ -39,7 +39,7 @@ public class TestResponse implements WebDavResponse {
         }
 
     };
-    
+
     private String characterEncoding = null;
 
     private final ByteArrayOutputStream content = new ByteArrayOutputStream();

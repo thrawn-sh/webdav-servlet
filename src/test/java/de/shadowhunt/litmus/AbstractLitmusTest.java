@@ -19,6 +19,9 @@ package de.shadowhunt.litmus;
 import java.io.File;
 import java.util.UUID;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+
 import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavDispatcher;
@@ -29,15 +32,17 @@ import de.shadowhunt.webdav.impl.store.FileSystemStore;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 public abstract class AbstractLitmusTest {
 
-    private static final  WebDavDispatcher DISPATCHER = WebDavDispatcher.getInstance();
+    private static final WebDavDispatcher DISPATCHER = WebDavDispatcher.getInstance();
 
     private static File root;
-    
+
     private static WebDavStore store;
 
     @AfterClass
@@ -49,19 +54,35 @@ public abstract class AbstractLitmusTest {
     public static void initStore() {
         root = new File(new File(FileUtils.getTempDirectory(), "webdav-servlet-test"), UUID.randomUUID().toString());
         store = new FileSystemStore(root);
-        
+
         final WebDavPath litmusRoot = WebDavPath.create("/litmus");
         store.createCollection(litmusRoot);
     }
-    
+
     @Mock
     protected WebDavConfig config;
 
-    protected TestResponse execute(final WebDavRequest request) throws Exception {
-        final TestResponse response = new TestResponse(request);
+    private WebDavRequest create(final File request) throws Exception {
+        final JAXBContext context = JAXBContext.newInstance(XmlRequest.class);
 
-        DISPATCHER.service(store, request, response);
+        final Unmarshaller unmarshaller = context.createUnmarshaller();
+        final XmlRequest webdavRequest = (XmlRequest) unmarshaller.unmarshal(request);
+        webdavRequest.setConfig(config);
+
+        return webdavRequest;
+    }
+
+    protected TestResponse execute(final File request) throws Exception {
+        final WebDavRequest webDavRequest = create(request);
+        final TestResponse response = new TestResponse(webDavRequest);
+
+        DISPATCHER.service(store, webDavRequest, response);
 
         return response;
+    }
+
+    @Before
+    public void initMock() {
+        MockitoAnnotations.initMocks(this);
     }
 }

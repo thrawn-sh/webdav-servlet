@@ -14,12 +14,37 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt;
+package de.shadowhunt.litmus;
 
-import javax.annotation.CheckForNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlValue;
 
-public interface ContentNormalizer {
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "header")
+class XmlHeader {
 
-    @CheckForNull
-    String normalize(@CheckForNull String content);
+    @XmlAttribute(name = "name")
+    private String name;
+
+    @XmlValue
+    private String value;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public void setValue(final String value) {
+        this.value = value;
+    }
 }
