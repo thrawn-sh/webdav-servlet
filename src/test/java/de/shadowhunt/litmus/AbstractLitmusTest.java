@@ -17,6 +17,7 @@
 package de.shadowhunt.litmus;
 
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
@@ -32,9 +33,11 @@ import de.shadowhunt.webdav.impl.store.FileSystemStore;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public abstract class AbstractLitmusTest {
@@ -66,10 +69,15 @@ public abstract class AbstractLitmusTest {
         final JAXBContext context = JAXBContext.newInstance(XmlRequest.class);
 
         final Unmarshaller unmarshaller = context.createUnmarshaller();
-        final XmlRequest webdavRequest = (XmlRequest) unmarshaller.unmarshal(request);
-        webdavRequest.setConfig(config);
+        final XmlRequest xmlRequest = (XmlRequest) unmarshaller.unmarshal(request);
+        Assert.assertNotNull("request must not be null", xmlRequest);
 
-        return webdavRequest;
+        final List<XmlHeader> headers = xmlRequest.getHeaders();
+        Assert.assertNotNull("headers must not be null", headers);
+        Assert.assertFalse("headers must not be empty", headers.isEmpty());
+
+        xmlRequest.setConfig(config);
+        return xmlRequest;
     }
 
     protected TestResponse execute(final File request) throws Exception {
@@ -84,5 +92,7 @@ public abstract class AbstractLitmusTest {
     @Before
     public void initMock() {
         MockitoAnnotations.initMocks(this);
+
+        Mockito.when(config.isAllowInfiniteDepthRequests()).thenReturn(true);
     }
 }

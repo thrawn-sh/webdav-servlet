@@ -55,6 +55,7 @@ class XmlRequest implements WebDavRequest {
     private String content;
 
     @XmlElementWrapper(name = "headers")
+    @XmlElement(name = "header")
     private List<XmlHeader> headers;
 
     @XmlTransient
@@ -74,6 +75,14 @@ class XmlRequest implements WebDavRequest {
     @Override
     public WebDavConfig getConfig() {
         return config;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public List<XmlHeader> getHeaders() {
+        return headers;
     }
 
     @Override
@@ -118,6 +127,10 @@ class XmlRequest implements WebDavRequest {
         return Optional.empty(); // FIXME
     }
 
+    public String getUrl() {
+        return url;
+    }
+
     private boolean isLocalUri(final URI uri) throws URISyntaxException {
         final URI requestURI = new URI(url);
         if (!requestURI.getScheme().equalsIgnoreCase(uri.getScheme())) {
@@ -146,12 +159,24 @@ class XmlRequest implements WebDavRequest {
         this.config = config;
     }
 
+    public void setContent(final String content) {
+        this.content = content;
+    }
+
+    public void setHeaders(final List<XmlHeader> headers) {
+        this.headers = headers;
+    }
+
     public void setId(final UUID id) {
         this.id = id;
     }
 
     public void setMethod(final Method method) {
         this.method = method;
+    }
+
+    public void setUrl(final String url) {
+        this.url = url;
     }
 
     @Override
