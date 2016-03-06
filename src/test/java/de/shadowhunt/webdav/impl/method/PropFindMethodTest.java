@@ -18,7 +18,10 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.ByteArrayInputStream;
 
+import de.shadowhunt.CombinedNormalizer;
 import de.shadowhunt.ContentNormalizer;
+import de.shadowhunt.EtagNormalizer;
+import de.shadowhunt.LastModifiedNormalizer;
 import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
@@ -36,40 +39,7 @@ import org.mockito.Mockito;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
-    private static final ContentNormalizer COMBINED_NORMALIZER = new ContentNormalizer() {
-
-        @Override
-        public String normalize(final String content) {
-            final String lastModified = LAST_MODIFIED_NORMALIZER.normalize(content);
-            return ETAG_NORMALIZER.normalize(lastModified);
-        }
-    };
-
-    private static final ContentNormalizer ETAG_NORMALIZER = new ContentNormalizer() {
-
-        private static final String REGEX = "<D:getetag>[^<]*</D:getetag>";
-
-        private static final String REPLACEMENT = "<D:getetag>0000000000</D:getetag>";
-
-        @Override
-        public String normalize(final String content) {
-            return content.replaceAll(REGEX, REPLACEMENT);
-        }
-
-    };
-
-    private static final ContentNormalizer LAST_MODIFIED_NORMALIZER = new ContentNormalizer() {
-
-        private static final String REGEX = "<D:getlastmodified>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}</D:getlastmodified>";
-
-        private static final String REPLACEMENT = "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>";
-
-        @Override
-        public String normalize(final String content) {
-            return content.replaceAll(REGEX, REPLACEMENT);
-        }
-
-    };
+    private static final ContentNormalizer NORMALIZER = new CombinedNormalizer(new LastModifiedNormalizer(), new EtagNormalizer());
 
     @BeforeClass
     public static void fillStore() {
@@ -212,7 +182,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:response>", //
                 "</D:multistatus>", //
                 "\r\n");
-        Assert.assertEquals("content must match", expected, response.getContent(COMBINED_NORMALIZER));
+        Assert.assertEquals("content must match", expected, response.getContent(NORMALIZER));
     }
 
     @Test
@@ -323,6 +293,6 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:response>", //
                 "</D:multistatus>", //
                 "\r\n");
-        Assert.assertEquals("content must match", expected, response.getContent(COMBINED_NORMALIZER));
+        Assert.assertEquals("content must match", expected, response.getContent(NORMALIZER));
     }
 }
