@@ -34,11 +34,7 @@ public abstract class AbstractWebDavProperty implements WebDavProperty, Comparab
 
     @Override
     public final int compareTo(final WebDavProperty o) {
-        final int result = identifier.compareTo(o.getIdentifier());
-        if (result != 0) {
-            return result;
-        }
-        return getValue().compareTo(o.getValue());
+        return identifier.compareTo(o.getIdentifier());
     }
 
     @Override
@@ -46,13 +42,13 @@ public abstract class AbstractWebDavProperty implements WebDavProperty, Comparab
         if (this == o) {
             return true;
         }
-        if (!(o instanceof AbstractWebDavProperty)) {
+        if (!(o instanceof WebDavProperty)) {
             return false;
         }
 
-        final AbstractWebDavProperty property = (AbstractWebDavProperty) o;
+        final WebDavProperty property = (WebDavProperty) o;
 
-        if (!identifier.equals(property.identifier)) {
+        if (!identifier.equals(property.getIdentifier())) {
             return false;
         }
 
