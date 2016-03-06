@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    This file is part of Shadowhunt WebDav Servlet.
+
+    Shadowhunt WebDav Servlet is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Shadowhunt WebDav Servlet is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<request>
+  <method>PROPFIND</method>
+  <uri>http://127.0.0.1:8080/webdav/litmus/prop2</uri>
+  <base>/webdav</base>
+  <headers>
+    <header name="Connection">TE</header>
+    <header name="X-Litmus">props: 12 (propget)</header>
+    <header name="TE">trailers</header>
+    <header name="User-Agent">litmus/0.13 neon/0.29.6</header>
+    <header name="Content-Type">application/xml</header>
+    <header name="Content-Length">578</header>
+    <header name="Depth">0</header>
+    <header name="Host">127.0.0.1:8080</header>
+  </headers>
+  <content>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHByb3BmaW5kIHhtbG5zPSJEQVY6Ij48cHJvcD4KPHByb3AwIHhtbG5zPSJodHRwOi8vZXhhbXBsZS5jb20vbmVvbi9saXRtdXMvIi8+Cjxwcm9wMSB4bWxucz0iaHR0cDovL2V4YW1wbGUuY29tL25lb24vbGl0bXVzLyIvPgo8cHJvcDIgeG1sbnM9Imh0dHA6Ly9leGFtcGxlLmNvbS9uZW9uL2xpdG11cy8iLz4KPHByb3AzIHhtbG5zPSJodHRwOi8vZXhhbXBsZS5jb20vbmVvbi9saXRtdXMvIi8+Cjxwcm9wNCB4bWxucz0iaHR0cDovL2V4YW1wbGUuY29tL25lb24vbGl0bXVzLyIvPgo8cHJvcDUgeG1sbnM9Imh0dHA6Ly9leGFtcGxlLmNvbS9uZW9uL2xpdG11cy8iLz4KPHByb3A2IHhtbG5zPSJodHRwOi8vZXhhbXBsZS5jb20vbmVvbi9saXRtdXMvIi8+Cjxwcm9wNyB4bWxucz0iaHR0cDovL2V4YW1wbGUuY29tL25lb24vbGl0bXVzLyIvPgo8cHJvcDggeG1sbnM9Imh0dHA6Ly9leGFtcGxlLmNvbS9uZW9uL2xpdG11cy8iLz4KPHByb3A5IHhtbG5zPSJodHRwOi8vZXhhbXBsZS5jb20vbmVvbi9saXRtdXMvIi8+CjwvcHJvcD48L3Byb3BmaW5kPgo=</content>
+</request>

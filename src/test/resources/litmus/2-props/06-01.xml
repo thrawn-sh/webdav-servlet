@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    This file is part of Shadowhunt WebDav Servlet.
+
+    Shadowhunt WebDav Servlet is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Shadowhunt WebDav Servlet is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<request>
+  <method>PROPPATCH</method>
+  <uri>http://127.0.0.1:8080/webdav/litmus/prop</uri>
+  <base>/webdav</base>
+  <headers>
+    <header name="Connection">TE</header>
+    <header name="X-Litmus">props: 6 (propset)</header>
+    <header name="TE">trailers</header>
+    <header name="User-Agent">litmus/0.13 neon/0.29.6</header>
+    <header name="Content-Type">application/xml</header>
+    <header name="Content-Length">1033</header>
+    <header name="Host">127.0.0.1:8080</header>
+  </headers>
+  <content>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiID8+CjxEOnByb3BlcnR5dXBkYXRlIHhtbG5zOkQ9IkRBVjoiPjxEOnNldD48RDpwcm9wPjxwcm9wMCB4bWxucz0iaHR0cDovL2V4YW1wbGUuY29tL25lb24vbGl0bXVzLyI+dmFsdWUwPC9wcm9wMD48L0Q6cHJvcD48L0Q6c2V0Pgo8RDpzZXQ+PEQ6cHJvcD48cHJvcDEgeG1sbnM9Imh0dHA6Ly9leGFtcGxlLmNvbS9uZW9uL2xpdG11cy8iPnZhbHVlMTwvcHJvcDE+PC9EOnByb3A+PC9EOnNldD4KPEQ6c2V0PjxEOnByb3A+PHByb3AyIHhtbG5zPSJodHRwOi8vZXhhbXBsZS5jb20vbmVvbi9saXRtdXMvIj52YWx1ZTI8L3Byb3AyPjwvRDpwcm9wPjwvRDpzZXQ+CjxEOnNldD48RDpwcm9wPjxwcm9wMyB4bWxucz0iaHR0cDovL2V4YW1wbGUuY29tL25lb24vbGl0bXVzLyI+dmFsdWUzPC9wcm9wMz48L0Q6cHJvcD48L0Q6c2V0Pgo8RDpzZXQ+PEQ6cHJvcD48cHJvcDQgeG1sbnM9Imh0dHA6Ly9leGFtcGxlLmNvbS9uZW9uL2xpdG11cy8iPnZhbHVlNDwvcHJvcDQ+PC9EOnByb3A+PC9EOnNldD4KPEQ6c2V0PjxEOnByb3A+PHByb3A1IHhtbG5zPSJodHRwOi8vZXhhbXBsZS5jb20vbmVvbi9saXRtdXMvIj52YWx1ZTU8L3Byb3A1PjwvRDpwcm9wPjwvRDpzZXQ+CjxEOnNldD48RDpwcm9wPjxwcm9wNiB4bWxucz0iaHR0cDovL2V4YW1wbGUuY29tL25lb24vbGl0bXVzLyI+dmFsdWU2PC9wcm9wNj48L0Q6cHJvcD48L0Q6c2V0Pgo8RDpzZXQ+PEQ6cHJvcD48cHJvcDcgeG1sbnM9Imh0dHA6Ly9leGFtcGxlLmNvbS9uZW9uL2xpdG11cy8iPnZhbHVlNzwvcHJvcDc+PC9EOnByb3A+PC9EOnNldD4KPEQ6c2V0PjxEOnByb3A+PHByb3A4IHhtbG5zPSJodHRwOi8vZXhhbXBsZS5jb20vbmVvbi9saXRtdXMvIj52YWx1ZTg8L3Byb3A4PjwvRDpwcm9wPjwvRDpzZXQ+CjxEOnNldD48RDpwcm9wPjxwcm9wOSB4bWxucz0iaHR0cDovL2V4YW1wbGUuY29tL25lb24vbGl0bXVzLyI+dmFsdWU5PC9wcm9wOT48L0Q6cHJvcD48L0Q6c2V0Pgo8L0Q6cHJvcGVydHl1cGRhdGU+Cg==</content>
+</request>
