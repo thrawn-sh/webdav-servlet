@@ -44,8 +44,8 @@ public final class WebDavDispatcher {
         }
     }
 
-    void checkAuthorization(final WebDavStore store, final WebDavRequest request) {
-        final Access access = store.grantAccess(request.getPath(), request.getPrincipal());
+    void checkAuthorization(final WebDavMethod method, final WebDavStore store, final WebDavRequest request) {
+        final Access access = store.grantAccess(method, request.getPath(), request.getPrincipal());
         if (access == Access.DENY) {
             throw new WebDavException("user not authorized", WebDavResponse.Status.SC_FORBIDDEN);
         }
@@ -74,9 +74,9 @@ public final class WebDavDispatcher {
 
     public void service(final WebDavStore store, final WebDavRequest request, final WebDavResponse response) throws IOException {
         try {
-            checkAuthorization(store, request);
-
             final WebDavMethod method = determineWebDavMethod(request);
+
+            checkAuthorization(method, store, request);
 
             verifyMethod(method.getMethod(), request.getConfig());
 

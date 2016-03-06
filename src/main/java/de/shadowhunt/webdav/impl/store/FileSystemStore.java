@@ -38,6 +38,7 @@ import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavEntity.Type;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavLock;
+import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavProperty;
 import de.shadowhunt.webdav.WebDavStore;
@@ -260,7 +261,7 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public Access grantAccess(final WebDavPath path, final Optional<Principal> principal) {
+    public Access grantAccess(final WebDavMethod method, final WebDavPath path, final Optional<Principal> principal) {
         return Access.ALLOW; // TODO
     }
 

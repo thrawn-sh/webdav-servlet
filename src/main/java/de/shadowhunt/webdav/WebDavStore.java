@@ -54,7 +54,7 @@ public interface WebDavStore {
 
     Collection<WebDavProperty> getProperties(WebDavPath path) throws WebDavException;
 
-    Access grantAccess(WebDavPath path, Optional<Principal> principal);
+    Access grantAccess(WebDavMethod method, WebDavPath path, Optional<Principal> principal);
 
     List<WebDavPath> list(WebDavPath path) throws WebDavException;
 
