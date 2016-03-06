@@ -16,27 +16,26 @@
  */
 grammar Precondition;
 
-precondition: (noTagList | tagList)+;
+precondition: implicitResourceList* explicitResourceList*;
 
-noTagList: (list)+;
-tagList: resourceTag (list)+;
+implicitResourceList:          list+;
+explicitResourceList: resource list+;
 
-list: '(' (condition)+ ')';
-resourceTag: '<' URL '>';
+list:     '(' condition ')';
+resource: '<' URL_TOKEN '>';
 
-condition: (NOT)? ( '<' STATE_TOKEN '>' | entityTag);
+condition: ( lock | etag );
 
-entityTag: '[' STRING ']';
+lock: '<' LOCK_TOKEN '>';
+etag: '[' ETAG_TOKEN ']';
 
-NOT: [Nn] [Oo] [Tt];
+ETAG_TOKEN: (DIGIT | LETTER               )+;
+LOCK_TOKEN: (DIGIT | LETTER | LOCK_SPECIAL)+;
+URL_TOKEN:  (DIGIT | LETTER | URL_SPECIAL )+;
 
-STATE_TOKEN: (DIGIT | LETTER | STATE_SPECIAL)+;
-STRING: (DIGIT | LETTER)+;
-URL: (DIGIT | LETTER | URL_SPECIAL)+;
-
-DIGIT: ('0' .. '9');
-LETTER: ('a' .. 'z') | ('A' .. 'Z');
-URL_SPECIAL: '$' | '-' | '_' | '.' | '+' | '!' | '*' | '\'' | '(' | ')' | ',';
-STATE_SPECIAL: '-' | ':';
+DIGIT:        ('0' .. '9');
+LETTER:       ('a' .. 'z') | ('A' .. 'Z');
+LOCK_SPECIAL: ('-' | ':');
+URL_SPECIAL:  ('$' | '-' | '_' | '.' | '+' | '!' | '*' | '\'' | '(' | ')' | ',' | '/' | ':' );
 
 WS: [ \r\n\t]+ -> channel (HIDDEN);

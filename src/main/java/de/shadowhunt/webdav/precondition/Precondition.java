@@ -18,14 +18,18 @@ package de.shadowhunt.webdav.precondition;
 
 import java.util.Optional;
 
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.precondition.PreconditionParser.ConditionContext;
+import de.shadowhunt.webdav.precondition.PreconditionParser.EtagContext;
+import de.shadowhunt.webdav.precondition.PreconditionParser.ExplicitResourceListContext;
+import de.shadowhunt.webdav.precondition.PreconditionParser.ImplicitResourceListContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.ListContext;
-import de.shadowhunt.webdav.precondition.PreconditionParser.NoTagListContext;
+import de.shadowhunt.webdav.precondition.PreconditionParser.LockContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.PreconditionContext;
-import de.shadowhunt.webdav.precondition.PreconditionParser.TagListContext;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -55,24 +59,15 @@ public final class Precondition {
         }
 
         @Override
-        public void enterCondition(final ConditionContext ctx) {
-            final ParserRuleContext parent = ctx.getParent();
-            final WebDavPath path = paths.get(parent);
-            if (path == null) {
-                // tagList where the resource-tag does not belong to the store
-                evaluatuion.put(ctx, false);
-                return;
-            }
+        public void enterExplicitResourceList(final ExplicitResourceListContext ctx) {
+            final String resource = ctx.resource().URL_TOKEN().getText();
+            final Optional<WebDavPath> path = request.toPath(resource);
+            path.ifPresent(x -> paths.put(ctx, x));
+        }
 
-            if (!store.exists(path)) {
-                evaluatuion.put(ctx, false);
-                return;
-            }
-
-            final boolean expectation = (ctx.NOT() == null);
-            // TODO FIXME check condition
-
-            evaluatuion.put(ctx, expectation);
+        @Override
+        public void enterImplicitResourceList(final ImplicitResourceListContext ctx) {
+            paths.put(ctx, request.getPath());
         }
 
         @Override
@@ -82,58 +77,72 @@ public final class Precondition {
             paths.put(ctx, path);
         }
 
-        @Override
-        public void enterNoTagList(final NoTagListContext ctx) {
-            paths.put(ctx, request.getPath());
+        private void evaluateChildren(final ParseTree node) {
+            // for node to be true all child nodes *MUST* be true
+            final int children = node.getChildCount();
+            for (int c = 0; c < children; c++) {
+                final ParseTree child = node.getChild(c);
+                if (child instanceof ListContext) {
+                    if (!getEvaluationResult(child)) {
+                        evaluatuion.put(node, false);
+                        return;
+                    }
+                }
+            }
+            evaluatuion.put(node, true);
         }
 
         @Override
-        public void enterTagList(final TagListContext ctx) {
-            final String resource = ctx.resourceTag().toString();
-            final Optional<WebDavPath> path = request.toPath(resource);
-            path.ifPresent(x -> paths.put(ctx, x));
+        public void exitCondition(final ConditionContext ctx) {
+            final ParserRuleContext parent = ctx.getParent();
+            final WebDavPath path = paths.get(parent);
+            if (path == null) {
+                // explicitResourceList where the resource does not belong to the store
+                evaluatuion.put(ctx, false);
+                return;
+            }
+
+            if (!store.exists(path)) {
+                evaluatuion.put(ctx, false);
+                return;
+            }
+
+            final WebDavEntity entity = store.getEntity(path);
+
+            final LockContext lockContext = ctx.lock();
+            if (lockContext != null) {
+                final String lockToken = lockContext.LOCK_TOKEN().getText();
+                final Optional<WebDavLock> lock = entity.getLock();
+                lock.ifPresent(x -> evaluatuion.put(ctx, lockToken.equals(x.getToken())));
+                return;
+            }
+
+            final EtagContext etagContext = ctx.etag();
+            if (etagContext != null) {
+                final String etagToken = etagContext.ETAG_TOKEN().getText();
+                final Optional<String> etag = entity.getEtag();
+                etag.ifPresent(x -> evaluatuion.put(ctx, etagToken.equals(x)));
+                return;
+            }
+
+            // fallback
+            evaluatuion.put(ctx, false);
+        }
+
+        @Override
+        public void exitExplicitResourceList(final ExplicitResourceListContext ctx) {
+            evaluateChildren(ctx);
+        }
+
+        @Override
+        public void exitImplicitResourceList(final ImplicitResourceListContext ctx) {
+            evaluateChildren(ctx);
         }
 
         @Override
         public void exitList(final ListContext ctx) {
-            // for list to be true all child contexts *MUST* be true
-            final int children = ctx.getChildCount();
-            for (int c = 0; c < children; c++) {
-                final ParseTree child = ctx.getChild(c);
-                if (!getEvaluationResult(child)) {
-                    evaluatuion.put(ctx, false);
-                    return;
-                }
-            }
-            evaluatuion.put(ctx, true);
-        }
-
-        @Override
-        public void exitNoTagList(final NoTagListContext ctx) {
-            // for noTagList to be true all child lists *MUST* be true
-            final int children = ctx.getChildCount();
-            for (int c = 0; c < children; c++) {
-                final ParseTree child = ctx.getChild(c);
-                if (!getEvaluationResult(child)) {
-                    evaluatuion.put(ctx, false);
-                    return;
-                }
-            }
-            evaluatuion.put(ctx, true);
-        }
-
-        @Override
-        public void exitTagList(final TagListContext ctx) {
-            // for tagList to be true all child lists *MUST* be true
-            final int children = ctx.getChildCount();
-            for (int c = 0; c < children; c++) {
-                final ParseTree child = ctx.getChild(c);
-                if (!getEvaluationResult(child)) {
-                    evaluatuion.put(ctx, false);
-                    return;
-                }
-            }
-            evaluatuion.put(ctx, true);
+            final boolean conditionResult = getEvaluationResult(ctx.condition());
+            evaluatuion.put(ctx, conditionResult);
         }
 
         private boolean getEvaluationResult(final ParseTree node) {
@@ -145,8 +154,10 @@ public final class Precondition {
         }
     }
 
+    public static final String PRECONDITION_HEADER = "If";
+
     public static boolean verify(final WebDavStore store, final WebDavRequest request) {
-        final String precondition = request.getOption("If", "");
+        final String precondition = request.getOption(PRECONDITION_HEADER, "");
         if (StringUtils.isEmpty(precondition)) {
             return true;
         }
