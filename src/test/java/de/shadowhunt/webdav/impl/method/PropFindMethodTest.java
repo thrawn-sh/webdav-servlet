@@ -138,7 +138,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
-                "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:ns3=\"missing\" xmlns:D=\"DAV:\">", //
+                "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"bar\" xmlns:ns2=\"foo\" xmlns:ns3=\"missing\">", //
                 "<D:response>", //
                 "<D:href>/webdav/item.txt</D:href>", //
                 "<D:propstat>", //
@@ -166,12 +166,12 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
-                "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:D=\"DAV:\">", //
+                "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"bar\" xmlns:ns2=\"foo\">", //
                 "<D:response>", //
                 "<D:href>/webdav/item.txt</D:href>", //
                 "<D:propstat>", //
                 "<D:prop>", //
-                "<ns1:foo>foo_foo_content</ns1:foo>", //
+                "<ns2:foo>foo_foo_content</ns2:foo>", //
                 "</D:prop>", //
                 "<D:status>HTTP/1.1 200 OK</D:status>", //
                 "</D:propstat>", //
@@ -194,18 +194,18 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
-                "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:D=\"DAV:\">", //
+                "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"bar\" xmlns:ns2=\"foo\">", //
                 "<D:response>", //
                 "<D:href>/webdav/item.txt</D:href>", //
                 "<D:propstat>", //
                 "<D:prop>", //
                 "<D:displayname>item.txt</D:displayname>", //
                 "<D:getcontentlength>7</D:getcontentlength>", //
-                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
                 "<D:getetag>0000000000</D:getetag>", //
-                "<ns1:foo>foo_foo_content</ns1:foo>", //
-                "<ns1:bar>foo_bar_content</ns1:bar>", //
-                "<ns2:foo>bar_foo_content</ns2:foo>", //
+                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
+                "<ns1:foo>bar_foo_content</ns1:foo>", //
+                "<ns2:bar>foo_bar_content</ns2:bar>", //
+                "<ns2:foo>foo_foo_content</ns2:foo>", //
                 "</D:prop>", //
                 "<D:status>HTTP/1.1 200 OK</D:status>", //
                 "</D:propstat>", //
@@ -228,7 +228,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
-                "<D:multistatus xmlns:ns1=\"bar\" xmlns:ns2=\"foo\" xmlns:D=\"DAV:\">", //
+                "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"bar\" xmlns:ns2=\"foo\">", //
                 "<D:response>", //
                 "<D:href>/webdav/item.txt</D:href>", //
                 "<D:propstat>", //
@@ -264,7 +264,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
-                "<D:multistatus xmlns:ns2=\"bar\" xmlns:ns1=\"foo\" xmlns:D=\"DAV:\">", //
+                "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"bar\" xmlns:ns2=\"foo\">", //
                 "<D:response>", //
                 "<D:href>/webdav/collection</D:href>", //
                 "<D:propstat>", //
@@ -275,9 +275,9 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:resourcetype>", //
                 "<D:collection/>", //
                 "</D:resourcetype>", //
-                "<ns1:foo>foo_foo_content</ns1:foo>", //
-                "<ns1:bar>foo_bar_content</ns1:bar>", //
-                "<ns2:foo>bar_foo_content</ns2:foo>", //
+                "<ns1:foo>bar_foo_content</ns1:foo>", //
+                "<ns2:bar>foo_bar_content</ns2:bar>", //
+                "<ns2:foo>foo_foo_content</ns2:foo>", //
                 "</D:prop>", //
                 "<D:status>HTTP/1.1 200 OK</D:status>", //
                 "</D:propstat>", //
@@ -288,8 +288,8 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop>", //
                 "<D:displayname>item.txt</D:displayname>", //
                 "<D:getcontentlength>4</D:getcontentlength>", //
-                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
                 "<D:getetag>0000000000</D:getetag>", //
+                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
                 "<D:supportedlock>", //
                 "<D:lockentry>", //
                 "<D:lockscope>", //
@@ -300,9 +300,9 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "</D:locktype>", //
                 "</D:lockentry>", //
                 "</D:supportedlock>", //
-                "<ns1:foo>foo_foo_content</ns1:foo>", //
-                "<ns1:bar>foo_bar_content</ns1:bar>", //
-                "<ns2:foo>bar_foo_content</ns2:foo>", //
+                "<ns1:foo>bar_foo_content</ns1:foo>", //
+                "<ns2:bar>foo_bar_content</ns2:bar>", //
+                "<ns2:foo>foo_foo_content</ns2:foo>", //
                 "</D:prop>", //
                 "<D:status>HTTP/1.1 200 OK</D:status>", //
                 "</D:propstat>", //

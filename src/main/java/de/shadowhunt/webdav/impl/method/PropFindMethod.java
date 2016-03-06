@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.xml.stream.XMLStreamException;
@@ -236,7 +236,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
         }
 
         if (listPropertyNames(document)) {
-            final Map<WebDavPath, Collection<PropertyIdentifier>> result = new LinkedHashMap<>();
+            final Map<WebDavPath, Collection<PropertyIdentifier>> result = new TreeMap<>();
             collectPropertyNames(store, target, depth, result);
             return new PropertyNameResponse(entity, request.getBase(), result);
         }
@@ -252,7 +252,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
             return AbstractBasicResponse.createBadRequest(entity);
         }
 
-        final Map<WebDavPath, Collection<WebDavProperty>> result = new LinkedHashMap<>();
+        final Map<WebDavPath, Collection<WebDavProperty>> result = new TreeMap<>();
         collectProperties(store, target, depth, result);
         return new PropertiesResponse(entity, request.getBase(), requested, result);
     }

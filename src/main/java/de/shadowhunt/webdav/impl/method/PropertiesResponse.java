@@ -17,12 +17,11 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -68,23 +67,26 @@ class PropertiesResponse extends AbstractBasicResponse {
     }
 
     private Map<String, String> announceNameSpacePrefixes(final XMLStreamWriter writer) throws XMLStreamException {
-        final Map<String, String> prefixes = new HashMap<>();
+        final Map<String, String> prefixes = new TreeMap<>();
         writer.setPrefix(PropertyIdentifier.DEFAULT_DAV_PREFIX, PropertyIdentifier.DAV_NAMESPACE);
         prefixes.put(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.DEFAULT_DAV_PREFIX);
 
+        final Set<PropertyIdentifier> all = new TreeSet<>();
+        all.addAll(requested);
         for (final Collection<WebDavProperty> properties : entries.values()) {
             for (final WebDavProperty property : properties) {
-                announce(writer, property.getIdentifier(), prefixes);
+                all.add(property.getIdentifier());
             }
         }
-        for (final PropertyIdentifier identifier : requested) {
+
+        for (final PropertyIdentifier identifier : all) {
             announce(writer, identifier, prefixes);
         }
         return prefixes;
     }
 
     private Collection<WebDavProperty> getAvailable(final Collection<WebDavProperty> properties) {
-        final Collection<WebDavProperty> available = new ArrayList<>();
+        final Collection<WebDavProperty> available = new TreeSet<>();
 
         for (final WebDavProperty property : properties) {
             final PropertyIdentifier identifier = property.getIdentifier();
@@ -96,7 +98,7 @@ class PropertiesResponse extends AbstractBasicResponse {
     }
 
     private Collection<PropertyIdentifier> getMissing(final Collection<WebDavProperty> available) {
-        final Collection<PropertyIdentifier> missing = new HashSet<>(requested);
+        final Collection<PropertyIdentifier> missing = new TreeSet<>(requested);
 
         for (final WebDavProperty property : available) {
             final PropertyIdentifier identifier = property.getIdentifier();

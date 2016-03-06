@@ -18,8 +18,8 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -46,7 +46,7 @@ class PropertyNameResponse extends AbstractBasicResponse {
     }
 
     private Map<String, String> announceNameSpacePrefixes(final XMLStreamWriter writer) throws XMLStreamException {
-        final Map<String, String> prefixes = new HashMap<>();
+        final Map<String, String> prefixes = new TreeMap<>();
         writer.setPrefix(PropertyIdentifier.DEFAULT_DAV_PREFIX, PropertyIdentifier.DAV_NAMESPACE);
         prefixes.put(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.DEFAULT_DAV_PREFIX);
 

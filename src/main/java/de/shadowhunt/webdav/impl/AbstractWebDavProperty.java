@@ -24,12 +24,21 @@ import de.shadowhunt.webdav.WebDavProperty;
 
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class AbstractWebDavProperty implements WebDavProperty {
+public abstract class AbstractWebDavProperty implements WebDavProperty, Comparable<WebDavProperty> {
 
     protected final PropertyIdentifier identifier;
 
     protected AbstractWebDavProperty(final PropertyIdentifier identifier) {
         this.identifier = identifier;
+    }
+
+    @Override
+    public final int compareTo(final WebDavProperty o) {
+        final int result = identifier.compareTo(o.getIdentifier());
+        if (result != 0) {
+            return result;
+        }
+        return getValue().compareTo(o.getValue());
     }
 
     @Override
