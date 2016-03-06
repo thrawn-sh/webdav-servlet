@@ -122,7 +122,6 @@
 
         <!-- miscellaneous -->
         <module name="ArrayTypeStyle" />
-        <module name="AvoidEscapedUnicodeCharacters" />
         <module name="FinalParameters" />
         <module name="Indentation">
             <property name="arrayInitIndent" value="8" />
