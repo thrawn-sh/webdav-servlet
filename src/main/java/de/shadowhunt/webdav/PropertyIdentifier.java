@@ -90,7 +90,7 @@ public final class PropertyIdentifier implements Comparable<PropertyIdentifier> 
         properties.add(DISPLAY_NAME_IDENTIFIER); // getName
         properties.add(CONTENT_LENGTH_IDENTIFIER); // getSize
         // properties.add(CONTENT_TYPE_PROPERTY); // not supported
-        properties.add(ETAG_IDENTIFIER); // getHash
+        properties.add(ETAG_IDENTIFIER); // getEtag
         properties.add(LAST_MODIFIED_IDENTIFIER); // getLastModified
         properties.add(RESOURCE_TYPE_IDENTIFIER); // getScope
         properties.add(LOCK_IDENTIFIER); // getLock
