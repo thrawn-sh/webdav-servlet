@@ -120,20 +120,31 @@ public final class PropertyIdentifier implements Comparable<PropertyIdentifier> 
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof PropertyIdentifier)) {
+        if (obj == null) {
             return false;
         }
-
-        final PropertyIdentifier that = (PropertyIdentifier) o;
-
-        if (!name.equals(that.name)) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
-
+        final PropertyIdentifier other = (PropertyIdentifier) obj;
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (nameSpace == null) {
+            if (other.nameSpace != null) {
+                return false;
+            }
+        } else if (!nameSpace.equals(other.nameSpace)) {
+            return false;
+        }
         return true;
     }
 
@@ -147,8 +158,10 @@ public final class PropertyIdentifier implements Comparable<PropertyIdentifier> 
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + nameSpace.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((nameSpace == null) ? 0 : nameSpace.hashCode());
         return result;
     }
 
