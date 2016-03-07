@@ -49,4 +49,9 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
         }
         return Integer.parseInt(depth);
     }
+
+    @Override
+    public final String toString() {
+        return "WebDavMethod [method=" + getMethod() + "]";
+    }
 }
