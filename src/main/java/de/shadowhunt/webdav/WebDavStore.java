@@ -24,6 +24,9 @@ import java.util.Optional;
 
 import javax.annotation.concurrent.ThreadSafe;
 
+import de.shadowhunt.webdav.WebDavLock.LockScope;
+import de.shadowhunt.webdav.WebDavLock.LockType;
+
 @ThreadSafe
 public interface WebDavStore {
 
@@ -35,7 +38,7 @@ public interface WebDavStore {
 
     void createItem(WebDavPath path, InputStream content) throws WebDavException;
 
-    WebDavLock createLock(Optional<Principal> principal) throws WebDavException;
+    WebDavLock createLock(LockScope scope, LockType type, String owner) throws WebDavException;
 
     void delete(WebDavPath path) throws WebDavException;
 

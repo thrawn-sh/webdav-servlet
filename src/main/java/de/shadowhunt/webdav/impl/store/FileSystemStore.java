@@ -38,6 +38,8 @@ import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavEntity.Type;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavLock;
+import de.shadowhunt.webdav.WebDavLock.LockScope;
+import de.shadowhunt.webdav.WebDavLock.LockType;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavProperty;
@@ -129,9 +131,8 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public WebDavLock createLock(final Optional<Principal> principal) {
-        final String username = principal.map(Principal::getName).orElse("");
-        return new LockImpl("opaquelocktoken:" + UUID.randomUUID().toString(), WebDavLock.Scope.EXCLUSIVE, username);
+    public WebDavLock createLock(final LockScope scope, final LockType type, final String owner) {
+        return new LockImpl(UUID.randomUUID(), LockScope.EXCLUSIVE, LockType.WRITE, owner);
     }
 
     private PropertyIdentifier createPropertyIdentifier(final String elementName) {
@@ -175,7 +176,9 @@ public class FileSystemStore implements WebDavStore {
             }
 
             try {
-                return Optional.of(new LockImpl(FileUtils.readFileToString(lock), WebDavLock.Scope.EXCLUSIVE, ""));
+                final String token = FileUtils.readFileToString(lock);
+                final UUID uuid = UUID.fromString(token);
+                return Optional.of(new LockImpl(uuid, LockScope.EXCLUSIVE, LockType.WRITE, "")); // FIXME Owner
             } catch (final IOException e) {
                 throw new WebDavException("can not read lock for " + path, e);
             }
@@ -289,7 +292,8 @@ public class FileSystemStore implements WebDavStore {
         synchronized (monitor) {
             final File lockFile = getMetaFile(path.append(LOCK_SUFFIX));
             try {
-                FileUtils.write(lockFile, lock.getToken());
+                final UUID token = lock.getToken();
+                FileUtils.write(lockFile, token.toString());
             } catch (final Exception e) {
                 throw new WebDavException("can not write lock for " + path, e);
             }

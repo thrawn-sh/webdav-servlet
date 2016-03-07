@@ -19,6 +19,7 @@ package de.shadowhunt.webdav.impl.method;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -44,7 +45,8 @@ class LockResponse extends AbstractBasicResponse {
 
         response.setCharacterEncoding(DEFAULT_ENCODING);
         response.setContentType("application/xml");
-        response.addHeader("Lock-Token", "<" + lock.getToken() + ">");
+        final UUID token = lock.getToken();
+        response.addHeader("Lock-Token", "<" + WebDavLock.PREFIX + token + ">");
         response.setStatus(Status.SC_MULTISTATUS);
 
         try {
@@ -64,12 +66,13 @@ class LockResponse extends AbstractBasicResponse {
             writer.writeEndElement();
 
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktype");
-            writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, "write");
+            writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, lock.getType().name().toLowerCase(Locale.US));
             writer.writeEndElement();
 
-            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "timeout");
-            writer.writeCharacters("Seconds-3600");
-            writer.writeEndElement();
+            // TODO timeout not supported
+            // writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "timeout");
+            // writer.writeCharacters("Seconds-3600");
+            // writer.writeEndElement();
 
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "depth");
             writer.writeCharacters("0");
@@ -81,7 +84,8 @@ class LockResponse extends AbstractBasicResponse {
 
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktoken");
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "href");
-            writer.writeCharacters(lock.getToken());
+            writer.writeCharacters(WebDavLock.PREFIX);
+            writer.writeCharacters(token.toString());
             writer.writeEndElement(); // href
             writer.writeEndElement(); // locktoken
             writer.writeEndElement(); // activelock

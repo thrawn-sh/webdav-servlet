@@ -16,20 +16,30 @@
  */
 package de.shadowhunt.webdav;
 
+import java.util.UUID;
+
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
 public interface WebDavLock {
 
-    enum Scope {
+    enum LockScope {
         EXCLUSIVE, SHARED;
     }
 
+    enum LockType {
+        READ, WRITE;
+    }
+
+    String PREFIX = "urn:uuid:";
+
     String getOwner();
 
-    Scope getScope();
+    LockScope getScope();
 
-    String getToken();
+    UUID getToken();
+
+    LockType getType();
 
     WebDavProperty toProperty();
 

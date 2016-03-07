@@ -19,13 +19,14 @@ package de.shadowhunt.webdav.impl.method;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.UUID;
 
 import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.PropertyIdentifier;
 import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavLock;
+import de.shadowhunt.webdav.WebDavLock.LockScope;
+import de.shadowhunt.webdav.WebDavLock.LockType;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
@@ -72,7 +73,7 @@ public abstract class AbstractWebDavMethodTest {
         }
 
         if (locked) {
-            final WebDavLock lock = store.createLock(Optional.empty());
+            final WebDavLock lock = store.createLock(LockScope.EXCLUSIVE, LockType.WRITE, "");
             store.lock(path, lock);
         }
     }
@@ -81,7 +82,7 @@ public abstract class AbstractWebDavMethodTest {
         createCollection0(path.getParent(), false);
         store.createItem(path, new ByteArrayInputStream(content.getBytes()));
         if (locked) {
-            final WebDavLock lock = store.createLock(Optional.empty());
+            final WebDavLock lock = store.createLock(LockScope.EXCLUSIVE, LockType.WRITE, "");
             store.lock(path, lock);
         }
         setProperties(path);
@@ -107,7 +108,7 @@ public abstract class AbstractWebDavMethodTest {
                         new StringWebDavProperty(new PropertyIdentifier("foo", "foo"), "foo_foo_content"), //
                         new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo_bar_content"), //
                         new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar_foo_content") //
-        ));
+                ));
     }
 
     @Mock

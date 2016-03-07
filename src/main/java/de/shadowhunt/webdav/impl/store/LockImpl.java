@@ -17,6 +17,7 @@
 package de.shadowhunt.webdav.impl.store;
 
 import java.util.Locale;
+import java.util.UUID;
 
 import javax.annotation.concurrent.Immutable;
 import javax.xml.stream.XMLStreamException;
@@ -48,7 +49,7 @@ final class LockImpl implements WebDavLock {
             writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, getScope().name().toLowerCase(Locale.US));
             writer.writeEndElement();
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktype");
-            writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, "write"); // FIXME
+            writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, getType().name().toLowerCase(Locale.US));
             writer.writeEndElement();
             writer.writeEndElement();
             writer.writeEndElement();
@@ -57,14 +58,17 @@ final class LockImpl implements WebDavLock {
 
     private final String owner;
 
-    private final Scope scope;
+    private final LockScope scope;
 
-    private final String token;
+    private final UUID token;
 
-    LockImpl(final String token, final Scope scope, final String owner) {
+    private final LockType type;
+
+    LockImpl(final UUID token, final LockScope scope, final LockType type, final String owner) {
         this.owner = owner;
         this.token = token;
         this.scope = scope;
+        this.type = type;
     }
 
     @Override
@@ -95,13 +99,18 @@ final class LockImpl implements WebDavLock {
     }
 
     @Override
-    public Scope getScope() {
+    public LockScope getScope() {
         return scope;
     }
 
     @Override
-    public String getToken() {
+    public UUID getToken() {
         return token;
+    }
+
+    @Override
+    public LockType getType() {
+        return type;
     }
 
     @Override
@@ -119,11 +128,6 @@ final class LockImpl implements WebDavLock {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Lock{");
-        sb.append("owner=").append(owner);
-        sb.append(", token=").append(token);
-        sb.append(", scope=").append(scope);
-        sb.append('}');
-        return sb.toString();
+        return "LockImpl [owner=" + owner + ", scope=" + scope + ", token=" + token + ", type=" + type + "]";
     }
 }

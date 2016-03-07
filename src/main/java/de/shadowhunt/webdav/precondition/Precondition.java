@@ -17,6 +17,7 @@
 package de.shadowhunt.webdav.precondition;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavLock;
@@ -48,6 +49,8 @@ import org.apache.commons.lang3.StringUtils;
 public final class Precondition {
 
     private static class PreconditionValidatior extends PreconditionBaseListener {
+
+        private static final UUID UUID_ZERO = new UUID(0L, 0L);
 
         private final ParseTreeProperty<Boolean> evaluatuion = new ParseTreeProperty<>();
 
@@ -115,9 +118,14 @@ public final class Precondition {
 
             final LockContext lockContext = ctx.lock();
             if (lockContext != null) {
-                final String lockToken = lockContext.LOCK_TOKEN().getText();
+                final UUID lockToken = getLockToken(lockContext.LOCK_TOKEN().getText());
+                if (UUID_ZERO.equals(lockToken)) {
+                    evaluatuion.put(ctx, false);
+                    return;
+                }
+
                 final Optional<WebDavLock> lock = entity.getLock();
-                lock.ifPresent(x -> evaluatuion.put(ctx, lockToken.equals(x.getToken())));
+                lock.ifPresent(x -> evaluatuion.put(ctx, x.getToken().equals(lockToken)));
                 return;
             }
 
@@ -155,6 +163,19 @@ public final class Precondition {
                 return false;
             }
             return result;
+        }
+
+        private UUID getLockToken(final String token) {
+            if (!token.startsWith(WebDavLock.PREFIX)) {
+                return UUID_ZERO;
+            }
+
+            final String plain = StringUtils.removeStart(token, WebDavLock.PREFIX);
+            try {
+                return UUID.fromString(plain);
+            } catch (final IllegalArgumentException e) {
+                return UUID_ZERO;
+            }
         }
     }
 

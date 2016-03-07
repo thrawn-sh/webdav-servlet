@@ -37,9 +37,9 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
 
     private static final ContentNormalizer LOCK_TOKEN_NORMALIZER = new ContentNormalizer() {
 
-        private static final String REGEX = "<D:href>opaquelocktoken:........-....-....-....-............</D:href>";
+        private static final String REGEX = "<D:href>urn:uuid:........-....-....-....-............</D:href>";
 
-        private static final String REPLACEMENT = "<D:href>opaquelocktoken:00000000-0000-0000-0000-000000000000</D:href>";
+        private static final String REPLACEMENT = "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>";
 
         @Override
         public String normalize(final String content) {
@@ -86,12 +86,12 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:locktype>", //
                 "<D:write/>", //
                 "</D:locktype>", //
-                "<D:timeout>Seconds-3600</D:timeout>", //
+                // "<D:timeout>Seconds-3600</D:timeout>", //
                 "<D:depth>0</D:depth>", //
                 "<D:owner>", //
                 "</D:owner>", //
                 "<D:locktoken>", //
-                "<D:href>opaquelocktoken:00000000-0000-0000-0000-000000000000</D:href>", //
+                "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
                 "</D:locktoken>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //
@@ -123,12 +123,12 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:locktype>", //
                 "<D:write/>", //
                 "</D:locktype>", //
-                "<D:timeout>Seconds-3600</D:timeout>", //
+                // "<D:timeout>Seconds-3600</D:timeout>", //
                 "<D:depth>0</D:depth>", //
                 "<D:owner>", //
                 "</D:owner>", //
                 "<D:locktoken>", //
-                "<D:href>opaquelocktoken:00000000-0000-0000-0000-000000000000</D:href>", //
+                "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
                 "</D:locktoken>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //

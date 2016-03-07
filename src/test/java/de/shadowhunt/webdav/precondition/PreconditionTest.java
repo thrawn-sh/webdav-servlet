@@ -25,6 +25,8 @@ import java.util.UUID;
 import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavLock;
+import de.shadowhunt.webdav.WebDavLock.LockScope;
+import de.shadowhunt.webdav.WebDavLock.LockType;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavStore;
@@ -78,7 +80,7 @@ public class PreconditionTest {
 
         store.createItem(ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));
         store.createItem(LOCKED_ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));
-        final WebDavLock lock = store.createLock(Optional.empty());
+        final WebDavLock lock = store.createLock(LockScope.EXCLUSIVE, LockType.WRITE, "");
         store.lock(LOCKED_ITEM, lock);
     }
 
@@ -181,7 +183,7 @@ public class PreconditionTest {
         final WebDavEntity entity = store.getEntity(LOCKED_ITEM);
         final WebDavLock lock = entity.getLock().get();
 
-        final String precondition = "<" + LOCKED_RESOURCE + "> (<" + lock.getToken() + ">)";
+        final String precondition = "<" + LOCKED_RESOURCE + "> (<" + WebDavLock.PREFIX + lock.getToken() + ">)";
         Mockito.when(request.getOption(Precondition.PRECONDITION_HEADER, "")).thenReturn(precondition);
         Assert.assertTrue(Precondition.verify(store, request));
     }
@@ -202,7 +204,7 @@ public class PreconditionTest {
         final WebDavEntity entity = store.getEntity(LOCKED_ITEM);
         final WebDavLock lock = entity.getLock().get();
 
-        final String precondition = "(<" + lock.getToken() + ">)";
+        final String precondition = "(<" + WebDavLock.PREFIX + lock.getToken() + ">)";
         Mockito.when(request.getOption(Precondition.PRECONDITION_HEADER, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
         Assert.assertTrue(Precondition.verify(store, request));
