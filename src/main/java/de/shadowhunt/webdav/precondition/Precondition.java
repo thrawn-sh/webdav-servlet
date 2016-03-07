@@ -31,11 +31,15 @@ import de.shadowhunt.webdav.precondition.PreconditionParser.ListContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.LockContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.PreconditionContext;
 
+import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.TokenSource;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -154,6 +158,15 @@ public final class Precondition {
         }
     }
 
+    private static class ThrowingErrorListener extends BaseErrorListener {
+        @Override
+        public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line, final int charPositionInLine, final String msg, final RecognitionException e) throws ParseCancellationException {
+            throw new ParseCancellationException("line " + line + ":" + charPositionInLine + " " + msg);
+        }
+    }
+
+    private static final ANTLRErrorListener ERROR_LISTENER = new ThrowingErrorListener();
+
     public static final String PRECONDITION_HEADER = "If";
 
     public static boolean verify(final WebDavStore store, final WebDavRequest request) {
@@ -162,26 +175,35 @@ public final class Precondition {
             return true;
         }
 
-        final CharStream stream = new ANTLRInputStream(precondition);
-        final TokenSource lexer = new PreconditionLexer(stream);
+        try {
+            final CharStream stream = new ANTLRInputStream(precondition);
+            final PreconditionLexer lexer = new PreconditionLexer(stream);
+            lexer.removeErrorListeners();
+            lexer.addErrorListener(ERROR_LISTENER);
 
-        final CommonTokenStream tokens = new CommonTokenStream(lexer);
-        final PreconditionParser parser = new PreconditionParser(tokens);
+            final CommonTokenStream tokens = new CommonTokenStream(lexer);
+            final PreconditionParser parser = new PreconditionParser(tokens);
+            parser.removeErrorListeners();
+            parser.addErrorListener(ERROR_LISTENER);
 
-        final PreconditionContext context = parser.precondition();
-        final ParseTreeWalker walker = new ParseTreeWalker();
-        final PreconditionValidatior validator = new PreconditionValidatior(store, request);
-        walker.walk(validator, context);
+            final PreconditionContext context = parser.precondition();
+            final ParseTreeWalker walker = new ParseTreeWalker();
+            final PreconditionValidatior validator = new PreconditionValidatior(store, request);
+            walker.walk(validator, context);
 
-        // for precondition to be true at last one tagList or noTagList must be true
-        final int children = context.getChildCount();
-        for (int c = 0; c < children; c++) {
-            final ParseTree child = context.getChild(c);
-            if (validator.getEvaluationResult(child)) {
-                return true;
+            // for precondition to be true at last one explicitResourceList or implicitResourceList must be true
+            final int children = context.getChildCount();
+            for (int c = 0; c < children; c++) {
+                final ParseTree child = context.getChild(c);
+                if (validator.getEvaluationResult(child)) {
+                    return true;
+                }
             }
+            return false;
+        } catch (final RuntimeException e) {
+            // TODO log
+            return false;
         }
-        return false;
     }
 
     private Precondition() {

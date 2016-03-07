@@ -107,6 +107,12 @@ public class PreconditionTest {
     }
 
     @Test
+    public void test_00_illegalInput() throws Exception {
+        Mockito.when(request.getOption(Precondition.PRECONDITION_HEADER, "")).thenReturn("this input is invalid");
+        Assert.assertFalse(Precondition.verify(store, request));
+    }
+
+    @Test
     public void test_00_explicit_foreign() throws Exception {
         final String precondition = "<" + FOREIGN_RESOURCE + "> (<DAV:no-lock>)";
         Mockito.when(request.getOption(Precondition.PRECONDITION_HEADER, "")).thenReturn(precondition);
