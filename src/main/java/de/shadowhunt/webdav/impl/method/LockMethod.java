@@ -23,6 +23,7 @@ import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
+import de.shadowhunt.webdav.WebDavResponse.Status;
 import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.WebDavStore;
 
@@ -43,11 +44,11 @@ public class LockMethod extends AbstractWebDavMethod {
         final WebDavEntity entity = store.getEntity(target);
         final Optional<WebDavLock> lock = entity.getLock();
         if (lock.isPresent()) {
-            return new LockResponse(entity);
+            return new LockDiscoveryResponse(entity, Status.SC_MULTISTATUS);
         }
 
         final WebDavLock newlock = store.createLock(null, null, ""); // FIXME
         final WebDavEntity lockedEntity = store.lock(target, newlock);
-        return new LockResponse(lockedEntity);
+        return new LockDiscoveryResponse(lockedEntity, Status.SC_OK);
     }
 }

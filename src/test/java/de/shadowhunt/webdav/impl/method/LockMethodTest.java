@@ -73,7 +73,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPrincipal()).thenReturn(Optional.empty());
 
         final TestResponse response = execute(method);
-        assertBasicRequirements(response, Status.SC_MULTISTATUS);
+        assertBasicRequirements(response, Status.SC_OK);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String content = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //

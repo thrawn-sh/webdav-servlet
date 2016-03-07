@@ -32,10 +32,13 @@ import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
-class LockResponse extends AbstractBasicResponse {
+class LockDiscoveryResponse extends AbstractBasicResponse {
 
-    LockResponse(final WebDavEntity entity) {
+    private final Status status;
+
+    LockDiscoveryResponse(final WebDavEntity entity, final Status status) {
         super(entity);
+        this.status = status;
     }
 
     @Override
@@ -47,7 +50,7 @@ class LockResponse extends AbstractBasicResponse {
         response.setContentType("application/xml");
         final UUID token = lock.getToken();
         response.addHeader("Lock-Token", "<" + WebDavLock.PREFIX + token + ">");
-        response.setStatus(Status.SC_MULTISTATUS);
+        response.setStatus(status);
 
         try {
             final XMLOutputFactory factory = XMLOutputFactory.newFactory();
