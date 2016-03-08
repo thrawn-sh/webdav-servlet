@@ -116,6 +116,10 @@ public class FileSystemStore implements WebDavStore {
     }
 
     private void createFolder(final WebDavPath path, final File file) {
+        if (file.isDirectory()) {
+            return;
+        }
+
         if (!file.mkdir()) {
             throw new WebDavException("can not create folder " + path);
         }
@@ -153,6 +157,10 @@ public class FileSystemStore implements WebDavStore {
     }
 
     private void delete(final WebDavPath path, final File file) {
+        if (!file.exists()) {
+            return;
+        }
+
         if (file.isFile()) {
             if (!file.delete()) {
                 throw new WebDavException("can not delete " + path);
