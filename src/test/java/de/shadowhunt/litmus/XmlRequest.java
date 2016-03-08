@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
+import java.util.Base64;
+import java.util.Base64.Decoder;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,7 +40,6 @@ import de.shadowhunt.webdav.WebDavMethod.Method;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -92,7 +93,8 @@ class XmlRequest implements WebDavRequest {
 
     @Override
     public InputStream getInputStream() {
-        return new ByteArrayInputStream(Base64.decodeBase64(content));
+        final Decoder decoder = Base64.getDecoder();
+        return new ByteArrayInputStream(decoder.decode(content));
     }
 
     @Override
