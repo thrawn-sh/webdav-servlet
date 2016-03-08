@@ -76,7 +76,7 @@ public class PreconditionTest {
     @BeforeClass
     public static void initStore() {
         root = new File(new File(FileUtils.getTempDirectory(), "webdav-servlet-test"), UUID.randomUUID().toString());
-        store = new FileSystemStore(root);
+        store = new FileSystemStore(root, true);
 
         store.createItem(ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));
         store.createItem(LOCKED_ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));

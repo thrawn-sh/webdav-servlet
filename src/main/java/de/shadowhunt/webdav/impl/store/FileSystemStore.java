@@ -67,12 +67,21 @@ public class FileSystemStore implements WebDavStore {
     private final File resourceRoot;
 
     public FileSystemStore(final File root) {
+        this(root, false);
+    }
+
+    public FileSystemStore(final File root, final boolean clear) {
         this.resourceRoot = new File(root, "content");
+        this.metaRoot = new File(root, "meta");
+
+        if (clear) {
+            FileUtils.deleteQuietly(resourceRoot);
+            FileUtils.deleteQuietly(metaRoot);
+        }
+
         if (!resourceRoot.exists() && !resourceRoot.mkdirs()) {
             throw new WebDavException("resourceRoot path: " + resourceRoot + " does not exist and can not be created");
         }
-
-        this.metaRoot = new File(root, "meta");
         if (!metaRoot.exists() && !metaRoot.mkdirs()) {
             throw new WebDavException("metaRoot path: " + metaRoot + " does not exist and can not be created");
         }

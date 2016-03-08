@@ -96,7 +96,7 @@ public abstract class AbstractWebDavMethodTest {
     @BeforeClass
     public static void initStore() {
         root = new File(new File(FileUtils.getTempDirectory(), "webdav-servlet-test"), UUID.randomUUID().toString());
-        store = new FileSystemStore(root);
+        store = new FileSystemStore(root, true);
 
         createCollection(EXISITING_COLLECTION, false);
         createItem(EXISITING_ITEM, "example", false);

@@ -56,7 +56,7 @@ public abstract class AbstractLitmusTest {
     @BeforeClass
     public static void initStore() {
         root = new File(new File(FileUtils.getTempDirectory(), "webdav-servlet-test"), UUID.randomUUID().toString());
-        store = new FileSystemStore(root);
+        store = new FileSystemStore(root, true);
 
         final WebDavPath litmusRoot = WebDavPath.create("/litmus");
         store.createCollection(litmusRoot);
