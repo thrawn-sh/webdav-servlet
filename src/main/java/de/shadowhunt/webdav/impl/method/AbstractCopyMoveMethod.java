@@ -50,7 +50,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
         store.setProperties(target, properties);
 
         for (final WebDavPath child : store.list(source)) {
-            copy(store, child, target.getChild(child.getName()), depth - 1);
+            copy(store, child, target.append(child.getName()), depth - 1);
         }
     }
 
