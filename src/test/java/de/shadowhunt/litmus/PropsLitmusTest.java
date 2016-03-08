@@ -433,9 +433,8 @@ public class PropsLitmusTest extends AbstractLitmusTest {
                 " xmlns:ns6=\"http://example.com/gamma\"", //
                 " xmlns:ns7=\"http://example.com/iota\"", //
                 " xmlns:ns8=\"http://example.com/kappa\"", //
-                " xmlns:ns9=\"http://example.com/neon/litmus/\"", //
-                " xmlns:ns10=\"http://example.com/theta\"", //
-                " xmlns:ns11=\"http://example.com/zeta\">", //
+                " xmlns:ns9=\"http://example.com/theta\"", //
+                " xmlns:ns10=\"http://example.com/zeta\">", //
                 "<D:response>", //
                 "<D:href>/webdav/litmus/prop</D:href>", //
                 "<D:propstat>", //
@@ -448,8 +447,8 @@ public class PropsLitmusTest extends AbstractLitmusTest {
                 "<ns6:somename>manynsvalue</ns6:somename>", //
                 "<ns7:somename>manynsvalue</ns7:somename>", //
                 "<ns8:somename>manynsvalue</ns8:somename>", //
+                "<ns9:somename>manynsvalue</ns9:somename>", //
                 "<ns10:somename>manynsvalue</ns10:somename>", //
-                "<ns11:somename>manynsvalue</ns11:somename>", //
                 "</D:prop>", //
                 "<D:status>HTTP/1.1 200 OK</D:status>", //
                 "</D:propstat>", //
