@@ -175,13 +175,21 @@ public class FileSystemStore implements WebDavStore {
                 return Optional.empty();
             }
 
-            try {
-                final String token = FileUtils.readFileToString(lock);
-                final UUID uuid = UUID.fromString(token);
-                return Optional.of(new LockImpl(uuid, LockScope.EXCLUSIVE, LockType.WRITE, "")); // FIXME Owner
-            } catch (final IOException e) {
-                throw new WebDavException("can not read lock for " + path, e);
+            final Properties properties = new Properties();
+            try (final InputStream is = new FileInputStream(lock)) {
+                properties.loadFromXML(is);
+            } catch (final Exception e) {
+                throw new WebDavException("can not load lock for " + path, e);
             }
+
+            final String owner = properties.getProperty(LOCK_OWNER);
+            String scopeProperty = properties.getProperty(LOCK_SCOPE);
+            final LockScope scope = LockScope.valueOf(scopeProperty);
+            String tokenProperty = properties.getProperty(LOCK_TOKEN);
+            final UUID token = UUID.fromString(tokenProperty);
+            String typeProperty = properties.getProperty(LOCK_TYPE);
+            final LockType type = LockType.valueOf(typeProperty);
+            return Optional.of(new LockImpl(token, scope, type, owner));
         }
     }
 
@@ -241,7 +249,7 @@ public class FileSystemStore implements WebDavStore {
 
             final File meta = getMetaFile(path.append(PROPERTIES_SUFFIX));
             if (!meta.exists()) {
-                return new ArrayList<>();
+                return Collections.emptyList();
             }
 
             final Properties properties = new Properties();
@@ -292,8 +300,24 @@ public class FileSystemStore implements WebDavStore {
         synchronized (monitor) {
             final File lockFile = getMetaFile(path.append(LOCK_SUFFIX));
             try {
+                final Properties store = new Properties();
+                final String owner = lock.getOwner();
+                store.put(LOCK_OWNER, owner);
+                final LockScope scope = lock.getScope();
+                final String scopeProperty = scope.name();
+                store.put(LOCK_SCOPE, scopeProperty);
                 final UUID token = lock.getToken();
-                FileUtils.write(lockFile, token.toString());
+                final String tokenProperty = token.toString();
+                store.put(LOCK_TOKEN, tokenProperty);
+                final LockType type = lock.getType();
+                final String typeProperty = type.name();
+                store.put(LOCK_TYPE, typeProperty);
+
+                try (final OutputStream os = new FileOutputStream(lockFile)) {
+                    store.storeToXML(os, "", "UTF-8");
+                } catch (final Exception e) {
+                    throw new WebDavException("can not save properties for " + path, e);
+                }
             } catch (final Exception e) {
                 throw new WebDavException("can not write lock for " + path, e);
             }
