@@ -19,6 +19,7 @@ package de.shadowhunt.webdav.impl.method;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.UUID;
 
 import de.shadowhunt.TestResponse;
@@ -73,7 +74,7 @@ public abstract class AbstractWebDavMethodTest {
         }
 
         if (locked) {
-            final WebDavLock lock = store.createLock(LockScope.EXCLUSIVE, LockType.WRITE, "");
+            final WebDavLock lock = store.createLock(Optional.of(LockScope.EXCLUSIVE), Optional.of(LockType.WRITE), Optional.empty());
             store.lock(path, lock);
         }
     }
@@ -82,7 +83,7 @@ public abstract class AbstractWebDavMethodTest {
         createCollection0(path.getParent(), false);
         store.createItem(path, new ByteArrayInputStream(content.getBytes()));
         if (locked) {
-            final WebDavLock lock = store.createLock(LockScope.EXCLUSIVE, LockType.WRITE, "");
+            final WebDavLock lock = store.createLock(Optional.of(LockScope.EXCLUSIVE), Optional.of(LockType.WRITE), Optional.empty());
             store.lock(path, lock);
         }
         setProperties(path);

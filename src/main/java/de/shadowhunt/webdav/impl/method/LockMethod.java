@@ -47,7 +47,7 @@ public class LockMethod extends AbstractWebDavMethod {
             return new LockDiscoveryResponse(entity, Status.SC_MULTISTATUS);
         }
 
-        final WebDavLock newlock = store.createLock(null, null, ""); // FIXME
+        final WebDavLock newlock = store.createLock(Optional.empty(), Optional.empty(), Optional.empty()); // FIXME
         final WebDavEntity lockedEntity = store.lock(target, newlock);
         return new LockDiscoveryResponse(lockedEntity, Status.SC_OK);
     }

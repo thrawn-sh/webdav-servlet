@@ -149,8 +149,9 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public WebDavLock createLock(final LockScope scope, final LockType type, final String owner) {
-        return new LockImpl(UUID.randomUUID(), LockScope.EXCLUSIVE, LockType.WRITE, owner);
+    public WebDavLock createLock(final Optional<LockScope> scope, final Optional<LockType> type, final Optional<String> owner) {
+        // ignore requested scope and type
+        return new LockImpl(UUID.randomUUID(), LockScope.EXCLUSIVE, LockType.WRITE, owner.orElse(""));
     }
 
     private PropertyIdentifier createPropertyIdentifier(final String elementName) {

@@ -80,7 +80,7 @@ public class PreconditionTest {
 
         store.createItem(ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));
         store.createItem(LOCKED_ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));
-        final WebDavLock lock = store.createLock(LockScope.EXCLUSIVE, LockType.WRITE, "");
+        final WebDavLock lock = store.createLock(Optional.of(LockScope.EXCLUSIVE), Optional.of(LockType.WRITE), Optional.empty());
         store.lock(LOCKED_ITEM, lock);
     }
 

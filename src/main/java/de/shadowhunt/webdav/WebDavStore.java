@@ -38,7 +38,7 @@ public interface WebDavStore {
 
     void createItem(WebDavPath path, InputStream content) throws WebDavException;
 
-    WebDavLock createLock(LockScope scope, LockType type, String owner) throws WebDavException;
+    WebDavLock createLock(Optional<LockScope> scope, Optional<LockType> type, Optional<String> owner) throws WebDavException;
 
     void delete(WebDavPath path) throws WebDavException;
 
