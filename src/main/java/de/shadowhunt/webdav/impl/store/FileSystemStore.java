@@ -342,8 +342,6 @@ public class FileSystemStore implements WebDavStore {
 
                 try (final OutputStream os = new FileOutputStream(lockFile)) {
                     store.storeToXML(os, "", "UTF-8");
-                } catch (final Exception e) {
-                    throw new WebDavException("can not save properties for " + path, e);
                 }
             } catch (final Exception e) {
                 throw new WebDavException("can not write lock for " + path, e);
