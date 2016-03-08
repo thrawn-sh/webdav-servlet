@@ -72,10 +72,13 @@ class LockDiscoveryResponse extends AbstractBasicResponse {
             writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, lock.getType().name().toLowerCase(Locale.US));
             writer.writeEndElement();
 
-            // TODO timeout not supported
-            // writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "timeout");
-            // writer.writeCharacters("Seconds-3600");
-            // writer.writeEndElement();
+            final int timeout = lock.getTimeoutInSeconds();
+            if (timeout >= 0) {
+                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "timeout");
+                writer.writeCharacters("Seconds-");
+                writer.writeCharacters(Integer.toString(timeout));
+                writer.writeEndElement();
+            }
 
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "depth");
             writer.writeCharacters("0");

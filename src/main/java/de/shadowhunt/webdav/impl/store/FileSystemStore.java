@@ -149,9 +149,9 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public WebDavLock createLock(final Optional<LockScope> scope, final Optional<LockType> type, final Optional<String> owner) {
-        // ignore requested scope and type
-        return new LockImpl(UUID.randomUUID(), LockScope.EXCLUSIVE, LockType.WRITE, owner.orElse(""));
+    public WebDavLock createLock(final Optional<LockScope> scope, final Optional<LockType> type, final Optional<Integer> timeoutInSeconds, final Optional<String> owner) {
+        // ignore requested scope, type and timeout
+        return new LockImpl(UUID.randomUUID(), LockScope.EXCLUSIVE, LockType.WRITE, -1, owner.orElse(""));
     }
 
     private PropertyIdentifier createPropertyIdentifier(final String elementName) {
@@ -213,7 +213,7 @@ public class FileSystemStore implements WebDavStore {
             final UUID token = UUID.fromString(tokenProperty);
             final String typeProperty = properties.getProperty(LOCK_TYPE);
             final LockType type = LockType.valueOf(typeProperty);
-            return Optional.of(new LockImpl(token, scope, type, owner));
+            return Optional.of(new LockImpl(token, scope, type, -1, owner));
         }
     }
 

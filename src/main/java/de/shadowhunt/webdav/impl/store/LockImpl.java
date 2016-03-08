@@ -60,14 +60,22 @@ final class LockImpl implements WebDavLock {
 
     private final LockScope scope;
 
+    @Override
+    public int getTimeoutInSeconds() {
+        return timeoutInSeconds;
+    }
+
     private final UUID token;
 
     private final LockType type;
 
-    LockImpl(final UUID token, final LockScope scope, final LockType type, final String owner) {
+    private final int timeoutInSeconds;
+
+    LockImpl(final UUID token, final LockScope scope, final LockType type, final int timeoutInSeconds, final String owner) {
         this.owner = owner;
         this.token = token;
         this.scope = scope;
+        this.timeoutInSeconds = timeoutInSeconds;
         this.type = type;
     }
 
@@ -128,6 +136,6 @@ final class LockImpl implements WebDavLock {
 
     @Override
     public String toString() {
-        return "LockImpl [owner=" + owner + ", scope=" + scope + ", token=" + token + ", type=" + type + "]";
+        return "LockImpl [owner=" + owner + ", scope=" + scope + ", token=" + token + ", type=" + type + ", timeoutInSeconds=" + timeoutInSeconds + "]";
     }
 }

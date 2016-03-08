@@ -37,6 +37,8 @@ public interface WebDavLock {
 
     LockScope getScope();
 
+    int getTimeoutInSeconds();
+
     UUID getToken();
 
     LockType getType();
