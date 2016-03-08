@@ -17,6 +17,7 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -54,56 +55,58 @@ class HtmlListingResponse extends AbstractBasicResponse {
         response.setCharacterEncoding(DEFAULT_ENCODING);
         response.setContentType("text/html");
 
-        final PrintWriter writer = new PrintWriter(response.getOutputStream());
-        writer.print("<!DOCTYPE html><html><head>");
-        writer.print("<title>Content of folder ");
-        final WebDavPath path = entity.getPath();
-        writer.print(StringEscapeUtils.escapeHtml4(path.getValue()));
-        writer.print("</title>");
+        try (final OutputStreamWriter stream = new OutputStreamWriter(response.getOutputStream(), DEFAULT_CHARSET)) {
+            final PrintWriter writer = new PrintWriter(stream);
+            writer.print("<!DOCTYPE html><html><head>");
+            writer.print("<title>Content of folder ");
+            final WebDavPath path = entity.getPath();
+            writer.print(StringEscapeUtils.escapeHtml4(path.getValue()));
+            writer.print("</title>");
 
-        if (css != null) {
-            writer.print("<style>");
-            writer.print(css);
-            writer.print("</style>");
-        }
-
-        writer.print("</head><body><table><thead><tr><th class=\"name\">Name</th><th class=\"size\">Size</th><th class=\"modified\">Modified</th></tr></thead><tbody>");
-        if (WebDavPath.ROOT.equals(path)) {
-            // do not leave WebDav
-            writer.print("<tr class=\"folder parent\"><td colspan=\"3\"><a href=\".\">Parent</a></td></tr>");
-        } else {
-            writer.print("<tr class=\"folder parent\"><td colspan=\"3\"><a href=\"..\">Parent</a></td></tr>");
-        }
-
-        Collections.sort(entities);
-        for (final WebDavEntity entity : entities) {
-            final String entityName = entity.getName();
-            final String link = URLEncoder.encode(entityName, DEFAULT_ENCODING);
-            final String entityNameHtml = StringEscapeUtils.escapeHtml4(entityName);
-            if (WebDavEntity.Type.COLLECTION == entity.getType()) {
-                writer.print("<tr class=\"folder\"><td colspan=\"3\"><a href=\"./");
-                writer.print(link);
-                writer.print("/\">");
-                writer.print(entityNameHtml);
-                writer.print("</a></td></tr>");
-            } else {
-                writer.print("<tr class=\"file\"><td class=\"name\"><a href=\"./");
-                writer.print(link);
-                writer.print("\">");
-                writer.print(entityNameHtml);
-                writer.print("</a></td><td class=\"size\">");
-                final String size = FileUtils.byteCountToDisplaySize(entity.getSize());
-                writer.print(size);
-                writer.print("</td><td class=\"modified\">");
-                final Date lastModified = entity.getLastModified();
-                final String formattedDate = dateFormat.format(lastModified);
-                writer.print(formattedDate);
-                writer.print("</td></tr>");
+            if (css != null) {
+                writer.print("<style>");
+                writer.print(css);
+                writer.print("</style>");
             }
-        }
 
-        writer.print("</tbody></table>");
-        writer.print("</body></html>");
-        writer.close();
+            writer.print("</head><body><table><thead><tr><th class=\"name\">Name</th><th class=\"size\">Size</th><th class=\"modified\">Modified</th></tr></thead><tbody>");
+            if (WebDavPath.ROOT.equals(path)) {
+                // do not leave WebDav
+                writer.print("<tr class=\"folder parent\"><td colspan=\"3\"><a href=\".\">Parent</a></td></tr>");
+            } else {
+                writer.print("<tr class=\"folder parent\"><td colspan=\"3\"><a href=\"..\">Parent</a></td></tr>");
+            }
+
+            Collections.sort(entities);
+            for (final WebDavEntity entity : entities) {
+                final String entityName = entity.getName();
+                final String link = URLEncoder.encode(entityName, DEFAULT_ENCODING);
+                final String entityNameHtml = StringEscapeUtils.escapeHtml4(entityName);
+                if (WebDavEntity.Type.COLLECTION == entity.getType()) {
+                    writer.print("<tr class=\"folder\"><td colspan=\"3\"><a href=\"./");
+                    writer.print(link);
+                    writer.print("/\">");
+                    writer.print(entityNameHtml);
+                    writer.print("</a></td></tr>");
+                } else {
+                    writer.print("<tr class=\"file\"><td class=\"name\"><a href=\"./");
+                    writer.print(link);
+                    writer.print("\">");
+                    writer.print(entityNameHtml);
+                    writer.print("</a></td><td class=\"size\">");
+                    final String size = FileUtils.byteCountToDisplaySize(entity.getSize());
+                    writer.print(size);
+                    writer.print("</td><td class=\"modified\">");
+                    final Date lastModified = entity.getLastModified();
+                    final String formattedDate = dateFormat.format(lastModified);
+                    writer.print(formattedDate);
+                    writer.print("</td></tr>");
+                }
+            }
+
+            writer.print("</tbody></table>");
+            writer.print("</body></html>");
+            writer.close();
+        }
     }
 }

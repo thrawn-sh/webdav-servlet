@@ -17,6 +17,7 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.Set;
@@ -45,7 +46,9 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
     public static final String DAV_HEADER = "DAV";
 
-    public static final String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
+    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+
+    public static final String DEFAULT_ENCODING = DEFAULT_CHARSET.name();
 
     private static final String ETAG_HEADER = "ETag";
 

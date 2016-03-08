@@ -64,44 +64,46 @@ final class RequestDebugHelper {
         try {
             final XMLOutputFactory factory = XMLOutputFactory.newFactory();
 
-            final XMLStreamWriter writer = factory.createXMLStreamWriter(new FileOutputStream(output), "UTF-8");
-            writer.writeStartDocument("UTF-8", "1.0");
+            try (final FileOutputStream stream = new FileOutputStream(output)) {
+                final XMLStreamWriter writer = factory.createXMLStreamWriter(stream, "UTF-8");
+                writer.writeStartDocument("UTF-8", "1.0");
 
-            writer.writeStartElement("request");
+                writer.writeStartElement("request");
 
-            writer.writeStartElement("method");
-            writer.writeCharacters(request.getMethod());
-            writer.writeEndElement();
-
-            writer.writeStartElement("uri");
-            writer.writeCharacters(request.getRequestURL().toString());
-            writer.writeEndElement();
-
-            writer.writeStartElement("base");
-            writer.writeCharacters(request.getServletPath());
-            writer.writeEndElement();
-
-            writer.writeStartElement("headers");
-            final Enumeration<String> headerNames = request.getHeaderNames();
-            while (headerNames.hasMoreElements()) {
-                final String name = headerNames.nextElement();
-
-                writer.writeStartElement("header");
-                writer.writeAttribute("name", name);
-                writer.writeCharacters(request.getHeader(name));
+                writer.writeStartElement("method");
+                writer.writeCharacters(request.getMethod());
                 writer.writeEndElement();
-            }
-            writer.writeEndElement();
 
-            writer.writeStartElement("content");
-            if (size > 0) {
-                writer.writeCharacters(Base64.getEncoder().encodeToString(buffer.toByteArray()));
-            }
-            writer.writeEndElement();
+                writer.writeStartElement("uri");
+                writer.writeCharacters(request.getRequestURL().toString());
+                writer.writeEndElement();
 
-            writer.writeEndElement(); // request
-            writer.writeEndDocument();
-            writer.close();
+                writer.writeStartElement("base");
+                writer.writeCharacters(request.getServletPath());
+                writer.writeEndElement();
+
+                writer.writeStartElement("headers");
+                final Enumeration<String> headerNames = request.getHeaderNames();
+                while (headerNames.hasMoreElements()) {
+                    final String name = headerNames.nextElement();
+
+                    writer.writeStartElement("header");
+                    writer.writeAttribute("name", name);
+                    writer.writeCharacters(request.getHeader(name));
+                    writer.writeEndElement();
+                }
+                writer.writeEndElement();
+
+                writer.writeStartElement("content");
+                if (size > 0) {
+                    writer.writeCharacters(Base64.getEncoder().encodeToString(buffer.toByteArray()));
+                }
+                writer.writeEndElement();
+
+                writer.writeEndElement(); // request
+                writer.writeEndDocument();
+                writer.close();
+            }
         } catch (final XMLStreamException e) {
             throw new WebDavException("can not write response", e);
         }

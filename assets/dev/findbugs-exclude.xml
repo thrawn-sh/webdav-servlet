@@ -20,8 +20,8 @@
 <FindBugsFilter>
     <Match>
         <Or>
-            <Class name="de.shadowhunt.webdav.impl.precondition.PreconditionLexer" />
-            <Class name="de.shadowhunt.webdav.impl.precondition.PreconditionParser" />
+            <Class name="de.shadowhunt.webdav.precondition.PreconditionLexer" />
+            <Class name="de.shadowhunt.webdav.precondition.PreconditionParser" />
         </Or>
     </Match>
 </FindBugsFilter>
