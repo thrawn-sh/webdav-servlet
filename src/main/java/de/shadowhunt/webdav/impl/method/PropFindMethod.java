@@ -96,8 +96,6 @@ public class PropFindMethod extends AbstractWebDavMethod {
 
     private static final FastDateFormat ISO_DATE_FORMATTER = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
 
-    public static final String METHOD = "PROPFIND";
-
     private static final XPathExpression NAME_EXPRESSION;
 
     private static final XPathExpression PROPERTIES_EXPRESSION;
