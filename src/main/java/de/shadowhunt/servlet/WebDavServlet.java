@@ -44,7 +44,7 @@ public class WebDavServlet extends HttpServlet {
         config.setShowCollectionListings(true);
 
         final WebDavStore store = new FileSystemStore(new File(FileUtils.getTempDirectory(), "webdav-servlet-repo"));
-        final WebDavRequest webDavRequest = new HttpServletRequestWrapper(request, config);
+        final WebDavRequest webDavRequest = RequestDebugHelper.generateAndDump(request, config);
         final WebDavResponse webDavResponse = new HttpServletResponseWrapper(response, webDavRequest);
 
         final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();

@@ -16,8 +16,6 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
-import java.util.Optional;
-
 import de.shadowhunt.ContentNormalizer;
 import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavMethod;
@@ -59,18 +57,43 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new LockMethod();
 
+        Mockito.when(request.getOption("Timeout", "infinite")).thenReturn("infinite");
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NOT_FOUND);
+        assertBasicRequirements(response, Status.SC_CREATED);
+        Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
+        Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
+        final String content = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
+                "<D:prop xmlns:D=\"DAV:\">", //
+                "<D:lockdiscovery>", //
+                "<D:activelock>", //
+                "<D:lockscope>", //
+                "<D:exclusive/>", //
+                "</D:lockscope>", //
+                "<D:locktype>", //
+                "<D:write/>", //
+                "</D:locktype>", //
+                // "<D:timeout>Seconds-3600</D:timeout>", //
+                "<D:depth>0</D:depth>", //
+                "<D:owner>", //
+                "</D:owner>", //
+                "<D:locktoken>", //
+                "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
+                "</D:locktoken>", //
+                "</D:activelock>", //
+                "</D:lockdiscovery>", //
+                "</D:prop>", //
+                "\r\n");
+        Assert.assertEquals("content must match", content, response.getContent(LOCK_TOKEN_NORMALIZER));
     }
 
     @Test
     public void test01_exisitingNotLocked() throws Exception {
         final WebDavMethod method = new LockMethod();
 
+        Mockito.when(request.getOption("Timeout", "infinite")).thenReturn("infinite");
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
-        Mockito.when(request.getPrincipal()).thenReturn(Optional.empty());
 
         final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_OK);
@@ -106,11 +129,11 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(true);
 
+        Mockito.when(request.getOption("Timeout", "infinite")).thenReturn("infinite");
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
-        Mockito.when(request.getPrincipal()).thenReturn(Optional.empty());
 
         final TestResponse response = execute(method);
-        assertBasicRequirements(response, Status.SC_MULTISTATUS);
+        assertBasicRequirements(response, Status.SC_OK);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String content = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
