@@ -45,6 +45,8 @@ import org.w3c.dom.NodeList;
 
 public class LockMethod extends AbstractWebDavMethod {
 
+    public static final String INFINITE = "infinite";
+
     private static final XPathExpression LOCK_OWNER;
 
     private static final XPathExpression LOCK_SCOPE;
@@ -90,7 +92,7 @@ public class LockMethod extends AbstractWebDavMethod {
         return Method.LOCK;
     }
 
-    public static Optional<String> getOwner(final Document document) {
+    private Optional<String> getOwner(final Document document) {
         try {
             final Node node = (Node) LOCK_OWNER.evaluate(document, XPathConstants.NODE);
             final String owner = node.getTextContent();
@@ -100,7 +102,7 @@ public class LockMethod extends AbstractWebDavMethod {
         }
     }
 
-    public static Optional<LockScope> getScope(final Document document) {
+    private Optional<LockScope> getScope(final Document document) {
         try {
             final NodeList nodelist = (NodeList) LOCK_SCOPE.evaluate(document, XPathConstants.NODESET);
             if (nodelist.getLength() < 0) {
@@ -116,11 +118,11 @@ public class LockMethod extends AbstractWebDavMethod {
     }
 
     private Optional<Integer> getTimeoutInSeconds(final WebDavRequest request) {
-        String timeout = request.getOption("Timeout", "infinite");
+        String timeout = request.getOption("Timeout", INFINITE);
         timeout = timeout.toLowerCase(Locale.US);
         timeout = timeout.trim();
 
-        if (timeout.startsWith("infinite")) {
+        if (timeout.startsWith(INFINITE)) {
             return Optional.of(-1);
         }
 
@@ -136,7 +138,7 @@ public class LockMethod extends AbstractWebDavMethod {
         }
     }
 
-    public static Optional<LockType> getType(final Document document) {
+    private Optional<LockType> getType(final Document document) {
         try {
             final NodeList nodelist = (NodeList) LOCK_TYPE.evaluate(document, XPathConstants.NODESET);
             if (nodelist.getLength() < 0) {
