@@ -331,13 +331,6 @@
                     <suppressionsLocation>file://${project.basedir}/assets/dev/checkstyle-suppressions.xml</suppressionsLocation>
                     <violationSeverity>warning</violationSeverity>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>6.14.1</version>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <id>validate</id>

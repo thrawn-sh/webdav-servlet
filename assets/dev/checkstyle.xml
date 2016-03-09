@@ -42,9 +42,6 @@
         <module name="EmptyBlock">
             <property name="option" value="text"/>
         </module>
-        <module name="EmptyCatchBlock">
-            <property name="exceptionVariableName" value="expected|ignore" />
-        </module>
         <module name="LeftCurly" />
         <module name="NeedBraces" />
         <module name="RightCurly" />
