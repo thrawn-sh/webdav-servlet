@@ -34,8 +34,8 @@ public class TestResponse implements WebDavResponse {
     private static final ContentNormalizer DUMMY = new ContentNormalizer() {
 
         @Override
-        public String normalize(final String content) {
-            return content;
+        public String normalize(final String value) {
+            return value;
         }
 
     };
