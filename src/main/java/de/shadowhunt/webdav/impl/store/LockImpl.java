@@ -60,16 +60,11 @@ final class LockImpl implements WebDavLock {
 
     private final LockScope scope;
 
-    @Override
-    public int getTimeoutInSeconds() {
-        return timeoutInSeconds;
-    }
+    private final int timeoutInSeconds;
 
     private final UUID token;
 
     private final LockType type;
-
-    private final int timeoutInSeconds;
 
     LockImpl(final UUID token, final LockScope scope, final LockType type, final int timeoutInSeconds, final String owner) {
         this.owner = owner;
@@ -109,6 +104,11 @@ final class LockImpl implements WebDavLock {
     @Override
     public LockScope getScope() {
         return scope;
+    }
+
+    @Override
+    public int getTimeoutInSeconds() {
+        return timeoutInSeconds;
     }
 
     @Override

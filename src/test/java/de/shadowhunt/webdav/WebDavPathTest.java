@@ -34,6 +34,13 @@ public class WebDavPathTest {
     }
 
     @Test
+    public void createRootWebDavPath() {
+        Assert.assertEquals("/ is ROOT", WebDavPath.ROOT, WebDavPath.create(WebDavPath.SEPARATOR));
+        Assert.assertEquals("empty is ROOT", WebDavPath.ROOT, WebDavPath.create(""));
+        Assert.assertEquals("null is ROOT", WebDavPath.ROOT, WebDavPath.create(null));
+    }
+
+    @Test
     public void createWebDavPath() {
         final WebDavPath expected = WebDavPath.create("/a/b/c/d.txt");
         Assert.assertEquals(expected, WebDavPath.create("/a/b/c/d.txt"));
@@ -48,13 +55,6 @@ public class WebDavPathTest {
     public void createWebDavPath_withParentDirectory() throws Exception {
         WebDavPath.create("/a/b/../c/d.txt");
         Assert.fail("path with parent directory must not complete");
-    }
-
-    @Test
-    public void createRootWebDavPath() {
-        Assert.assertEquals("/ is ROOT", WebDavPath.ROOT, WebDavPath.create(WebDavPath.SEPARATOR));
-        Assert.assertEquals("empty is ROOT", WebDavPath.ROOT, WebDavPath.create(""));
-        Assert.assertEquals("null is ROOT", WebDavPath.ROOT, WebDavPath.create(null));
     }
 
     @Test
