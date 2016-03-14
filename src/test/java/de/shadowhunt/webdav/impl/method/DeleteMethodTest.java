@@ -24,6 +24,7 @@ import de.shadowhunt.webdav.WebDavResponse.Status;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 // Tests are independent from each other but go from simple to more complex
@@ -34,6 +35,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new DeleteMethod();
 
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final TestResponse response = execute(method);
@@ -44,6 +46,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
     public void test01_exisitingItem() throws Exception {
         final WebDavMethod method = new DeleteMethod();
 
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final TestResponse response = execute(method);
@@ -54,6 +57,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
     public void test02_exisitingCollection() throws Exception {
         final WebDavMethod method = new DeleteMethod();
 
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
         Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
 
         final TestResponse response = execute(method);
@@ -66,6 +70,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(false);
 
+        Mockito.when(request.getOption(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
         Mockito.when(request.getPath()).thenReturn(WebDavPath.ROOT);
 
         final TestResponse response = execute(method);
