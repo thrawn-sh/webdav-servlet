@@ -18,6 +18,8 @@ package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavLock;
@@ -44,6 +46,11 @@ public class UnlockMethod extends AbstractWebDavMethod {
         final Optional<WebDavLock> lock = entity.getLock();
         if (!lock.isPresent()) {
             return AbstractBasicResponse.createBadRequest(entity);
+        }
+
+        final Set<UUID> tokens = deterimineLockTokens(request);
+        if (!tokens.contains(lock.get().getToken())) {
+            return AbstractBasicResponse.createLocked(entity); // TODO
         }
 
         store.unlock(target);

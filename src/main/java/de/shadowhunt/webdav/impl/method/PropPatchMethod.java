@@ -90,19 +90,20 @@ public class PropPatchMethod extends AbstractWebDavMethod {
 
     @Override
     public WebDavResponseWriter service(final WebDavStore store, final WebDavRequest request) throws IOException {
-        final WebDavPath target = request.getPath();
-        if (!store.exists(target)) {
+        final WebDavPath path = request.getPath();
+        if (!store.exists(path)) {
             return AbstractBasicResponse.createNotFound();
         }
 
-        final WebDavEntity entity = store.getEntity(target);
+        final WebDavEntity entity = store.getEntity(path);
+        checkUp(store, path, deterimineLockTokens(request));
 
         final Document document = PropertiesMessageHelper.parse(request.getInputStream());
         if (document == null) {
             return AbstractBasicResponse.createBadRequest(entity);
         }
 
-        final Collection<WebDavProperty> properties = store.getProperties(target);
+        final Collection<WebDavProperty> properties = store.getProperties(path);
         try {
             final NodeList nodes = (NodeList) EXPRESSION.evaluate(document, XPathConstants.NODESET);
             final int length = nodes.getLength();
@@ -128,7 +129,7 @@ public class PropPatchMethod extends AbstractWebDavMethod {
             return AbstractBasicResponse.createBadRequest(entity);
         }
 
-        store.setProperties(target, properties);
+        store.setProperties(path, properties);
         return AbstractBasicResponse.createCreated(entity);
     }
 }

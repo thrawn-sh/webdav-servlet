@@ -67,17 +67,20 @@ public class LockMethod extends AbstractWebDavMethod {
     }
 
     private WebDavLock determineLock(final WebDavStore store, final WebDavRequest request) throws IOException {
+        final WebDavPath path = request.getPath();
         final Optional<Integer> timeoutInSeconds = getTimeoutInSeconds(request);
 
         final Document document = PropertiesMessageHelper.parse(request.getInputStream());
         if (document != null) {
+            final WebDavEntity entity = store.getEntity(path);
+            checkLockTokenOnEntity(entity, deterimineLockTokens(request));
+
             final Optional<String> owner = getOwner(document);
             final Optional<LockScope> scope = getScope(document);
             final Optional<LockType> type = getType(document);
             return store.createLock(scope, type, timeoutInSeconds, owner);
         }
 
-        final WebDavPath path = request.getPath();
         final WebDavEntity entity = store.getEntity(path);
         final Optional<WebDavLock> lock = entity.getLock();
         if (lock.isPresent()) {

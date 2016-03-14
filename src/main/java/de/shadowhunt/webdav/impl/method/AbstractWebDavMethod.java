@@ -16,30 +16,92 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
-import javax.annotation.CheckForNull;
-
+import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavException;
+import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavMethod;
+import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
+import de.shadowhunt.webdav.WebDavResponse.Status;
+import de.shadowhunt.webdav.WebDavStore;
+
+import org.apache.commons.lang3.StringUtils;
 
 abstract class AbstractWebDavMethod implements WebDavMethod {
 
     public static final String INFINITY = "infinity";
 
-    protected boolean consume(@CheckForNull final InputStream inputStream) throws IOException {
-        if (inputStream == null) {
-            return false;
+    static void checkDown(final WebDavStore store, final WebDavPath path, final int depth, final Set<UUID> tokens) {
+        if (depth < 0) {
+            return; // FIXME
         }
 
-        final boolean data = (inputStream.read() != -1);
-        if (data) {
-            while (inputStream.read() != -1) {
-                // just deplete inputStream
-            }
+        final WebDavEntity entity = store.getEntity(path);
+        checkLockTokenOnEntity(entity, tokens);
+
+        for (final WebDavPath child : store.list(path)) {
+            checkDown(store, child, depth - 1, tokens);
         }
-        return data;
+    }
+
+    static void checkLockTokenOnEntity(final WebDavEntity entity, final Set<UUID> tokens) {
+        final Optional<WebDavLock> lock = entity.getLock();
+        if (!lock.isPresent()) {
+            return;
+        }
+
+        if (tokens.contains(lock.get().getToken())) {
+            return;
+        }
+        throw new WebDavException("", Status.SC_LOCKED); // TODO
+    }
+
+    static void checkUp(final WebDavStore store, final WebDavPath path, final Set<UUID> tokens) {
+        final WebDavEntity entity = store.getEntity(path);
+        checkLockTokenOnEntity(entity, tokens);
+
+        if (WebDavPath.ROOT.equals(path)) {
+            return;
+        }
+
+        checkUp(store, path.getParent(), tokens);
+    }
+
+    private Optional<UUID> convert(final String token) {
+        String value = token;
+        if (value.charAt(0) != '<' || value.charAt(value.length() - 1) != '>') {
+            Optional.empty();
+        }
+        value = value.substring(1, value.length() - 1);
+
+        if (!value.startsWith(WebDavLock.PREFIX)) {
+            Optional.empty();
+        }
+        value = value.substring(WebDavLock.PREFIX.length());
+
+        try {
+            return Optional.of(UUID.fromString(value));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
+    }
+
+    protected Set<UUID> deterimineLockTokens(final WebDavRequest request) {
+        final String tokens = request.getOption("Lock-Token", "");
+        if (StringUtils.isBlank(tokens)) {
+            return Collections.emptySet();
+        }
+
+        final Set<UUID> uuids = new HashSet<>();
+        final Optional<UUID> token = convert(tokens);
+        token.ifPresent(x -> uuids.add(x));
+        return uuids;
     }
 
     protected int determineDepth(final WebDavRequest request) {

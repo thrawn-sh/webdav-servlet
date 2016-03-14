@@ -17,6 +17,8 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavPath;
@@ -26,9 +28,24 @@ import de.shadowhunt.webdav.WebDavStore;
 
 public class DeleteMethod extends AbstractWebDavMethod {
 
-    private void delete(final WebDavStore store, final WebDavPath path) {
+    static void delete(final WebDavStore store, final WebDavPath path, final int depth, final Set<UUID> tokens) {
+        checkUp(store, path, tokens);
         for (final WebDavPath child : store.list(path)) {
-            delete(store, child);
+            delete0(store, child, depth - 1, tokens);
+        }
+        store.delete(path);
+    }
+
+    static void delete0(final WebDavStore store, final WebDavPath path, final int depth, final Set<UUID> tokens) {
+        if (depth < 0) {
+            return; // FIXME
+        }
+
+        final WebDavEntity entity = store.getEntity(path);
+        checkLockTokenOnEntity(entity, tokens);
+
+        for (final WebDavPath child : store.list(path)) {
+            delete(store, child, depth - 1, tokens);
         }
         store.delete(path);
     }
@@ -40,17 +57,20 @@ public class DeleteMethod extends AbstractWebDavMethod {
 
     @Override
     public WebDavResponseWriter service(final WebDavStore store, final WebDavRequest request) throws IOException {
-        final WebDavPath target = request.getPath();
-        if (WebDavPath.ROOT.equals(target)) {
-            final WebDavEntity entity = store.getEntity(target);
+        final WebDavPath path = request.getPath();
+        if (WebDavPath.ROOT.equals(path)) {
+            final WebDavEntity entity = store.getEntity(path);
             return AbstractBasicResponse.createForbidden(entity);
         }
 
-        if (!store.exists(target)) {
+        if (!store.exists(path)) {
             return AbstractBasicResponse.createNotFound();
         }
 
-        delete(store, target);
+        final Set<UUID> tokens = deterimineLockTokens(request);
+
+        final int depth = determineDepth(request);
+        delete(store, path, depth, tokens);
         return AbstractBasicResponse.createNoContent(null);
     }
 }

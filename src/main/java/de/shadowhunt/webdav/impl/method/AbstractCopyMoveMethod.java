@@ -19,6 +19,8 @@ package de.shadowhunt.webdav.impl.method;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Set;
+import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavPath;
@@ -37,7 +39,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
 
     protected void copy(final WebDavStore store, final WebDavPath source, final WebDavPath target, final int depth) {
         if (depth < 0) {
-            return;
+            return; // FIXME
         }
 
         final WebDavEntity sourceEntity = store.getEntity(source);
@@ -75,6 +77,8 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
             return AbstractBasicResponse.createNotFound();
         }
 
+        final Set<UUID> tokens = deterimineLockTokens(request);
+
         final WebDavEntity sourceEntity = store.getEntity(source);
 
         final boolean overwrite = determineOverwrite(request);
@@ -83,7 +87,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
         final boolean targetExistsBefore = store.exists(target);
         if (targetExistsBefore) {
             if (overwrite) {
-                store.delete(target);
+                DeleteMethod.delete(store, target, Integer.MAX_VALUE, tokens);
             } else {
                 return AbstractBasicResponse.createPreconditionFailed(sourceEntity);
             }
@@ -95,10 +99,15 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
             return AbstractBasicResponse.createConflict(sourceEntity);
         }
 
+        if (deleteSource) {
+            checkDown(store, source, depth, tokens);
+        }
+
+        checkUp(store, source.getParent(), tokens);
         copy(store, source, target, depth);
 
         if (deleteSource) {
-            store.delete(source);
+            DeleteMethod.delete(store, target, Integer.MAX_VALUE, tokens);
         }
 
         if (targetExistsBefore) {

@@ -33,16 +33,18 @@ public class PutMethod extends AbstractWebDavMethod {
 
     @Override
     public WebDavResponseWriter service(final WebDavStore store, final WebDavRequest request) throws IOException {
-        final WebDavPath target = request.getPath();
-        if (store.exists(target)) {
-            final WebDavEntity entity = store.getEntity(target);
+        final WebDavPath path = request.getPath();
+        if (store.exists(path)) {
+            final WebDavEntity entity = store.getEntity(path);
+            checkUp(store, path, deterimineLockTokens(request));
+
             if (entity.getType() == WebDavEntity.Type.COLLECTION) {
                 return AbstractBasicResponse.createMessageNodeAllowed(entity);
             }
         }
 
-        store.createItem(target, request.getInputStream());
-        final WebDavEntity entity = store.getEntity(target); // use newly created entity
+        store.createItem(path, request.getInputStream());
+        final WebDavEntity entity = store.getEntity(path); // use newly created entity
         return AbstractBasicResponse.createCreated(entity);
     }
 }

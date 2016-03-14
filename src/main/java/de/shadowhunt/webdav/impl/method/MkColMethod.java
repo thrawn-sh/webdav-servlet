@@ -17,6 +17,9 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
+import java.io.InputStream;
+
+import javax.annotation.CheckForNull;
 
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavPath;
@@ -26,6 +29,20 @@ import de.shadowhunt.webdav.WebDavStore;
 
 public class MkColMethod extends AbstractWebDavMethod {
 
+    protected boolean consume(@CheckForNull final InputStream inputStream) throws IOException {
+        if (inputStream == null) {
+            return false;
+        }
+
+        final boolean data = (inputStream.read() != -1);
+        if (data) {
+            while (inputStream.read() != -1) {
+                // just deplete inputStream
+            }
+        }
+        return data;
+    }
+
     @Override
     public Method getMethod() {
         return Method.MKCOL;
@@ -33,26 +50,28 @@ public class MkColMethod extends AbstractWebDavMethod {
 
     @Override
     public WebDavResponseWriter service(final WebDavStore store, final WebDavRequest request) throws IOException {
-        final WebDavPath target = request.getPath();
+        final WebDavPath path = request.getPath();
         if (consume(request.getInputStream())) {
             WebDavEntity entity = null;
-            if (store.exists(target)) {
-                entity = store.getEntity(target);
+            if (store.exists(path)) {
+                entity = store.getEntity(path);
             }
             return AbstractBasicResponse.createUnsupportedMediaType(entity);
         }
 
-        final WebDavPath parent = target.getParent();
+        final WebDavPath parent = path.getParent();
         if (!store.exists(parent)) {
             return AbstractBasicResponse.createConflict(null);
         }
 
-        WebDavEntity entity = null;
-        if (!store.exists(target)) {
-            store.createCollection(target);
-            entity = store.getEntity(target);
+        if (!store.exists(path)) {
+            checkUp(store, parent, deterimineLockTokens(request));
+            store.createCollection(path);
+            final WebDavEntity entity = store.getEntity(path);
             return AbstractBasicResponse.createCreated(entity);
         }
+
+        final WebDavEntity entity = store.getEntity(path);
         return AbstractBasicResponse.createMethodNotAllowed(entity);
     }
 }
