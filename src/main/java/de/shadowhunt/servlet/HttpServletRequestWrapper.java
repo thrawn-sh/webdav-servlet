@@ -98,8 +98,8 @@ public class HttpServletRequestWrapper implements WebDavRequest {
     }
 
     private boolean isLocalUri(final URI uri) throws URISyntaxException {
-        final URI requestURI = new URI(request.getRequestURI());
-        if (!requestURI.getScheme().equalsIgnoreCase(uri.getScheme())) {
+        final URI requestURI = new URI(request.getRequestURL().toString());
+        if (!request.getScheme().equalsIgnoreCase(uri.getScheme())) {
             return false;
         }
 
