@@ -67,6 +67,6 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NO_CONTENT);
+        assertNoContent(response, Status.SC_LOCKED);
     }
 }
