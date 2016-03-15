@@ -153,8 +153,12 @@ public final class Precondition {
 
         @Override
         public void exitList(final ListContext ctx) {
-            final boolean conditionResult = getEvaluationResult(ctx.condition());
-            evaluatuion.put(ctx, conditionResult);
+            boolean result = true;
+            for (final ConditionContext context : ctx.condition()) {
+                final boolean conditionResult = getEvaluationResult(context);
+                result &= conditionResult;
+            }
+            evaluatuion.put(ctx, result);
         }
 
         private boolean getEvaluationResult(final ParseTree node) {

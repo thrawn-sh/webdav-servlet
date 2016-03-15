@@ -21,7 +21,7 @@ precondition: implicitResourceList* explicitResourceList*;
 implicitResourceList:          list+;
 explicitResourceList: resource list+;
 
-list:     '(' condition ')';
+list:     '(' condition+ ')';
 resource: '<' URL_TOKEN '>';
 
 condition: ( lock | etag );
