@@ -91,6 +91,7 @@
         <jacoco.reportPath>${project.basedir}/target/jacoco-ut.exec</jacoco.reportPath>
         <jacoco.itReportPath>${project.basedir}/target/jacoco-it.exec</jacoco.itReportPath>
         <version.antlr>4.5.2-1</version.antlr>
+        <version.slf4j>1.7.19</version.slf4j>
     </properties>
 
     <build>
@@ -723,7 +724,13 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.19</version>
+            <version>${version.slf4j}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${version.slf4j}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <!-- }}}1 -->
