@@ -22,20 +22,18 @@ implicitResourceList:          list+;
 explicitResourceList: resource list+;
 
 list:     '(' condition+ ')';
-resource: '<' URL_TOKEN '>';
+resource: '<' URL '>';
 
-condition: ( lock | etag );
+condition: NOT? match;
+match: ( lock | etag );
 
-lock: '<' LOCK_TOKEN '>';
-etag: '[' ETAG_TOKEN ']';
+lock: '<' LOCK '>';
+etag: '[' ETAG ']';
 
-ETAG_TOKEN: (DIGIT | LETTER               )+;
-LOCK_TOKEN: (DIGIT | LETTER | LOCK_SPECIAL)+;
-URL_TOKEN:  (DIGIT | LETTER | URL_SPECIAL )+;
-
-DIGIT:        ('0' .. '9');
-LETTER:       ('a' .. 'z') | ('A' .. 'Z');
-LOCK_SPECIAL: ('-' | ':');
-URL_SPECIAL:  ('$' | '-' | '_' | '.' | '+' | '!' | '*' | '\'' | '(' | ')' | ',' | '/' | ':' );
+NOT:  [nN][oO][tT];
+ETAG: [0-9a-zA-Z]+;
+LOCK: [0-9a-zA-Z:-]+;
+URL:  [0-9a-zA-Z$-_.+!*\',/:]+;
 
 WS: [ \r\n\t]+ -> channel (HIDDEN);
+

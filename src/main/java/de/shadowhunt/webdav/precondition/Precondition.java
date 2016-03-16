@@ -30,6 +30,7 @@ import de.shadowhunt.webdav.precondition.PreconditionParser.ExplicitResourceList
 import de.shadowhunt.webdav.precondition.PreconditionParser.ImplicitResourceListContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.ListContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.LockContext;
+import de.shadowhunt.webdav.precondition.PreconditionParser.MatchContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.PreconditionContext;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
@@ -69,7 +70,7 @@ public final class Precondition {
 
         @Override
         public void enterExplicitResourceList(final ExplicitResourceListContext ctx) {
-            final String resource = ctx.resource().URL_TOKEN().getText();
+            final String resource = ctx.resource().URL().getText();
             final Optional<WebDavPath> path = request.toPath(resource);
             path.ifPresent(x -> paths.put(ctx, x));
         }
@@ -92,7 +93,7 @@ public final class Precondition {
             for (int c = 0; c < children; c++) {
                 final ParseTree child = node.getChild(c);
                 if (child instanceof ListContext) {
-                    if (!getEvaluationResult(child)) {
+                    if (!evaluatuion.get(child)) {
                         evaluatuion.put(node, false);
                         return;
                     }
@@ -103,6 +104,37 @@ public final class Precondition {
 
         @Override
         public void exitCondition(final ConditionContext ctx) {
+            final MatchContext match = ctx.match();
+            final boolean result = evaluatuion.get(match);
+            if (ctx.NOT() == null) {
+                evaluatuion.put(ctx, result);
+            } else {
+                evaluatuion.put(ctx, !result);
+            }
+        }
+
+        @Override
+        public void exitExplicitResourceList(final ExplicitResourceListContext ctx) {
+            evaluateChildren(ctx);
+        }
+
+        @Override
+        public void exitImplicitResourceList(final ImplicitResourceListContext ctx) {
+            evaluateChildren(ctx);
+        }
+
+        @Override
+        public void exitList(final ListContext ctx) {
+            boolean result = true;
+            for (final ConditionContext context : ctx.condition()) {
+                final boolean conditionResult = evaluatuion.get(context);
+                result &= conditionResult;
+            }
+            evaluatuion.put(ctx, result);
+        }
+
+        @Override
+        public void exitMatch(final MatchContext ctx) {
             final ParserRuleContext parent = ctx.getParent();
             final WebDavPath path = paths.get(parent);
             if (path == null) {
@@ -120,7 +152,7 @@ public final class Precondition {
 
             final LockContext lockContext = ctx.lock();
             if (lockContext != null) {
-                final UUID lockToken = getLockToken(lockContext.LOCK_TOKEN().getText());
+                final UUID lockToken = getLockToken(lockContext.LOCK().getText());
                 if (UUID_ZERO.equals(lockToken)) {
                     evaluatuion.put(ctx, false);
                     return;
@@ -133,7 +165,7 @@ public final class Precondition {
 
             final EtagContext etagContext = ctx.etag();
             if (etagContext != null) {
-                final String etagToken = etagContext.ETAG_TOKEN().getText();
+                final String etagToken = etagContext.ETAG().getText();
                 final Optional<String> etag = entity.getEtag();
                 etag.ifPresent(x -> evaluatuion.put(ctx, etagToken.equals(x)));
                 return;
@@ -141,34 +173,6 @@ public final class Precondition {
 
             // fallback
             evaluatuion.put(ctx, false);
-        }
-
-        @Override
-        public void exitExplicitResourceList(final ExplicitResourceListContext ctx) {
-            evaluateChildren(ctx);
-        }
-
-        @Override
-        public void exitImplicitResourceList(final ImplicitResourceListContext ctx) {
-            evaluateChildren(ctx);
-        }
-
-        @Override
-        public void exitList(final ListContext ctx) {
-            boolean result = true;
-            for (final ConditionContext context : ctx.condition()) {
-                final boolean conditionResult = getEvaluationResult(context);
-                result &= conditionResult;
-            }
-            evaluatuion.put(ctx, result);
-        }
-
-        private boolean getEvaluationResult(final ParseTree node) {
-            final Boolean result = evaluatuion.get(node);
-            if (result == null) {
-                return false;
-            }
-            return result;
         }
 
         private UUID getLockToken(final String token) {
@@ -199,40 +203,44 @@ public final class Precondition {
     public static final String PRECONDITION_HEADER = "If";
 
     public static boolean verify(final WebDavStore store, final WebDavRequest request) {
+        try {
+            return verify0(store, request);
+        } catch (final ParseCancellationException e) {
+            LOGGER.warn("could not parse precondition '" + precondition + "'", e);
+            return false;
+        }
+    }
+
+    static boolean verify0(final WebDavStore store, final WebDavRequest request) {
         final String precondition = request.getOption(PRECONDITION_HEADER, "");
         if (StringUtils.isEmpty(precondition)) {
             return true;
         }
 
-        try {
-            final CharStream stream = new ANTLRInputStream(precondition);
-            final PreconditionLexer lexer = new PreconditionLexer(stream);
-            lexer.removeErrorListeners();
-            lexer.addErrorListener(ERROR_LISTENER);
+        final CharStream stream = new ANTLRInputStream(precondition);
+        final PreconditionLexer lexer = new PreconditionLexer(stream);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(ERROR_LISTENER);
 
-            final CommonTokenStream tokens = new CommonTokenStream(lexer);
-            final PreconditionParser parser = new PreconditionParser(tokens);
-            parser.removeErrorListeners();
-            parser.addErrorListener(ERROR_LISTENER);
+        final CommonTokenStream tokens = new CommonTokenStream(lexer);
+        final PreconditionParser parser = new PreconditionParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(ERROR_LISTENER);
 
-            final PreconditionContext context = parser.precondition();
-            final ParseTreeWalker walker = new ParseTreeWalker();
-            final PreconditionValidatior validator = new PreconditionValidatior(store, request);
-            walker.walk(validator, context);
+        final PreconditionContext context = parser.precondition();
+        final ParseTreeWalker walker = new ParseTreeWalker();
+        final PreconditionValidatior validator = new PreconditionValidatior(store, request);
+        walker.walk(validator, context);
 
-            // for precondition to be true at last one explicitResourceList or implicitResourceList must be true
-            final int children = context.getChildCount();
-            for (int c = 0; c < children; c++) {
-                final ParseTree child = context.getChild(c);
-                if (validator.getEvaluationResult(child)) {
-                    return true;
-                }
+        // for precondition to be true at last one explicitResourceList or implicitResourceList must be true
+        final int children = context.getChildCount();
+        for (int c = 0; c < children; c++) {
+            final ParseTree child = context.getChild(c);
+            if (validator.evaluatuion.get(child)) {
+                return true;
             }
-            return false;
-        } catch (final ParseCancellationException e) {
-            LOGGER.warn("could not parse precondition '" + precondition + "'", e);
-            return false;
         }
+        return false;
     }
 
     private Precondition() {
