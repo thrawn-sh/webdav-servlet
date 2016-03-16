@@ -203,44 +203,40 @@ public final class Precondition {
     public static final String PRECONDITION_HEADER = "If";
 
     public static boolean verify(final WebDavStore store, final WebDavRequest request) {
-        try {
-            return verify0(store, request);
-        } catch (final ParseCancellationException e) {
-            LOGGER.warn("could not parse precondition '" + precondition + "'", e);
-            return false;
-        }
-    }
-
-    static boolean verify0(final WebDavStore store, final WebDavRequest request) {
         final String precondition = request.getOption(PRECONDITION_HEADER, "");
         if (StringUtils.isEmpty(precondition)) {
             return true;
         }
 
-        final CharStream stream = new ANTLRInputStream(precondition);
-        final PreconditionLexer lexer = new PreconditionLexer(stream);
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(ERROR_LISTENER);
+        try {
+            final CharStream stream = new ANTLRInputStream(precondition);
+            final PreconditionLexer lexer = new PreconditionLexer(stream);
+            lexer.removeErrorListeners();
+            lexer.addErrorListener(ERROR_LISTENER);
 
-        final CommonTokenStream tokens = new CommonTokenStream(lexer);
-        final PreconditionParser parser = new PreconditionParser(tokens);
-        parser.removeErrorListeners();
-        parser.addErrorListener(ERROR_LISTENER);
+            final CommonTokenStream tokens = new CommonTokenStream(lexer);
+            final PreconditionParser parser = new PreconditionParser(tokens);
+            parser.removeErrorListeners();
+            parser.addErrorListener(ERROR_LISTENER);
 
-        final PreconditionContext context = parser.precondition();
-        final ParseTreeWalker walker = new ParseTreeWalker();
-        final PreconditionValidatior validator = new PreconditionValidatior(store, request);
-        walker.walk(validator, context);
+            final PreconditionContext context = parser.precondition();
+            final ParseTreeWalker walker = new ParseTreeWalker();
+            final PreconditionValidatior validator = new PreconditionValidatior(store, request);
+            walker.walk(validator, context);
 
-        // for precondition to be true at last one explicitResourceList or implicitResourceList must be true
-        final int children = context.getChildCount();
-        for (int c = 0; c < children; c++) {
-            final ParseTree child = context.getChild(c);
-            if (validator.evaluatuion.get(child)) {
-                return true;
+            // for precondition to be true at last one explicitResourceList or implicitResourceList must be true
+            final int children = context.getChildCount();
+            for (int c = 0; c < children; c++) {
+                final ParseTree child = context.getChild(c);
+                if (validator.evaluatuion.get(child)) {
+                    return true;
+                }
             }
+            return false;
+        } catch (final ParseCancellationException e) {
+            LOGGER.warn("could not parse precondition '" + precondition + "'", e);
+            return false;
         }
-        return false;
     }
 
     private Precondition() {
