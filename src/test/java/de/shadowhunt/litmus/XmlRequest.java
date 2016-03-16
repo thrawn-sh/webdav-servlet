@@ -41,6 +41,8 @@ import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "request")
@@ -181,6 +183,8 @@ class XmlRequest implements WebDavRequest {
         this.url = url;
     }
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlRequest.class);
+
     @Override
     public Optional<WebDavPath> toPath(final String resource) {
         if (resource.startsWith("/")) {
@@ -198,7 +202,7 @@ class XmlRequest implements WebDavRequest {
             final String relativePath = StringUtils.removeStart(path, base);
             return Optional.of(WebDavPath.create(relativePath));
         } catch (final URISyntaxException e) {
-            // TODO logging
+            LOGGER.warn("illegal resource uri '" + resource + "'", e);
             return Optional.empty();
         }
     }

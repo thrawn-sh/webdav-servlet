@@ -45,6 +45,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Precondition {
 
@@ -192,6 +194,8 @@ public final class Precondition {
 
     private static final ANTLRErrorListener ERROR_LISTENER = new ThrowingErrorListener();
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Precondition.class);
+
     public static final String PRECONDITION_HEADER = "If";
 
     public static boolean verify(final WebDavStore store, final WebDavRequest request) {
@@ -225,8 +229,8 @@ public final class Precondition {
                 }
             }
             return false;
-        } catch (final RuntimeException e) {
-            // TODO log
+        } catch (final ParseCancellationException e) {
+            LOGGER.warn("could not parse precondition '" + precondition + "'", e);
             return false;
         }
     }

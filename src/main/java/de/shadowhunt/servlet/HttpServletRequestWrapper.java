@@ -33,8 +33,12 @@ import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpServletRequestWrapper implements WebDavRequest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpServletRequestWrapper.class);
 
     private final WebDavConfig config;
 
@@ -135,7 +139,7 @@ public class HttpServletRequestWrapper implements WebDavRequest {
             final String relativePath = StringUtils.removeStart(path, base);
             return Optional.of(WebDavPath.create(relativePath));
         } catch (final URISyntaxException e) {
-            // TODO logging
+            LOGGER.warn("illegal resource uri '" + resource + "'", e);
             return Optional.empty();
         }
     }

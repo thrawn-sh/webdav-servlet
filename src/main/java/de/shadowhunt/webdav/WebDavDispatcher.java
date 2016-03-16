@@ -28,6 +28,9 @@ import de.shadowhunt.webdav.WebDavMethod.Method;
 import de.shadowhunt.webdav.WebDavStore.Access;
 import de.shadowhunt.webdav.precondition.Precondition;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class WebDavDispatcher {
 
     private static final WebDavDispatcher INSTANCE = new WebDavDispatcher();
@@ -59,7 +62,7 @@ public final class WebDavDispatcher {
         final Method method = request.getMethod();
         final WebDavMethod dispatch = dispatcher.get(method);
         if (dispatch == null) {
-            throw new WebDavException("unsupported method", WebDavResponse.Status.SC_NOT_IMPLEMENTED);
+            throw new WebDavException("unsupported method (" + method + ")", WebDavResponse.Status.SC_NOT_IMPLEMENTED);
         }
         return dispatch;
     }
@@ -71,6 +74,8 @@ public final class WebDavDispatcher {
         }
         return WebDavPath.create(pathInfo);
     }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebDavDispatcher.class);
 
     public void service(final WebDavStore store, final WebDavRequest request, final WebDavResponse response) throws IOException {
         try {
@@ -87,8 +92,10 @@ public final class WebDavDispatcher {
             final WebDavResponseWriter webDavResponse = method.service(store, request);
             webDavResponse.write(response);
         } catch (final WebDavException e) {
+            LOGGER.warn("request failed", e);
             response.setStatus(e.getStatus());
         } catch (final RuntimeException e) {
+            LOGGER.warn("request failed", e);
             response.setStatus(WebDavResponse.Status.SC_INTERNAL_SERVER_ERROR);
         }
     }
