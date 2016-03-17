@@ -32,8 +32,8 @@ etag: '[' ETAG ']';
 
 NOT:  [nN][oO][tT];
 ETAG: [0-9a-zA-Z]+;
-LOCK: [0-9a-zA-Z:-]+;
-URL:  [0-9a-zA-Z$-_.+!*\',/:]+;
+LOCK: [0-9a-zA-Z:\-]+;
+URL:  [0-9a-zA-Z$\-_.+!*',/:]+;
 
 WS: [ \r\n\t]+ -> channel (HIDDEN);
 
