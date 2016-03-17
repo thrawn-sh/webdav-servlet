@@ -69,6 +69,11 @@ public final class Precondition {
         }
 
         @Override
+        public void enterCondition(final ConditionContext ctx) {
+            propagatePath(ctx);
+        }
+
+        @Override
         public void enterExplicitResourceList(final ExplicitResourceListContext ctx) {
             final String resource = ctx.resource().URL().getText();
             final Optional<WebDavPath> path = request.toPath(resource);
@@ -82,9 +87,7 @@ public final class Precondition {
 
         @Override
         public void enterList(final ListContext ctx) {
-            final ParserRuleContext parent = ctx.getParent();
-            final WebDavPath path = paths.get(parent);
-            paths.put(ctx, path);
+            propagatePath(ctx);
         }
 
         private void evaluateChildren(final ParseTree node) {
@@ -186,6 +189,12 @@ public final class Precondition {
             } catch (final IllegalArgumentException e) {
                 return UUID_ZERO;
             }
+        }
+
+        private void propagatePath(final ParserRuleContext context) {
+            final ParserRuleContext parent = context.getParent();
+            final WebDavPath path = paths.get(parent);
+            paths.put(context, path);
         }
     }
 
