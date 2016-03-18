@@ -76,12 +76,12 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
     private Optional<UUID> convert(final String token) {
         String value = token;
         if (value.charAt(0) != '<' || value.charAt(value.length() - 1) != '>') {
-            Optional.empty();
+            return Optional.empty();
         }
         value = value.substring(1, value.length() - 1);
 
         if (!value.startsWith(WebDavLock.PREFIX)) {
-            Optional.empty();
+            return Optional.empty();
         }
         value = value.substring(WebDavLock.PREFIX.length());
 
