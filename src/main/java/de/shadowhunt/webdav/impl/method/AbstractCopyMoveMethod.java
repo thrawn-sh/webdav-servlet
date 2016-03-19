@@ -107,7 +107,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
         copy(store, source, target, depth);
 
         if (deleteSource) {
-            DeleteMethod.delete(store, target, Integer.MAX_VALUE, tokens);
+            DeleteMethod.delete(store, source, Integer.MAX_VALUE, tokens);
         }
 
         if (targetExistsBefore) {
