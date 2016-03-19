@@ -389,6 +389,10 @@
                 <configuration>
                     <failOnWarning>true</failOnWarning>
                     <outputXML>true</outputXML>
+                    <usedDependencies>
+                        <!-- don't log to stdout during test -->
+                        <usedDependency>org.slf4j:slf4j-nop</usedDependency>
+                    </usedDependencies>
                 </configuration>
                 <executions>
                     <execution>
@@ -728,7 +732,7 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <artifactId>slf4j-nop</artifactId>
             <version>${version.slf4j}</version>
             <scope>test</scope>
         </dependency>
