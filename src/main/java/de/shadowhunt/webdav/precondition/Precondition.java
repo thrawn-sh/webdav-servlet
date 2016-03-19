@@ -32,6 +32,7 @@ import de.shadowhunt.webdav.precondition.PreconditionParser.ListContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.LockContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.MatchContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.PreconditionContext;
+import de.shadowhunt.webdav.precondition.PreconditionParser.ResourceContext;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -75,14 +76,16 @@ public final class Precondition {
 
         @Override
         public void enterExplicitResourceList(final ExplicitResourceListContext ctx) {
-            final String resource = ctx.resource().URL().getText();
+            final ResourceContext resourceContext = ctx.resource();
+            final String resource = resourceContext.URL().getText();
             final Optional<WebDavPath> path = request.toPath(resource);
             path.ifPresent(x -> paths.put(ctx, x));
         }
 
         @Override
         public void enterImplicitResourceList(final ImplicitResourceListContext ctx) {
-            paths.put(ctx, request.getPath());
+            final WebDavPath path = request.getPath();
+            paths.put(ctx, path);
         }
 
         @Override
