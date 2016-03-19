@@ -24,4 +24,8 @@
             <Class name="de.shadowhunt.webdav.precondition.PreconditionParser" />
         </Or>
     </Match>
+    <Match>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" />
+        <Class name="de.shadowhunt.webdav.precondition.Precondition$PreconditionValidatior" />
+    </Match>
 </FindBugsFilter>
