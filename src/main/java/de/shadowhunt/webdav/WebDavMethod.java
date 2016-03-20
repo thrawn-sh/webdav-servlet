@@ -18,6 +18,9 @@ package de.shadowhunt.webdav;
 
 import java.io.IOException;
 
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
 public interface WebDavMethod {
 
     enum Method {
