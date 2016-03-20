@@ -23,11 +23,13 @@ import de.shadowhunt.webdav.WebDavResponse.Status;
 
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 // Tests are *NOT* independent
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore
 public class BasicLitmusTest extends AbstractLitmusTest {
 
     private static final File ROOT = new File("src/test/resources/litmus/0-basic/");
