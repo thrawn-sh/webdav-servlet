@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponseWriter;
@@ -38,7 +39,7 @@ public class DeleteMethod extends AbstractWebDavMethod {
 
     static void delete0(final WebDavStore store, final WebDavPath path, final int depth, final Map<WebDavPath, UUID> tokens) {
         if (depth < 0) {
-            return; // FIXME
+            throw new WebDavException("no depth left to delete child: " + path);
         }
 
         final WebDavEntity entity = store.getEntity(path);

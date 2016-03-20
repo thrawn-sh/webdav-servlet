@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavEntity;
+import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavProperty;
 import de.shadowhunt.webdav.WebDavRequest;
@@ -39,7 +40,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
 
     protected void copy(final WebDavStore store, final WebDavPath source, final WebDavPath target, final int depth) {
         if (depth < 0) {
-            return; // FIXME
+            throw new WebDavException("no depth left to copy child: " + source);
         }
 
         final WebDavEntity sourceEntity = store.getEntity(source);

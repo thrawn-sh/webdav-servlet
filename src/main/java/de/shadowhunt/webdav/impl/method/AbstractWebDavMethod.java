@@ -36,7 +36,7 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
 
     static void checkDown(final WebDavStore store, final WebDavPath path, final int depth, final Map<WebDavPath, UUID> tokens) {
         if (depth < 0) {
-            return; // FIXME
+            throw new WebDavException("no depth left to check child: " + path);
         }
 
         final WebDavEntity entity = store.getEntity(path);
