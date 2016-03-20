@@ -57,7 +57,7 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
         if (entityLockToken.equals(tokens.get(entity.getPath()))) {
             return;
         }
-        throw new WebDavException("", Status.SC_LOCKED); // TODO
+        throw new WebDavException("no suitable lock token provided", Status.SC_LOCKED);
     }
 
     static void checkUp(final WebDavStore store, final WebDavPath path, final Map<WebDavPath, UUID> tokens) {
