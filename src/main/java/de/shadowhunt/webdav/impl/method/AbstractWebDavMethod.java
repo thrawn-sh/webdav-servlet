@@ -73,7 +73,7 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
         checkUp(store, path.getParent(), tokens);
     }
 
-    private Optional<UUID> convert(final String token) {
+    static Optional<UUID> convert(final String token) {
         String value = token;
         if (value.charAt(0) != '<' || value.charAt(value.length() - 1) != '>') {
             return Optional.empty();
@@ -87,7 +87,7 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
 
         try {
             return Optional.of(UUID.fromString(value));
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             return Optional.empty();
         }
     }
