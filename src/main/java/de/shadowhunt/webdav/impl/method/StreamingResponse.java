@@ -37,6 +37,8 @@ class StreamingResponse extends AbstractBasicResponse {
     @Override
     protected void write0(final WebDavResponse response) throws IOException {
         response.setStatus(WebDavResponse.Status.SC_OK);
+        response.setContentType(entity.getMimeType());
+
         final OutputStream output = response.getOutputStream();
         try {
             IOUtils.copy(input, output);

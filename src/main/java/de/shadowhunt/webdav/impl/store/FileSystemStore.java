@@ -33,9 +33,10 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
 
+import javax.activation.MimetypesFileTypeMap;
+
 import de.shadowhunt.webdav.PropertyIdentifier;
 import de.shadowhunt.webdav.WebDavEntity;
-import de.shadowhunt.webdav.WebDavEntity.Type;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavLock.LockScope;
@@ -59,6 +60,8 @@ public class FileSystemStore implements WebDavStore {
     private static final String LOCK_TOKEN = "token";
 
     private static final String LOCK_TYPE = "type";
+
+    private static final MimetypesFileTypeMap MIME_TYPES = new MimetypesFileTypeMap();
 
     private final File metaRoot;
 
@@ -256,9 +259,10 @@ public class FileSystemStore implements WebDavStore {
                 final String hash = calculateMd5(file, path);
                 final long size = calculateSize(file, path);
                 final String etag = calculateEtag(path);
-                return new EntiyImpl(path, Type.ITEM, Optional.of(hash), lastModified, size, lock, Optional.of(etag));
+                final String mimeType = MIME_TYPES.getContentType(file);
+                return new EntiyImpl(path, hash, lastModified, size, mimeType, lock, etag);
             }
-            return new EntiyImpl(path, Type.COLLECTION, Optional.empty(), lastModified, 0L, lock, Optional.empty());
+            return new EntiyImpl(path, lastModified, lock);
         }
     }
 

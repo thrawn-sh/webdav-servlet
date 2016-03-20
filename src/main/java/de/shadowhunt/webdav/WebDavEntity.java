@@ -34,6 +34,8 @@ public interface WebDavEntity extends Comparable<WebDavEntity> {
         }
     }
 
+    String COLLECTION_MIME_TYPE = "inode/directory";
+
     @Override
     boolean equals(Object o);
 
@@ -44,6 +46,8 @@ public interface WebDavEntity extends Comparable<WebDavEntity> {
     Date getLastModified();
 
     Optional<WebDavLock> getLock();
+
+    String getMimeType();
 
     String getName();
 

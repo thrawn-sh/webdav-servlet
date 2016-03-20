@@ -17,6 +17,7 @@
 package de.shadowhunt.webdav.impl.store;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 import de.shadowhunt.webdav.WebDavEntity;
@@ -33,20 +34,34 @@ class EntiyImpl implements WebDavEntity {
 
     private final WebDavLock lock;
 
+    private final String mimeType;
+
     private final WebDavPath path;
 
     private final long size;
 
     private final Type type;
 
-    EntiyImpl(final WebDavPath path, final Type type, final Optional<String> hash, final Date lastModified, final long size, final Optional<WebDavLock> lock, final Optional<String> etag) {
-        this.path = path;
-        this.type = type;
-        this.hash = hash.orElse(null);
+    EntiyImpl(final WebDavPath path, final String hash, final Date lastModified, final long size, final String mimeType, final Optional<WebDavLock> lock, final String etag) {
+        this.etag = Objects.requireNonNull(etag, "etag must not be null");
+        this.hash = Objects.requireNonNull(hash, "hash must not be null");
         this.lastModified = new Date(lastModified.getTime());
-        this.size = size;
         this.lock = lock.orElse(null);
-        this.etag = etag.orElse(null);
+        this.mimeType = Objects.requireNonNull(mimeType, "mimeType must not be null");
+        this.path = Objects.requireNonNull(path, "path must not be null");
+        this.size = size;
+        this.type = Type.ITEM;
+    }
+
+    EntiyImpl(final WebDavPath path, final Date lastModified, final Optional<WebDavLock> lock) {
+        this.etag = null;
+        this.hash = null;
+        this.lastModified = new Date(lastModified.getTime());
+        this.lock = lock.orElse(null);
+        this.mimeType = COLLECTION_MIME_TYPE;
+        this.path = Objects.requireNonNull(path, "path must not be null");
+        this.size = 0L;
+        this.type = Type.COLLECTION;
     }
 
     @Override
@@ -104,6 +119,11 @@ class EntiyImpl implements WebDavEntity {
     }
 
     @Override
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    @Override
     public String getName() {
         return path.getName();
     }
@@ -134,12 +154,6 @@ class EntiyImpl implements WebDavEntity {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Entity{");
-        sb.append("hash='").append(hash).append('\'');
-        sb.append(", path=").append(path);
-        sb.append(", size=").append(size);
-        sb.append(", type=").append(type);
-        sb.append('}');
-        return sb.toString();
+        return "EntiyImpl [path=" + path + ", type=" + type + ", etag=" + etag + ", hash=" + hash + ", lastModified=" + lastModified + ", lock=" + lock + ", mimeType=" + mimeType + ", size=" + size + "]";
     }
 }

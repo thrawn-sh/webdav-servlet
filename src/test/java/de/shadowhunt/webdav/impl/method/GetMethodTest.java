@@ -68,7 +68,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
 
         final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_OK);
-        // Assert.assertEquals("contentType must match", "", response.getContentType()); // FIXME
+        Assert.assertEquals("contentType must match", "text/plain", response.getContentType());
         Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
         Assert.assertEquals("content must match", content, response.getContent());
     }
