@@ -48,6 +48,21 @@ import org.slf4j.LoggerFactory;
 @XmlRootElement(name = "request")
 class XmlRequest implements WebDavRequest {
 
+    private static class XmlRequestPrincipal implements Principal {
+
+        private final String name;
+
+        XmlRequestPrincipal(final String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlRequest.class);
 
     @XmlElement(name = "base")
@@ -68,6 +83,9 @@ class XmlRequest implements WebDavRequest {
 
     @XmlElement(name = "method")
     private Method method;
+
+    @XmlElement(name = "principal")
+    private String principal;
 
     @XmlElement(name = "uri")
     private String url;
@@ -130,7 +148,10 @@ class XmlRequest implements WebDavRequest {
 
     @Override
     public Optional<Principal> getPrincipal() {
-        return Optional.empty(); // FIXME
+        if (principal == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new XmlRequestPrincipal(principal));
     }
 
     public String getUrl() {

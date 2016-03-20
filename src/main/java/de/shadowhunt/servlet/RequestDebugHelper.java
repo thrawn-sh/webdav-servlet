@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Principal;
 import java.util.Base64;
 import java.util.Enumeration;
 
@@ -77,6 +78,13 @@ final class RequestDebugHelper {
                 writer.writeStartElement("uri");
                 writer.writeCharacters(request.getRequestURL().toString());
                 writer.writeEndElement();
+
+                final Principal principal = request.getUserPrincipal();
+                if (principal != null) {
+                    writer.writeStartElement("pricipal");
+                    writer.writeCharacters(principal.getName());
+                    writer.writeEndElement();
+                }
 
                 writer.writeStartElement("base");
                 writer.writeCharacters(request.getServletPath());
