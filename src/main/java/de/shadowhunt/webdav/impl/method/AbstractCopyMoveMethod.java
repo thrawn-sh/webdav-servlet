@@ -94,7 +94,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
             }
         }
 
-        // targetParent collection must exist
+        // target parent collection must exist
         final WebDavPath targetParent = target.getParent();
         if (!store.exists(targetParent)) {
             return AbstractBasicResponse.createConflict(sourceEntity);
