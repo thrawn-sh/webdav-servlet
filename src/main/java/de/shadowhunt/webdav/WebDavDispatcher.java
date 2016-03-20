@@ -35,6 +35,8 @@ public final class WebDavDispatcher {
 
     private static final WebDavDispatcher INSTANCE = new WebDavDispatcher();
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebDavDispatcher.class);
+
     public static WebDavDispatcher getInstance() {
         return INSTANCE;
     }
@@ -74,8 +76,6 @@ public final class WebDavDispatcher {
         }
         return WebDavPath.create(pathInfo);
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebDavDispatcher.class);
 
     public void service(final WebDavStore store, final WebDavRequest request, final WebDavResponse response) throws IOException {
         try {
