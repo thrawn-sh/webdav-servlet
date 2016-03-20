@@ -42,17 +42,6 @@ class EntiyImpl implements WebDavEntity {
 
     private final Type type;
 
-    EntiyImpl(final WebDavPath path, final String hash, final Date lastModified, final long size, final String mimeType, final Optional<WebDavLock> lock, final String etag) {
-        this.etag = Objects.requireNonNull(etag, "etag must not be null");
-        this.hash = Objects.requireNonNull(hash, "hash must not be null");
-        this.lastModified = new Date(lastModified.getTime());
-        this.lock = lock.orElse(null);
-        this.mimeType = Objects.requireNonNull(mimeType, "mimeType must not be null");
-        this.path = Objects.requireNonNull(path, "path must not be null");
-        this.size = size;
-        this.type = Type.ITEM;
-    }
-
     EntiyImpl(final WebDavPath path, final Date lastModified, final Optional<WebDavLock> lock) {
         this.etag = null;
         this.hash = null;
@@ -62,6 +51,17 @@ class EntiyImpl implements WebDavEntity {
         this.path = Objects.requireNonNull(path, "path must not be null");
         this.size = 0L;
         this.type = Type.COLLECTION;
+    }
+
+    EntiyImpl(final WebDavPath path, final String hash, final Date lastModified, final long size, final String mimeType, final Optional<WebDavLock> lock, final String etag) {
+        this.etag = Objects.requireNonNull(etag, "etag must not be null");
+        this.hash = Objects.requireNonNull(hash, "hash must not be null");
+        this.lastModified = new Date(lastModified.getTime());
+        this.lock = lock.orElse(null);
+        this.mimeType = Objects.requireNonNull(mimeType, "mimeType must not be null");
+        this.path = Objects.requireNonNull(path, "path must not be null");
+        this.size = size;
+        this.type = Type.ITEM;
     }
 
     @Override
