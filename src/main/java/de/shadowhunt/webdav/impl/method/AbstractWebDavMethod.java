@@ -71,25 +71,6 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
         checkUp(store, path.getParent(), tokens);
     }
 
-    static Optional<UUID> convert(final String token) {
-        String value = token;
-        if (value.charAt(0) != '<' || value.charAt(value.length() - 1) != '>') {
-            return Optional.empty();
-        }
-        value = value.substring(1, value.length() - 1);
-
-        if (!value.startsWith(WebDavLock.PREFIX)) {
-            return Optional.empty();
-        }
-        value = value.substring(WebDavLock.PREFIX.length());
-
-        try {
-            return Optional.of(UUID.fromString(value));
-        } catch (final RuntimeException e) {
-            return Optional.empty();
-        }
-    }
-
     protected Map<WebDavPath, UUID> deterimineLockTokens(final WebDavRequest request) {
         return Precondition.getTokens(request);
     }
