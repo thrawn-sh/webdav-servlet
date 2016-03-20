@@ -16,6 +16,8 @@
  */
 package de.shadowhunt.webdav.precondition;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,7 +54,7 @@ public final class Precondition {
 
     public static final String PRECONDITION_HEADER = "If";
 
-    static <R> Optional<R> evaluate(final String precondition, final AbstractAggregator<R> aggregator) {
+    private static <R> Optional<R> evaluate(final String precondition, final AbstractAggregator<R> aggregator) {
         try {
             final CharStream stream = new ANTLRInputStream(precondition);
             final PreconditionLexer lexer = new PreconditionLexer(stream);
@@ -73,6 +75,16 @@ public final class Precondition {
             LOGGER.warn("could not parse precondition '" + precondition + "'", e);
             return Optional.empty();
         }
+    }
+
+    public static Map<WebDavPath, UUID> getTokens(final WebDavRequest request) {
+        final String precondition = request.getHeader(PRECONDITION_HEADER, "");
+        if (StringUtils.isEmpty(precondition)) {
+            return Collections.emptyMap();
+        }
+
+        final Optional<Map<WebDavPath, UUID>> valid = evaluate(precondition, new LockTokenCollector(request));
+        return valid.orElse(Collections.emptyMap());
     }
 
     public static boolean verify(final WebDavStore store, final WebDavRequest request) {

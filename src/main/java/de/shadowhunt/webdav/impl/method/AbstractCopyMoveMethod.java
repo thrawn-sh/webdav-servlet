@@ -19,7 +19,7 @@ package de.shadowhunt.webdav.impl.method;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavEntity;
@@ -77,7 +77,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
             return AbstractBasicResponse.createNotFound();
         }
 
-        final Set<UUID> tokens = deterimineLockTokens(request);
+        final Map<WebDavPath, UUID> tokens = deterimineLockTokens(request);
 
         final WebDavEntity sourceEntity = store.getEntity(source);
 

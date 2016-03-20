@@ -17,6 +17,8 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavPath;
@@ -36,7 +38,8 @@ public class PutMethod extends AbstractWebDavMethod {
         final WebDavPath path = request.getPath();
         if (store.exists(path)) {
             final WebDavEntity entity = store.getEntity(path);
-            checkUp(store, path, deterimineLockTokens(request));
+            final Map<WebDavPath, UUID> tokens = deterimineLockTokens(request);
+            checkUp(store, path, tokens);
 
             if (entity.getType() == WebDavEntity.Type.COLLECTION) {
                 return AbstractBasicResponse.createMessageNodeAllowed(entity);

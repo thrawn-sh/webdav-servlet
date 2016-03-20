@@ -19,7 +19,9 @@ package de.shadowhunt.webdav.impl.method;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -73,7 +75,8 @@ public class LockMethod extends AbstractWebDavMethod {
         final Document document = PropertiesMessageHelper.parse(request.getInputStream());
         if (document != null) {
             final WebDavEntity entity = store.getEntity(path);
-            checkLockTokenOnEntity(entity, deterimineLockTokens(request));
+            final Map<WebDavPath, UUID> tokens = deterimineLockTokens(request);
+            checkLockTokenOnEntity(entity, tokens);
 
             final Optional<String> owner = getOwner(document);
             final Optional<LockScope> scope = getScope(document);

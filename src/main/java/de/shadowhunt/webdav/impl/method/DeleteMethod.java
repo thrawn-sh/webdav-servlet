@@ -17,7 +17,7 @@
 package de.shadowhunt.webdav.impl.method;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavEntity;
@@ -28,7 +28,7 @@ import de.shadowhunt.webdav.WebDavStore;
 
 public class DeleteMethod extends AbstractWebDavMethod {
 
-    static void delete(final WebDavStore store, final WebDavPath path, final int depth, final Set<UUID> tokens) {
+    static void delete(final WebDavStore store, final WebDavPath path, final int depth, final Map<WebDavPath, UUID> tokens) {
         checkUp(store, path, tokens);
         for (final WebDavPath child : store.list(path)) {
             delete0(store, child, depth - 1, tokens);
@@ -36,7 +36,7 @@ public class DeleteMethod extends AbstractWebDavMethod {
         store.delete(path);
     }
 
-    static void delete0(final WebDavStore store, final WebDavPath path, final int depth, final Set<UUID> tokens) {
+    static void delete0(final WebDavStore store, final WebDavPath path, final int depth, final Map<WebDavPath, UUID> tokens) {
         if (depth < 0) {
             return; // FIXME
         }
@@ -67,7 +67,7 @@ public class DeleteMethod extends AbstractWebDavMethod {
             return AbstractBasicResponse.createNotFound();
         }
 
-        final Set<UUID> tokens = deterimineLockTokens(request);
+        final Map<WebDavPath, UUID> tokens = deterimineLockTokens(request);
 
         final int depth = determineDepth(request);
         delete(store, path, depth, tokens);
