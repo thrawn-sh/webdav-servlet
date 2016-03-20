@@ -16,16 +16,27 @@
  */
 package de.shadowhunt.servlet;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import de.shadowhunt.webdav.WebDavConfig;
 
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class HttpServletConfig implements WebDavConfig, Serializable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpServletConfig.class);
 
     private static final long serialVersionUID = 1L;
 
     private volatile boolean allowInfiniteDepthRequests = false;
+
+    private volatile String css = null;
 
     private volatile boolean readOnly = true;
 
@@ -33,7 +44,7 @@ public final class HttpServletConfig implements WebDavConfig, Serializable {
 
     @Override
     public Optional<String> getCssForCollectionListings() {
-        return Optional.of("/style.css"); // FIXME
+        return Optional.ofNullable(css);
     }
 
     @Override
@@ -53,6 +64,24 @@ public final class HttpServletConfig implements WebDavConfig, Serializable {
 
     public void setAllowInfiniteDepthRequests(final boolean allowInfiniteDepthRequests) {
         this.allowInfiniteDepthRequests = allowInfiniteDepthRequests;
+    }
+
+    public void setCssForCollectionListings(final String cssResourceName) {
+        final Class<?> clazz = getClass();
+        final ClassLoader classLoader = clazz.getClassLoader();
+        final InputStream cssStream = classLoader.getResourceAsStream(cssResourceName);
+        if (cssStream == null) {
+            LOGGER.warn("could not find resource: " + cssResourceName);
+            return;
+        }
+
+        try {
+            css = IOUtils.toString(cssStream, StandardCharsets.UTF_8);
+        } catch (final IOException e) {
+            LOGGER.warn("could not set css for collections", e);
+        } finally {
+            IOUtils.closeQuietly(cssStream);
+        }
     }
 
     public void setReadOnly(final boolean readOnly) {

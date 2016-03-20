@@ -40,6 +40,7 @@ public class WebDavServlet extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         final HttpServletConfig config = new HttpServletConfig();
         config.setAllowInfiniteDepthRequests(true);
+        config.setCssForCollectionListings("/WEB-INF/style.css");
         config.setReadOnly(false);
         config.setShowCollectionListings(true);
 
