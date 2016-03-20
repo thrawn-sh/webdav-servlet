@@ -32,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 public class UnlockMethod extends AbstractWebDavMethod {
 
     protected Optional<UUID> deterimineLockToken(final WebDavRequest request) {
-        final String token = request.getOption("Lock-Token", "");
+        final String token = request.getHeader("Lock-Token", "");
         if (StringUtils.isBlank(token)) {
             return Optional.empty();
         }

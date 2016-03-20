@@ -215,7 +215,7 @@ public final class Precondition {
     public static final String PRECONDITION_HEADER = "If";
 
     public static boolean verify(final WebDavStore store, final WebDavRequest request) {
-        final String precondition = request.getOption(PRECONDITION_HEADER, "");
+        final String precondition = request.getHeader(PRECONDITION_HEADER, "");
         if (StringUtils.isEmpty(precondition)) {
             return true;
         }

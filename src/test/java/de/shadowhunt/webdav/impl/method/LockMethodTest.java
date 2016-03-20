@@ -57,7 +57,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new LockMethod();
 
-        Mockito.when(request.getOption("Timeout", LockMethod.INFINITE)).thenReturn(LockMethod.INFINITE);
+        Mockito.when(request.getHeader("Timeout", LockMethod.INFINITE)).thenReturn(LockMethod.INFINITE);
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final TestResponse response = execute(method);
@@ -92,7 +92,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     public void test01_exisitingNotLocked() throws Exception {
         final WebDavMethod method = new LockMethod();
 
-        Mockito.when(request.getOption("Timeout", LockMethod.INFINITE)).thenReturn(LockMethod.INFINITE);
+        Mockito.when(request.getHeader("Timeout", LockMethod.INFINITE)).thenReturn(LockMethod.INFINITE);
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final TestResponse response = execute(method);
@@ -129,7 +129,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(true);
 
-        Mockito.when(request.getOption("Timeout", LockMethod.INFINITE)).thenReturn(LockMethod.INFINITE);
+        Mockito.when(request.getHeader("Timeout", LockMethod.INFINITE)).thenReturn(LockMethod.INFINITE);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
 
         final TestResponse response = execute(method);

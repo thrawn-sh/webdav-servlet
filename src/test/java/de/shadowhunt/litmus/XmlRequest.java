@@ -48,6 +48,8 @@ import org.slf4j.LoggerFactory;
 @XmlRootElement(name = "request")
 class XmlRequest implements WebDavRequest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlRequest.class);
+
     @XmlElement(name = "base")
     private String base;
 
@@ -84,6 +86,16 @@ class XmlRequest implements WebDavRequest {
         return content;
     }
 
+    @Override
+    public String getHeader(final String name, final String defaultValue) {
+        for (final XmlHeader header : headers) {
+            if (name.equals(header.getName())) {
+                return header.getValue();
+            }
+        }
+        return defaultValue;
+    }
+
     public List<XmlHeader> getHeaders() {
         return headers;
     }
@@ -102,16 +114,6 @@ class XmlRequest implements WebDavRequest {
     @Override
     public Method getMethod() {
         return method;
-    }
-
-    @Override
-    public String getOption(final String name, final String defaultValue) {
-        for (final XmlHeader header : headers) {
-            if (name.equals(header.getName())) {
-                return header.getValue();
-            }
-        }
-        return defaultValue;
     }
 
     @Override
@@ -182,8 +184,6 @@ class XmlRequest implements WebDavRequest {
     public void setUrl(final String url) {
         this.url = url;
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(XmlRequest.class);
 
     @Override
     public Optional<WebDavPath> toPath(final String resource) {

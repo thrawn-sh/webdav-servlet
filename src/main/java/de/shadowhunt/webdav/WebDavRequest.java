@@ -30,13 +30,13 @@ public interface WebDavRequest {
 
     WebDavConfig getConfig();
 
+    String getHeader(String name, String defaultValue);
+
     UUID getId();
 
     InputStream getInputStream() throws IOException;
 
     Method getMethod();
-
-    String getOption(String name, String defaultValue);
 
     WebDavPath getPath();
 

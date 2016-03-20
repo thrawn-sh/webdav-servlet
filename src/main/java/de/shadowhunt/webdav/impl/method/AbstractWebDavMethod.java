@@ -93,7 +93,7 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
     }
 
     protected Set<UUID> deterimineLockTokens(final WebDavRequest request) {
-        final String tokens = request.getOption("Lock-Token", "");
+        final String tokens = request.getHeader("Lock-Token", "");
         if (StringUtils.isBlank(tokens)) {
             return Collections.emptySet();
         }
@@ -105,7 +105,7 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
     }
 
     protected int determineDepth(final WebDavRequest request) {
-        final String depth = request.getOption("Depth", INFINITY);
+        final String depth = request.getHeader("Depth", INFINITY);
         if (INFINITY.equalsIgnoreCase(depth)) {
             return Integer.MAX_VALUE;
         }

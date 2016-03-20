@@ -121,7 +121,7 @@ public class LockMethod extends AbstractWebDavMethod {
     }
 
     private Optional<Integer> getTimeoutInSeconds(final WebDavRequest request) {
-        String timeout = request.getOption("Timeout", INFINITE);
+        String timeout = request.getHeader("Timeout", INFINITE);
         timeout = timeout.toLowerCase(Locale.US);
         timeout = timeout.trim();
 

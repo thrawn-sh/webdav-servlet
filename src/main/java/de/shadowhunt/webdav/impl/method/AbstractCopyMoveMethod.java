@@ -57,13 +57,13 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
     }
 
     protected boolean determineOverwrite(final WebDavRequest request) {
-        final String overwrite = request.getOption("Overwrite", "T");
+        final String overwrite = request.getHeader("Overwrite", "T");
         return "T".equalsIgnoreCase(overwrite);
     }
 
     protected WebDavPath determineTarget(final WebDavRequest request) {
         final String pathInfo = request.getBase();
-        final String destination = request.getOption("Destination", "");
+        final String destination = request.getHeader("Destination", "");
         final URI destinationUri = URI.create(destination);
         final String destinationPath = destinationUri.getPath();
         final int indexOf = destinationPath.indexOf(pathInfo);

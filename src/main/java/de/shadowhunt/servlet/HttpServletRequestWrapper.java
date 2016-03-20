@@ -63,6 +63,15 @@ public class HttpServletRequestWrapper implements WebDavRequest {
     }
 
     @Override
+    public String getHeader(final String name, final String defaultValue) {
+        final String header = request.getHeader(name);
+        if (StringUtils.isBlank(header)) {
+            return defaultValue;
+        }
+        return header;
+    }
+
+    @Override
     public UUID getId() {
         return id;
     }
@@ -76,15 +85,6 @@ public class HttpServletRequestWrapper implements WebDavRequest {
     public Method getMethod() {
         final String method = request.getMethod().toUpperCase(Locale.US);
         return Method.valueOf(method);
-    }
-
-    @Override
-    public String getOption(final String name, final String defaultValue) {
-        final String header = request.getHeader(name);
-        if (StringUtils.isBlank(header)) {
-            return defaultValue;
-        }
-        return header;
     }
 
     @Override
