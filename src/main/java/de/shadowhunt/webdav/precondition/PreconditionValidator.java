@@ -149,16 +149,20 @@ class PreconditionValidator extends AbstractAggregator<Boolean> {
             }
 
             final Optional<WebDavLock> lock = entity.getLock();
-            lock.ifPresent(x -> evaluatuion.put(ctx, x.getToken().equals(lockToken)));
-            return;
+            if (lock.isPresent()) {
+                evaluatuion.put(ctx, lock.get().getToken().equals(lockToken));
+                return;
+            }
         }
 
         final EtagContext etagContext = ctx.etag();
         if (etagContext != null) {
             final String etagToken = etagContext.ETAG().getText();
             final Optional<String> etag = entity.getEtag();
-            etag.ifPresent(x -> evaluatuion.put(ctx, etagToken.equals(x)));
-            return;
+            if (etag.isPresent()) {
+                evaluatuion.put(ctx, etag.get().equals(etagToken));
+                return;
+            }
         }
 
         // fallback

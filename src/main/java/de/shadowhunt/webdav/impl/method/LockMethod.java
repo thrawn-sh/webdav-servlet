@@ -101,6 +101,10 @@ public class LockMethod extends AbstractWebDavMethod {
     private Optional<String> getOwner(final Document document) {
         try {
             final Node node = (Node) LOCK_OWNER.evaluate(document, XPathConstants.NODE);
+            if (node == null) {
+                return Optional.empty();
+            }
+
             final String owner = node.getTextContent();
             return Optional.of(owner);
         } catch (final Exception e) {
