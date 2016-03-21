@@ -1,0 +1,21 @@
+general
+=======
+- All files (beside binary and windows only files) use UNIX line separator (\n).
+- File encoding is UTF-8
+
+maven (https://maven.apache.org)
+================================
+# remove all artifacts from previous builds
+$> mvn clean
+
+# compile and test project
+$> mvn install
+
+# *only* compile project
+$> mvn install -DskipTests=true
+
+litmus tests (http://www.webdav.org/neon/litmus/litmus-0.13.tar.gz)
+===================================================================
+- basic, copy_move and props tests are automated through unit tests
+- lock tests must be run via litmus binary
+- accepted results are located in assets/litmus.txt
