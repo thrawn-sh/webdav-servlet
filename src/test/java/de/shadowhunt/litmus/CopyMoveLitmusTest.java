@@ -24,13 +24,11 @@ import de.shadowhunt.webdav.WebDavResponse.Status;
 
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 // Tests are *NOT* independent
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore // FIXME
 public class CopyMoveLitmusTest extends AbstractLitmusTest {
 
     private static final File ROOT = new File("src/test/resources/litmus/1-copy_move/");
