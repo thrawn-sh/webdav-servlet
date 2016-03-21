@@ -16,6 +16,7 @@
  */
 package de.shadowhunt.webdav.precondition;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -80,19 +81,13 @@ class PreconditionValidator extends AbstractAggregator<Boolean> {
         propagatePath(ctx);
     }
 
-    private void evaluateChildren(final ParseTree node) {
-        // for node to be true all child nodes *MUST* be true
-        final int children = node.getChildCount();
-        for (int c = 0; c < children; c++) {
-            final ParseTree child = node.getChild(c);
-            if (child instanceof ListContext) {
-                if (!evaluatuion.get(child)) {
-                    evaluatuion.put(node, false);
-                    return;
-                }
+    private boolean evaluateListContexts(final List<ListContext> contexts) {
+        for (final ListContext context : contexts) {
+            if (evaluatuion.get(context)) {
+                return true;
             }
         }
-        evaluatuion.put(node, true);
+        return false;
     }
 
     @Override
@@ -108,12 +103,14 @@ class PreconditionValidator extends AbstractAggregator<Boolean> {
 
     @Override
     public void exitExplicitResourceList(final ExplicitResourceListContext ctx) {
-        evaluateChildren(ctx);
+        final boolean result = evaluateListContexts(ctx.list());
+        evaluatuion.put(ctx, result);
     }
 
     @Override
     public void exitImplicitResourceList(final ImplicitResourceListContext ctx) {
-        evaluateChildren(ctx);
+        final boolean result = evaluateListContexts(ctx.list());
+        evaluatuion.put(ctx, result);
     }
 
     @Override
