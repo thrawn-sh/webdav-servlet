@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.annotation.CheckForNull;
+
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavPath;
@@ -141,32 +143,18 @@ class PreconditionValidator extends AbstractAggregator<Boolean> {
         final WebDavEntity entity = store.getEntity(path);
 
         final LockContext lockContext = ctx.lock();
-        if (lockContext != null) {
-            final UUID lockToken = getLockToken(lockContext.LOCK().getText());
-            if (UUID_ZERO.equals(lockToken)) {
-                evaluatuion.put(ctx, false);
-                return;
-            }
-
-            final Optional<WebDavLock> lock = entity.getLock();
-            if (lock.isPresent()) {
-                evaluatuion.put(ctx, lock.get().getToken().equals(lockToken));
-                return;
-            }
+        Optional<Boolean> result = processLock(entity, lockContext);
+        if (!result.isPresent()) {
+            final EtagContext etagContext = ctx.etag();
+            result = processEtag(entity, etagContext);
         }
 
-        final EtagContext etagContext = ctx.etag();
-        if (etagContext != null) {
-            final String etagToken = etagContext.ETAG().getText();
-            final Optional<String> etag = entity.getEtag();
-            if (etag.isPresent()) {
-                evaluatuion.put(ctx, etag.get().equals(etagToken));
-                return;
-            }
+        if (result.isPresent()) {
+            evaluatuion.put(ctx, result.get());
+        } else {
+            // fallback
+            evaluatuion.put(ctx, false);
         }
-
-        // fallback
-        evaluatuion.put(ctx, false);
     }
 
     private UUID getLockToken(final String token) {
@@ -193,6 +181,38 @@ class PreconditionValidator extends AbstractAggregator<Boolean> {
             }
         }
         return Optional.of(Boolean.FALSE);
+    }
+
+    private Optional<Boolean> processEtag(final WebDavEntity entity, @CheckForNull final EtagContext context) {
+        if (context == null) {
+            return Optional.empty();
+        }
+
+        final String etagToken = context.ETAG().getText();
+        final Optional<String> etag = entity.getEtag();
+        if (etag.isPresent()) {
+            return Optional.of(etag.get().equals(etagToken));
+        }
+        return Optional.of(Boolean.FALSE);
+    }
+
+    private Optional<Boolean> processLock(final WebDavEntity entity, @CheckForNull final LockContext context) {
+        if (context == null) {
+            return Optional.empty();
+        }
+
+        final UUID lockToken = getLockToken(context.LOCK().getText());
+        if (UUID_ZERO.equals(lockToken)) {
+            return Optional.of(Boolean.FALSE);
+        }
+
+        final Optional<WebDavLock> lock = entity.getLock();
+        if (lock.isPresent()) {
+            return Optional.of(lock.get().getToken().equals(lockToken));
+        }
+
+        // lock token presented for an unlocked entity
+        return Optional.of(Boolean.TRUE);
     }
 
     private void propagatePath(final ParserRuleContext context) {
