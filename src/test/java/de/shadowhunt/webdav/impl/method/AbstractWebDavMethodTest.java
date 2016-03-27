@@ -25,6 +25,7 @@ import java.util.UUID;
 import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.PropertyIdentifier;
 import de.shadowhunt.webdav.WebDavConfig;
+import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavLock.LockScope;
 import de.shadowhunt.webdav.WebDavLock.LockType;
@@ -74,8 +75,7 @@ public abstract class AbstractWebDavMethodTest {
         }
 
         if (locked) {
-            final WebDavLock lock = store.createLock(Optional.of(LockScope.EXCLUSIVE), Optional.of(LockType.WRITE), Optional.empty(), Optional.empty());
-            store.lock(path, lock);
+            ensureLocked(path);
         }
     }
 
@@ -92,6 +92,18 @@ public abstract class AbstractWebDavMethodTest {
     @AfterClass
     public static void destroyStore() {
         FileUtils.deleteQuietly(root);
+    }
+
+    protected static WebDavLock ensureLocked(final WebDavPath path) {
+        final WebDavEntity entity = store.getEntity(path);
+        final Optional<WebDavLock> exisitingLock = entity.getLock();
+        if (exisitingLock.isPresent()) {
+            return exisitingLock.get();
+        }
+
+        final WebDavLock lock = store.createLock(Optional.of(LockScope.EXCLUSIVE), Optional.of(LockType.WRITE), Optional.empty(), Optional.empty());
+        store.lock(path, lock);
+        return lock;
     }
 
     @BeforeClass

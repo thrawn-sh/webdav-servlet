@@ -16,15 +16,22 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import de.shadowhunt.TestResponse;
+import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 // Tests are independent from each other but go from simple to more complex
@@ -36,6 +43,40 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
     @BeforeClass
     public static void fillStore() {
         createItem(LOCKED_ITEM, "test", true);
+    }
+
+    protected WebDavLock lock;
+
+    @Before
+    public void ensureStore() {
+        lock = ensureLocked(LOCKED_ITEM);
+    }
+
+    @Test
+    public void test_deterimineLockToken() throws Exception {
+        final UnlockMethod method = new UnlockMethod();
+
+        Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn(null);
+        Assert.assertEquals("must match", Optional.empty(), method.deterimineLockToken(request));
+
+        Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn("");
+        Assert.assertEquals("must match", Optional.empty(), method.deterimineLockToken(request));
+
+        Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn("<test");
+        Assert.assertEquals("must match", Optional.empty(), method.deterimineLockToken(request));
+
+        Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn("test>");
+        Assert.assertEquals("must match", Optional.empty(), method.deterimineLockToken(request));
+
+        Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn("<test>");
+        Assert.assertEquals("must match", Optional.empty(), method.deterimineLockToken(request));
+
+        Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn("<" + WebDavLock.PREFIX + "test>");
+        Assert.assertEquals("must match", Optional.empty(), method.deterimineLockToken(request));
+
+        final UUID uuid = UUID.randomUUID();
+        Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn("<" + WebDavLock.PREFIX + uuid + ">");
+        Assert.assertEquals("must match", Optional.of(uuid), method.deterimineLockToken(request));
     }
 
     @Test
@@ -59,7 +100,7 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test02_exisitingLocked() throws Exception {
+    public void test02_exisitingLocked_lock() throws Exception {
         final WebDavMethod method = new UnlockMethod();
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(true);
@@ -68,5 +109,19 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_LOCKED);
+    }
+
+    @Test
+    public void test02_exisitingLocked_unlock() throws Exception {
+        final WebDavMethod method = new UnlockMethod();
+
+        Mockito.when(config.isShowCollectionListings()).thenReturn(true);
+
+        Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
+        final String token = "<" + WebDavLock.PREFIX + lock.getToken() + ">";
+        Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn(token);
+
+        final TestResponse response = execute(method);
+        assertNoContent(response, Status.SC_NO_CONTENT);
     }
 }
