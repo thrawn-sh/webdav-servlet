@@ -34,6 +34,8 @@ import de.shadowhunt.webdav.WebDavResponse.Status;
 
 class LockDiscoveryResponse extends AbstractBasicResponse {
 
+    public static final String LOCK_TOKEN = "Lock-Token";
+
     private final Status status;
 
     LockDiscoveryResponse(final WebDavEntity entity, final Status status) {
@@ -49,7 +51,7 @@ class LockDiscoveryResponse extends AbstractBasicResponse {
         response.setCharacterEncoding(DEFAULT_ENCODING);
         response.setContentType("application/xml");
         final UUID token = lock.getToken();
-        response.addHeader("Lock-Token", "<" + WebDavLock.PREFIX + token + ">");
+        response.addHeader(LOCK_TOKEN, "<" + WebDavLock.PREFIX + token + ">");
         response.setStatus(status);
 
         try {
