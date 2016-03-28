@@ -34,7 +34,7 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
 
     public static final String INFINITY = "infinity";
 
-    static void checkDown(final WebDavStore store, final WebDavPath path, final int depth, final Map<WebDavPath, UUID> tokens) {
+    protected static void checkDown(final WebDavStore store, final WebDavPath path, final int depth, final Map<WebDavPath, UUID> tokens) {
         if (depth < 0) {
             throw new WebDavException("no depth left to check child: " + path);
         }
@@ -47,7 +47,7 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
         }
     }
 
-    static void checkLockTokenOnEntity(final WebDavEntity entity, final Map<WebDavPath, UUID> tokens) {
+    protected static void checkLockTokenOnEntity(final WebDavEntity entity, final Map<WebDavPath, UUID> tokens) {
         final Optional<WebDavLock> lock = entity.getLock();
         if (!lock.isPresent()) {
             return;
@@ -60,7 +60,7 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
         throw new WebDavException("no suitable lock token provided", Status.SC_LOCKED);
     }
 
-    static void checkUp(final WebDavStore store, final WebDavPath path, final Map<WebDavPath, UUID> tokens) {
+    protected static void checkUp(final WebDavStore store, final WebDavPath path, final Map<WebDavPath, UUID> tokens) {
         final WebDavEntity entity = store.getEntity(path);
         checkLockTokenOnEntity(entity, tokens);
 
