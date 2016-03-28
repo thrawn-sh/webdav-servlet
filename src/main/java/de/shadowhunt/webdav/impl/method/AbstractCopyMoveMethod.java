@@ -101,7 +101,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
         }
 
         if (deleteSource) {
-            checkDown(store, source, depth, tokens);
+            checkDown(store, source, Integer.MAX_VALUE, tokens);
         }
 
         checkUp(store, source.getParent(), tokens);
