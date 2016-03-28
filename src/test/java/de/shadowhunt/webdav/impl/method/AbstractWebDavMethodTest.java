@@ -64,7 +64,7 @@ public abstract class AbstractWebDavMethodTest {
         setProperties(path);
     }
 
-    protected static void createCollection0(final WebDavPath path, final boolean locked) {
+    private static void createCollection0(final WebDavPath path, final boolean locked) {
         if (WebDavPath.ROOT.equals(path)) {
             return;
         }
