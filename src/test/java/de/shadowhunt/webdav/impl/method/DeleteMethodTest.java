@@ -16,11 +16,15 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
+import java.util.UUID;
+
 import de.shadowhunt.TestResponse;
+import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
+import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -55,17 +59,36 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
 
     @Test
     public void test02_exisitingCollection() throws Exception {
+        final WebDavPath root = WebDavPath.create(UUID.randomUUID().toString());
+        createItem(root.append("item.txt"), "test", false);
+        createItem(root.append("collection/item.txt"), "test", false);
+
         final WebDavMethod method = new DeleteMethod();
 
         Mockito.when(request.getHeader(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
-        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
+        Mockito.when(request.getPath()).thenReturn(root);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NO_CONTENT);
     }
 
+    @Test(expected = WebDavException.class)
+    public void test03_exisitingCollection_not_enough_depth() throws Exception {
+        final WebDavPath root = WebDavPath.create(UUID.randomUUID().toString());
+        createItem(root.append("item.txt"), "test", false);
+        final WebDavMethod method = new DeleteMethod();
+
+        Mockito.when(config.isShowCollectionListings()).thenReturn(false);
+
+        Mockito.when(request.getHeader(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
+        Mockito.when(request.getPath()).thenReturn(root);
+
+        execute(method);
+        Assert.fail("method must not complete");
+    }
+
     @Test
-    public void test02_exisitingRootCollection() throws Exception {
+    public void test03_exisitingRootCollection() throws Exception {
         final WebDavMethod method = new DeleteMethod();
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(false);
