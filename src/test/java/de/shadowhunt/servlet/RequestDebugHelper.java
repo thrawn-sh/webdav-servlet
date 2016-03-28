@@ -35,7 +35,6 @@ import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavRequest;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 final class RequestDebugHelper {
@@ -57,11 +56,11 @@ final class RequestDebugHelper {
 
     static int counter = 1;
 
-    static WebDavRequest generateAndDump(final HttpServletRequest request, final WebDavConfig config) throws IOException {
+    static WebDavRequest generateAndDump(final HttpServletRequest request, final WebDavConfig config, final File dumpLocation) throws IOException {
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         final int size = IOUtils.copy(request.getInputStream(), buffer);
 
-        final File output = new File(FileUtils.getTempDirectory(), String.format("%05d", counter++) + "_" + request.getMethod() + ".xml");
+        final File output = new File(dumpLocation, String.format("%05d", counter++) + "_" + request.getMethod() + ".xml");
         try {
             final XMLOutputFactory factory = XMLOutputFactory.newFactory();
 

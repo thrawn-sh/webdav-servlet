@@ -50,48 +50,36 @@
             <param-value>true</param-value>
         </init-param>
     </servlet>
+    <servlet>
+        <servlet-name>debug</servlet-name>
+        <servlet-class>de.shadowhunt.servlet.WebDavDebugServlet</servlet-class>
+        <init-param>
+            <description>Allowing PROPFIND with DEPTH infinity can result in high loads (default: false)</description>
+            <param-name>infiniteDepthRequests</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <description>Show listings of collctions in the browser (default: false)</description>
+            <param-name>listing</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <description>When listings of collctions for the browser are created include this css (default: none)</description>
+            <param-name>listingCss</param-name>
+            <param-value>/style.css</param-value>
+        </init-param>
+        <init-param>
+            <description>Allow writing operations on the webdav store (default: false)</description>
+            <param-name>writeable</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
     <servlet-mapping>
         <servlet-name>webdav</servlet-name>
         <url-pattern>/webdav/*</url-pattern>
     </servlet-mapping>
-
-    <security-constraint>
-        <display-name>WebDav read-only operations</display-name>
-        <web-resource-collection>
-            <web-resource-name>WebDav Servlet</web-resource-name>
-            <url-pattern>/webdav/*</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>OPTIONS</http-method>
-            <http-method>PROPFIND</http-method>
-
-        </web-resource-collection>
-        <!--auth-constraint>
-            <role-name>WEBDAV_RO</role-name>
-        </auth-constraint-->
-        <user-data-constraint>
-            <transport-guarantee>NONE</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
-
-    <security-constraint>
-        <display-name>WebDav write operations</display-name>
-        <web-resource-collection>
-            <web-resource-name>WebDav Servlet</web-resource-name>
-            <url-pattern>/webdav/*</url-pattern>
-            <http-method>COPY</http-method>
-            <http-method>DELETE</http-method>
-            <http-method>LOCK</http-method>
-            <http-method>MKCOL</http-method>
-            <http-method>MOVE</http-method>
-            <http-method>PROPPATCH</http-method>
-            <http-method>PUT</http-method>
-            <http-method>UNLOCK</http-method>
-        </web-resource-collection>
-        <!--auth-constraint>
-            <role-name>WEBDAV_RW</role-name>
-        </auth-constraint-->
-        <user-data-constraint>
-            <transport-guarantee>NONE</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
+    <servlet-mapping>
+        <servlet-name>debug</servlet-name>
+        <url-pattern>/debug/*</url-pattern>
+    </servlet-mapping>
 </web-app>

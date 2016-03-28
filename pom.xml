@@ -573,6 +573,8 @@
                      </requestLog>
                      <stopKey>${project.artifactId}</stopKey>
                      <stopPort>9999</stopPort>
+                     <useTestClasspath>true</useTestClasspath>
+                     <webAppSourceDirectory>${project.basedir}/src/test/webapp</webAppSourceDirectory>
                  </configuration>
             </plugin>
             <plugin>

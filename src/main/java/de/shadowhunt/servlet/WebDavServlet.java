@@ -36,6 +36,14 @@ public class WebDavServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
+    protected WebDavRequest createWebDavRequestWrapper(final HttpServletRequest request, final HttpServletConfig config) throws IOException {
+        return new HttpServletRequestWrapper(request, config);
+    }
+
+    protected WebDavResponse createWenDavResponseWrapper(final HttpServletResponse response, final WebDavRequest webDavRequest) throws IOException {
+        return new HttpServletResponseWrapper(response, webDavRequest);
+    }
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         final HttpServletConfig config = new HttpServletConfig();
@@ -45,8 +53,8 @@ public class WebDavServlet extends HttpServlet {
         config.setShowCollectionListings(true);
 
         final WebDavStore store = new FileSystemStore(new File(FileUtils.getTempDirectory(), "webdav-servlet-repo"));
-        final WebDavRequest webDavRequest = new HttpServletRequestWrapper(request, config);
-        final WebDavResponse webDavResponse = new HttpServletResponseWrapper(response, webDavRequest);
+        final WebDavRequest webDavRequest = createWebDavRequestWrapper(request, config);
+        final WebDavResponse webDavResponse = createWenDavResponseWrapper(response, webDavRequest);
 
         final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();
         dispatcher.service(store, webDavRequest, webDavResponse);
