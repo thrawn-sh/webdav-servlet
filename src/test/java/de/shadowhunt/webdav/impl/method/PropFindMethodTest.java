@@ -69,6 +69,18 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
+    public void test02_broken_request_body() throws Exception {
+        final WebDavMethod method = new PropFindMethod();
+
+        Mockito.when(request.getHeader(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("0");
+        Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><bad:a xmlns:bad=\"foo:\"/>".getBytes()));
+        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+
+        final TestResponse response = execute(method);
+        assertNoContent(response, Status.SC_BAD_REQUEST);
+    }
+
+    @Test
     public void test02_missing_request_body() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
