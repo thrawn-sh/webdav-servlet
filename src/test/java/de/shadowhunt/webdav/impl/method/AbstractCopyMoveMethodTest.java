@@ -64,6 +64,18 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
     }
 
     @Test
+    public void test01_exisitingSourceItem_missingTargetParent() throws Exception {
+        final WebDavMethod method = createMethod();
+
+        Mockito.when(request.getHeader(Matchers.eq("Depth"), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
+        Mockito.when(request.getHeader(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/non_exisiting/item.txt");
+        Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
+
+        final TestResponse response = execute(method);
+        assertNoContent(response, Status.SC_CONFLICT);
+    }
+
+    @Test
     public void test02_exisitingSourceItem_exisitingTargetItem_noOverride() throws Exception {
         final WebDavMethod method = createMethod();
 
@@ -93,5 +105,25 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NO_CONTENT);
+    }
+
+    @Test
+    public void test03_shallow() throws Exception {
+        final WebDavPath srcRoot = createCollection(WebDavPath.create("shallow_source"), false).getPath();
+        createItem(srcRoot.append("item.txt"), "test", false);
+        createItem(srcRoot.append("child/item.txt"), "test", false);
+
+        final WebDavMethod method = createMethod();
+
+        final WebDavPath target = WebDavPath.create("/target_item-03.txt");
+        createItem(target, "test", false);
+
+        Mockito.when(request.getHeader(Matchers.eq("Depth"), Matchers.anyString())).thenReturn("1");
+        Mockito.when(request.getHeader(Matchers.eq("Destination"), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/shallow_target");
+        Mockito.when(request.getHeader(Matchers.eq("Overwrite"), Matchers.anyString())).thenReturn("T");
+        Mockito.when(request.getPath()).thenReturn(srcRoot);
+
+        final TestResponse response = execute(method);
+        assertNoContent(response, Status.SC_CREATED);
     }
 }
