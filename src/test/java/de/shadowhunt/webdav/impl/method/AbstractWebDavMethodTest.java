@@ -59,9 +59,10 @@ public abstract class AbstractWebDavMethodTest {
 
     private static WebDavStore store;
 
-    protected static void createCollection(final WebDavPath path, final boolean locked) {
+    protected static WebDavEntity createCollection(final WebDavPath path, final boolean locked) {
         createCollection0(path, locked);
         setProperties(path);
+        return store.getEntity(path);
     }
 
     private static void createCollection0(final WebDavPath path, final boolean locked) {
@@ -79,7 +80,7 @@ public abstract class AbstractWebDavMethodTest {
         }
     }
 
-    protected static void createItem(final WebDavPath path, final String content, final boolean locked) {
+    protected static WebDavEntity createItem(final WebDavPath path, final String content, final boolean locked) {
         createCollection0(path.getParent(), false);
         store.createItem(path, new ByteArrayInputStream(content.getBytes()));
         if (locked) {
@@ -87,6 +88,7 @@ public abstract class AbstractWebDavMethodTest {
             store.lock(path, lock);
         }
         setProperties(path);
+        return store.getEntity(path);
     }
 
     @AfterClass
