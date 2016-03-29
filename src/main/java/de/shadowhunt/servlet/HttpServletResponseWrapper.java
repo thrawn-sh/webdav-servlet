@@ -25,13 +25,13 @@ import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
 
-public class HttpServletResponseWrapper implements WebDavResponse {
+class HttpServletResponseWrapper implements WebDavResponse {
 
     private final WebDavRequest request;
 
     private final HttpServletResponse response;
 
-    public HttpServletResponseWrapper(final HttpServletResponse response, final WebDavRequest request) {
+    HttpServletResponseWrapper(final HttpServletResponse response, final WebDavRequest request) {
         this.response = response;
         this.request = request;
     }

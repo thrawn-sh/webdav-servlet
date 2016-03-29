@@ -36,7 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HttpServletRequestWrapper implements WebDavRequest {
+class HttpServletRequestWrapper implements WebDavRequest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpServletRequestWrapper.class);
 
@@ -46,7 +46,7 @@ public class HttpServletRequestWrapper implements WebDavRequest {
 
     private final HttpServletRequest request;
 
-    public HttpServletRequestWrapper(final HttpServletRequest request, final WebDavConfig config) {
+    HttpServletRequestWrapper(final HttpServletRequest request, final WebDavConfig config) {
         this.request = request;
         this.config = config;
         this.id = UUID.randomUUID();

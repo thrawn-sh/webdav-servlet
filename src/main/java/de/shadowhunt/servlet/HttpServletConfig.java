@@ -28,7 +28,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class HttpServletConfig implements WebDavConfig, Serializable {
+class HttpServletConfig implements WebDavConfig, Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpServletConfig.class);
 
