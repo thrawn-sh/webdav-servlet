@@ -22,9 +22,12 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import javax.servlet.ServletException;
+
 import de.shadowhunt.webdav.WebDavConfig;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +69,7 @@ class HttpServletConfig implements WebDavConfig, Serializable {
         this.allowInfiniteDepthRequests = allowInfiniteDepthRequests;
     }
 
-    public void setCssForCollectionListings(final String cssResourceName) {
+    public void setCssForCollectionListings(final String cssResourceName) throws ServletException {
         final Class<?> clazz = getClass();
         final ClassLoader classLoader = clazz.getClassLoader();
         final InputStream cssStream = classLoader.getResourceAsStream(cssResourceName);
@@ -76,9 +79,10 @@ class HttpServletConfig implements WebDavConfig, Serializable {
         }
 
         try {
-            css = IOUtils.toString(cssStream, StandardCharsets.UTF_8);
+            final String cssData = IOUtils.toString(cssStream, StandardCharsets.UTF_8);
+            css = StringUtils.trimToNull(cssData);
         } catch (final IOException e) {
-            LOGGER.warn("could not set css for collections", e);
+            throw new ServletException("could not set css for collections", e);
         } finally {
             IOUtils.closeQuietly(cssStream);
         }

@@ -32,7 +32,7 @@ public class WebDavDebugServlet extends WebDavServlet {
     private File dumpLocation = FileUtils.getTempDirectory();
 
     @Override
-    protected WebDavRequest createWebDavRequestWrapper(final HttpServletRequest request, final HttpServletConfig config) throws IOException {
+    protected WebDavRequest createWebDavRequestWrapper(final HttpServletRequest request) throws IOException {
         return RequestDebugHelper.generateAndDump(request, config, dumpLocation);
     }
 }

@@ -19,11 +19,13 @@ package de.shadowhunt.servlet;
 import java.io.File;
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavDispatcher;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
@@ -31,13 +33,53 @@ import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.impl.store.FileSystemStore;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class WebDavServlet extends HttpServlet {
 
+    public static final String INFINITE = "infinite";
+
+    public static final String LISTING = "listing";
+
+    public static final String LISTING_CSS = "listingCss";
+
     private static final long serialVersionUID = 1L;
 
-    protected WebDavRequest createWebDavRequestWrapper(final HttpServletRequest request, final HttpServletConfig config) throws IOException {
+    public static final String WRITABLE = "writable";
+
+    protected WebDavConfig config;
+
+    protected WebDavStore store;
+
+    protected HttpServletConfig createWebDavConfig(final ServletConfig servletConfig) throws ServletException {
+        final HttpServletConfig webdavConfig = new HttpServletConfig();
+
+        final String infiniteParameter = servletConfig.getInitParameter(INFINITE);
+        final boolean infinite = Boolean.parseBoolean(infiniteParameter);
+        webdavConfig.setAllowInfiniteDepthRequests(infinite);
+
+        final String listingParameter = servletConfig.getInitParameter(LISTING);
+        final boolean listing = Boolean.parseBoolean(listingParameter);
+        webdavConfig.setShowCollectionListings(listing);
+
+        final String listingCssParameter = servletConfig.getInitParameter(LISTING_CSS);
+        if (StringUtils.isNotEmpty(listingCssParameter)) {
+            webdavConfig.setCssForCollectionListings(listingCssParameter);
+        }
+
+        final String writeableParameter = servletConfig.getInitParameter(WRITABLE);
+        final boolean writeable = Boolean.parseBoolean(writeableParameter);
+        webdavConfig.setShowCollectionListings(!writeable);
+
+        return webdavConfig;
+    }
+
+    protected WebDavRequest createWebDavRequestWrapper(final HttpServletRequest request) throws IOException {
         return new HttpServletRequestWrapper(request, config);
+    }
+
+    protected WebDavStore createWebDavStore(final ServletConfig servletConfig) {
+        return new FileSystemStore(new File(FileUtils.getTempDirectory(), "webdav-servlet-repo")); // FIXME
     }
 
     protected WebDavResponse createWenDavResponseWrapper(final HttpServletResponse response, final WebDavRequest webDavRequest) throws IOException {
@@ -45,15 +87,16 @@ public class WebDavServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-        final HttpServletConfig config = new HttpServletConfig();
-        config.setAllowInfiniteDepthRequests(true);
-        config.setCssForCollectionListings("/WEB-INF/style.css");
-        config.setReadOnly(false);
-        config.setShowCollectionListings(true);
+    public void init(final ServletConfig servletConfig) throws ServletException {
+        super.init(servletConfig);
 
-        final WebDavStore store = new FileSystemStore(new File(FileUtils.getTempDirectory(), "webdav-servlet-repo"));
-        final WebDavRequest webDavRequest = createWebDavRequestWrapper(request, config);
+        config = createWebDavConfig(servletConfig);
+        store = createWebDavStore(servletConfig);
+    }
+
+    @Override
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        final WebDavRequest webDavRequest = createWebDavRequestWrapper(request);
         final WebDavResponse webDavResponse = createWenDavResponseWrapper(response, webDavRequest);
 
         final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();
