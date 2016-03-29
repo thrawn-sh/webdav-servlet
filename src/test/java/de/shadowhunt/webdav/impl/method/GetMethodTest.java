@@ -89,7 +89,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         final String expected = concat("<!DOCTYPE html>", //
                 "<html>", //
                 "<head>", //
-                "<title>Content of folder </title>", //
+                "<title>Content of folder /</title>", //
                 "</head>", //
                 "<body>", //
                 "<table>", //
