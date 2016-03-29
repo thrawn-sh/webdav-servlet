@@ -27,7 +27,7 @@
 
     <!-- project information {{{1 -->
     <name>Shadowhunt WebDav Servlet</name>
-    <description>TODO</description>
+    <description>WebDav Server written in JAVA</description>
     <url>https://dev.shadowhunt.de/webdav-servlet</url>
     <inceptionYear>2014</inceptionYear>
 
@@ -57,8 +57,8 @@
     <!-- environment information {{{1 -->
     <scm>
         <tag>HEAD</tag>
-        <connection>scm:git:https://scm.shadowhunt.de/webdav-servlet</connection>
-        <developerConnection>scm:git:https://scm.shadowhunt.de/webdav-servlet</developerConnection>
+        <connection>scm:git:https://scm.shadowhunt.de/webdav-servlet.git</connection>
+        <developerConnection>scm:git:https://scm.shadowhunt.de/webdav-servlet.git</developerConnection>
         <url>https://github.com/thrawn-sh</url>
     </scm>
 
@@ -283,6 +283,7 @@
                 <artifactId>buildmetadata-maven-plugin</artifactId>
                 <configuration>
                     <buildDatePattern>yyyy-MM-dd</buildDatePattern>
+                    <forceNewProperties>true</forceNewProperties>
                 </configuration>
                 <executions>
                     <execution>
