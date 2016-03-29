@@ -53,7 +53,7 @@ public class WebDavServlet extends HttpServlet {
 
     protected WebDavConfig config;
 
-    protected WebDavStore store;
+    protected transient WebDavStore store;
 
     protected HttpServletConfig createWebDavConfig(final ServletConfig servletConfig) throws ServletException {
         final HttpServletConfig webdavConfig = new HttpServletConfig();
