@@ -49,7 +49,7 @@ public class WebDavServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String WRITABLE = "writable";
+    public static final String WRITEABLE = "writeable";
 
     protected WebDavConfig config;
 
@@ -71,7 +71,7 @@ public class WebDavServlet extends HttpServlet {
             final ServletContext servletContext = servletConfig.getServletContext();
             final InputStream cssStream = servletContext.getResourceAsStream(listingCssParameter);
             if (cssStream == null) {
-                // LOGGER.warn("could not find resource: " + listingCssParameter);
+                throw new ServletException("could not find resource: " + listingCssParameter);
             } else {
                 try {
                     final String cssData = IOUtils.toString(cssStream, StandardCharsets.UTF_8);
@@ -87,9 +87,9 @@ public class WebDavServlet extends HttpServlet {
             }
         }
 
-        final String writeableParameter = servletConfig.getInitParameter(WRITABLE);
+        final String writeableParameter = servletConfig.getInitParameter(WRITEABLE);
         final boolean writeable = Boolean.parseBoolean(writeableParameter);
-        webdavConfig.setShowCollectionListings(!writeable);
+        webdavConfig.setReadOnly(!writeable);
 
         return webdavConfig;
     }
