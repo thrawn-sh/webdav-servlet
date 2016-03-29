@@ -16,30 +16,18 @@
  */
 package de.shadowhunt.servlet;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-
-import javax.servlet.ServletException;
 
 import de.shadowhunt.webdav.WebDavConfig;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 class HttpServletConfig implements WebDavConfig, Serializable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpServletConfig.class);
 
     private static final long serialVersionUID = 1L;
 
     private volatile boolean allowInfiniteDepthRequests = false;
 
-    private volatile String css = null;
+    private volatile String cssForCollectionListings = null;
 
     private volatile boolean readOnly = true;
 
@@ -47,7 +35,7 @@ class HttpServletConfig implements WebDavConfig, Serializable {
 
     @Override
     public Optional<String> getCssForCollectionListings() {
-        return Optional.ofNullable(css);
+        return Optional.ofNullable(cssForCollectionListings);
     }
 
     @Override
@@ -69,23 +57,8 @@ class HttpServletConfig implements WebDavConfig, Serializable {
         this.allowInfiniteDepthRequests = allowInfiniteDepthRequests;
     }
 
-    public void setCssForCollectionListings(final String cssResourceName) throws ServletException {
-        final Class<?> clazz = getClass();
-        final ClassLoader classLoader = clazz.getClassLoader();
-        final InputStream cssStream = classLoader.getResourceAsStream(cssResourceName);
-        if (cssStream == null) {
-            LOGGER.warn("could not find resource: " + cssResourceName);
-            return;
-        }
-
-        try {
-            final String cssData = IOUtils.toString(cssStream, StandardCharsets.UTF_8);
-            css = StringUtils.trimToNull(cssData);
-        } catch (final IOException e) {
-            throw new ServletException("could not set css for collections", e);
-        } finally {
-            IOUtils.closeQuietly(cssStream);
-        }
+    public void setCssForCollectionListings(final String cssForCollectionListings) {
+        this.cssForCollectionListings = cssForCollectionListings;
     }
 
     public void setReadOnly(final boolean readOnly) {

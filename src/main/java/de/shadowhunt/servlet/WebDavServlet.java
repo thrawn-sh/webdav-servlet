@@ -18,8 +18,11 @@ package de.shadowhunt.servlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +36,7 @@ import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.impl.store.FileSystemStore;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class WebDavServlet extends HttpServlet {
@@ -64,7 +68,23 @@ public class WebDavServlet extends HttpServlet {
 
         final String listingCssParameter = servletConfig.getInitParameter(LISTING_CSS);
         if (StringUtils.isNotEmpty(listingCssParameter)) {
-            webdavConfig.setCssForCollectionListings(listingCssParameter);
+            final ServletContext servletContext = servletConfig.getServletContext();
+            final InputStream cssStream = servletContext.getResourceAsStream(listingCssParameter);
+            if (cssStream == null) {
+                // LOGGER.warn("could not find resource: " + listingCssParameter);
+            } else {
+                try {
+                    final String cssData = IOUtils.toString(cssStream, StandardCharsets.UTF_8);
+                    final String css = StringUtils.trimToNull(cssData);
+                    if (css != null) {
+                        webdavConfig.setCssForCollectionListings(css);
+                    }
+                } catch (final IOException e) {
+                    throw new ServletException("could not set css for collections", e);
+                } finally {
+                    IOUtils.closeQuietly(cssStream);
+                }
+            }
         }
 
         final String writeableParameter = servletConfig.getInitParameter(WRITABLE);
