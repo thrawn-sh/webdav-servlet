@@ -60,7 +60,7 @@ public class LockMethod extends AbstractWebDavMethod {
         final XPath xpath = factory.newXPath();
         xpath.setNamespaceContext(PropertyIdentifier.DAV_NS_CONTEXT);
         try {
-            LOCK_OWNER = xpath.compile("/D:lockinfo/D:owner/D:href");
+            LOCK_OWNER = xpath.compile("/D:lockinfo/D:owner");
             LOCK_SCOPE = xpath.compile("/D:lockinfo/D:lockscope/*");
             LOCK_TYPE = xpath.compile("/D:lockinfo/D:locktype/*");
         } catch (final XPathExpressionException e) {
@@ -115,7 +115,7 @@ public class LockMethod extends AbstractWebDavMethod {
     private Optional<LockScope> getScope(final Document document) {
         try {
             final NodeList nodelist = (NodeList) LOCK_SCOPE.evaluate(document, XPathConstants.NODESET);
-            if (nodelist.getLength() < 0) {
+            if (nodelist.getLength() <= 0) {
                 return Optional.empty();
             }
             final Node node = nodelist.item(0);
@@ -128,20 +128,16 @@ public class LockMethod extends AbstractWebDavMethod {
     }
 
     private Optional<Integer> getTimeoutInSeconds(final WebDavRequest request) {
-        String timeout = request.getHeader("Timeout", INFINITE);
-        timeout = timeout.toLowerCase(Locale.US);
-        timeout = timeout.trim();
+        final String timeout = StringUtils.trimToEmpty(request.getHeader("Timeout", INFINITE));
 
-        if (timeout.startsWith(INFINITE)) {
+        if (StringUtils.startsWithIgnoreCase(timeout, INFINITE)) {
             return Optional.of(-1);
         }
 
-        if (timeout.startsWith("seconds-")) {
-            timeout = StringUtils.removeStart(timeout, "seconds-");
-        }
+        final String digits = StringUtils.removeStartIgnoreCase(timeout, "Seconds-");
 
         try {
-            final int seconds = Integer.parseInt(timeout);
+            final int seconds = Integer.parseInt(digits);
             return Optional.of(seconds);
         } catch (final NumberFormatException e) {
             return Optional.of(-1);
@@ -151,7 +147,7 @@ public class LockMethod extends AbstractWebDavMethod {
     private Optional<LockType> getType(final Document document) {
         try {
             final NodeList nodelist = (NodeList) LOCK_TYPE.evaluate(document, XPathConstants.NODESET);
-            if (nodelist.getLength() < 0) {
+            if (nodelist.getLength() <= 0) {
                 return Optional.empty();
             }
             final Node node = nodelist.item(0);

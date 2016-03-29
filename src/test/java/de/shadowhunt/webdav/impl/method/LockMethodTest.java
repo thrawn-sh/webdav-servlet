@@ -16,6 +16,9 @@
  */
 package de.shadowhunt.webdav.impl.method;
 
+import java.io.ByteArrayInputStream;
+import java.util.UUID;
+
 import de.shadowhunt.ContentNormalizer;
 import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavMethod;
@@ -57,7 +60,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new LockMethod();
 
-        Mockito.when(request.getHeader("Timeout", LockMethod.INFINITE)).thenReturn(LockMethod.INFINITE);
+        Mockito.when(request.getHeader(Mockito.eq("Timeout"), Mockito.anyString())).thenReturn(LockMethod.INFINITE);
         Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
 
         final TestResponse response = execute(method);
@@ -76,8 +79,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "</D:locktype>", //
                 // "<D:timeout>Seconds-3600</D:timeout>", //
                 "<D:depth>0</D:depth>", //
-                "<D:owner>", //
-                "</D:owner>", //
+                "<D:owner></D:owner>", //
                 "<D:locktoken>", //
                 "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
                 "</D:locktoken>", //
@@ -92,7 +94,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     public void test01_exisitingNotLocked() throws Exception {
         final WebDavMethod method = new LockMethod();
 
-        Mockito.when(request.getHeader("Timeout", LockMethod.INFINITE)).thenReturn(LockMethod.INFINITE);
+        Mockito.when(request.getHeader(Mockito.eq("Timeout"), Mockito.anyString())).thenReturn(LockMethod.INFINITE);
         Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
 
         final TestResponse response = execute(method);
@@ -111,8 +113,91 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "</D:locktype>", //
                 // "<D:timeout>Seconds-3600</D:timeout>", //
                 "<D:depth>0</D:depth>", //
-                "<D:owner>", //
-                "</D:owner>", //
+                "<D:owner></D:owner>", //
+                "<D:locktoken>", //
+                "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
+                "</D:locktoken>", //
+                "</D:activelock>", //
+                "</D:lockdiscovery>", //
+                "</D:prop>", //
+                "\r\n");
+        Assert.assertEquals("content must match", content, response.getContent(LOCK_TOKEN_NORMALIZER));
+    }
+
+    @Test
+    public void test01_exisitingNotLocked_complete_body() throws Exception {
+        final WebDavPath path = WebDavPath.create(UUID.randomUUID() + ".txt");
+        createItem(path, "test", false);
+        final WebDavMethod method = new LockMethod();
+
+        final String input = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
+                "<D:lockinfo xmlns:D='DAV:'>", //
+                "<D:lockscope><D:exclusive/></D:lockscope>", //
+                "<D:locktype><D:write/></D:locktype>", //
+                "<D:owner>test</D:owner>", //
+                "</D:lockinfo>");
+
+        Mockito.when(request.getHeader(Mockito.eq("Timeout"), Mockito.anyString())).thenReturn("Seconds-3600");
+        Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream(input.getBytes()));
+        Mockito.when(request.getPath()).thenReturn(path);
+
+        final TestResponse response = execute(method);
+        assertBasicRequirements(response, Status.SC_OK);
+        Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
+        Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
+        final String content = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
+                "<D:prop xmlns:D=\"DAV:\">", //
+                "<D:lockdiscovery>", //
+                "<D:activelock>", //
+                "<D:lockscope>", //
+                "<D:exclusive/>", //
+                "</D:lockscope>", //
+                "<D:locktype>", //
+                "<D:write/>", //
+                "</D:locktype>", //
+                // "<D:timeout>Seconds-3600</D:timeout>", //
+                "<D:depth>0</D:depth>", //
+                "<D:owner>test</D:owner>", //
+                "<D:locktoken>", //
+                "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
+                "</D:locktoken>", //
+                "</D:activelock>", //
+                "</D:lockdiscovery>", //
+                "</D:prop>", //
+                "\r\n");
+        Assert.assertEquals("content must match", content, response.getContent(LOCK_TOKEN_NORMALIZER));
+    }
+
+    @Test
+    public void test01_exisitingNotLocked_incomplete_body() throws Exception {
+        final WebDavPath path = WebDavPath.create(UUID.randomUUID() + ".txt");
+        createItem(path, "test", false);
+        final WebDavMethod method = new LockMethod();
+
+        final String input = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
+                "<D:lockinfo xmlns:D='DAV:'/>");
+
+        Mockito.when(request.getHeader(Mockito.eq("Timeout"), Mockito.anyString())).thenReturn("Minutes-5");
+        Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream(input.getBytes()));
+        Mockito.when(request.getPath()).thenReturn(path);
+
+        final TestResponse response = execute(method);
+        assertBasicRequirements(response, Status.SC_OK);
+        Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
+        Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
+        final String content = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
+                "<D:prop xmlns:D=\"DAV:\">", //
+                "<D:lockdiscovery>", //
+                "<D:activelock>", //
+                "<D:lockscope>", //
+                "<D:exclusive/>", //
+                "</D:lockscope>", //
+                "<D:locktype>", //
+                "<D:write/>", //
+                "</D:locktype>", //
+                // "<D:timeout>Seconds-3600</D:timeout>", //
+                "<D:depth>0</D:depth>", //
+                "<D:owner></D:owner>", //
                 "<D:locktoken>", //
                 "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
                 "</D:locktoken>", //
@@ -129,7 +214,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(true);
 
-        Mockito.when(request.getHeader("Timeout", LockMethod.INFINITE)).thenReturn(LockMethod.INFINITE);
+        Mockito.when(request.getHeader(Mockito.eq("Timeout"), Mockito.anyString())).thenReturn(LockMethod.INFINITE);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
 
         final TestResponse response = execute(method);
@@ -148,8 +233,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "</D:locktype>", //
                 // "<D:timeout>Seconds-3600</D:timeout>", //
                 "<D:depth>0</D:depth>", //
-                "<D:owner>", //
-                "</D:owner>", //
+                "<D:owner></D:owner>", //
                 "<D:locktoken>", //
                 "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
                 "</D:locktoken>", //
