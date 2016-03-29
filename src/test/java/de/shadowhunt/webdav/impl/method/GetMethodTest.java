@@ -103,17 +103,17 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
                 "<tbody>", //
                 "<tr class=\"folder parent\">", //
                 "<td colspan=\"3\">", //
-                "<a href=\".\">Parent</a>", //
+                "<a href=\"/webdav/\">Parent</a>", //
                 "</td>", //
                 "</tr>", //
                 "<tr class=\"folder\">", //
                 "<td colspan=\"3\">", //
-                "<a href=\"./collection/\">collection</a>", //
+                "<a href=\"/webdav/collection/\">collection</a>", //
                 "</td>", //
                 "</tr>", //
                 "<tr class=\"file\">", //
                 "<td class=\"name\">", //
-                "<a href=\"./item.txt\">item.txt</a>", //
+                "<a href=\"/webdav/item.txt\">item.txt</a>", //
                 "</td>", //
                 "<td class=\"size\">7 bytes</td>", //
                 "<td class=\"modified\">1970-01-01 01:00:00</td>", //
