@@ -22,8 +22,6 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-
 import de.shadowhunt.webdav.WebDavMethod.Method;
 import de.shadowhunt.webdav.WebDavStore.Access;
 import de.shadowhunt.webdav.precondition.Precondition;
@@ -62,19 +60,7 @@ public final class WebDavDispatcher {
 
     WebDavMethod determineWebDavMethod(final WebDavRequest request) {
         final Method method = request.getMethod();
-        final WebDavMethod dispatch = dispatcher.get(method);
-        if (dispatch == null) {
-            throw new WebDavException("unsupported method (" + method + ")", WebDavResponse.Status.SC_NOT_IMPLEMENTED);
-        }
-        return dispatch;
-    }
-
-    WebDavPath getResource(final HttpServletRequest request) {
-        final String pathInfo = request.getPathInfo();
-        if (pathInfo == null) {
-            return WebDavPath.ROOT;
-        }
-        return WebDavPath.create(pathInfo);
+        return dispatcher.get(method);
     }
 
     public void service(final WebDavStore store, final WebDavRequest request, final WebDavResponse response) throws IOException {
