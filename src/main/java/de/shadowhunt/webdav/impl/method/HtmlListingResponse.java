@@ -60,7 +60,11 @@ class HtmlListingResponse extends AbstractBasicResponse {
             writer.print("<!DOCTYPE html><html><head>");
             writer.print("<title>Content of folder ");
             final WebDavPath path = entity.getPath();
-            writer.print(StringEscapeUtils.escapeHtml4(path.getValue()));
+            if (WebDavPath.ROOT.equals(path)) {
+                writer.print('/');
+            } else {
+                writer.print(StringEscapeUtils.escapeHtml4(path.getValue()));
+            }
             writer.print("</title>");
 
             if (css != null) {
