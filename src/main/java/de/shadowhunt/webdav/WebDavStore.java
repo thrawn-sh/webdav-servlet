@@ -48,13 +48,6 @@ public interface WebDavStore {
 
     WebDavEntity getEntity(WebDavPath path) throws WebDavException;
 
-    default Optional<WebDavEntity> getEntityIfExists(final WebDavPath path) throws WebDavException {
-        if (exists(path)) {
-            return Optional.of(getEntity(path));
-        }
-        return Optional.empty();
-    }
-
     Collection<WebDavProperty> getProperties(WebDavPath path) throws WebDavException;
 
     Access grantAccess(WebDavMethod method, WebDavPath path, Optional<Principal> principal);
