@@ -19,6 +19,9 @@ package de.shadowhunt.webdav.precondition;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -68,6 +71,8 @@ public class PreconditionTest {
 
     private static WebDavStore store;
 
+    private static final Map<WebDavPath, UUID> TOKENS = new HashMap<>();
+
     @AfterClass
     public static void destroyStore() {
         FileUtils.deleteQuietly(root);
@@ -82,6 +87,9 @@ public class PreconditionTest {
         store.createItem(LOCKED_ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));
         final WebDavLock lock = store.createLock(Optional.of(LockScope.EXCLUSIVE), Optional.of(LockType.WRITE), Optional.empty(), Optional.empty());
         store.lock(LOCKED_ITEM, lock);
+
+        TOKENS.clear();
+        TOKENS.put(LOCKED_ITEM, lock.getToken());
     }
 
     @Mock
@@ -106,6 +114,8 @@ public class PreconditionTest {
     public void test_00_empty() throws Exception {
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn("");
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
     }
 
     @Test
@@ -115,6 +125,8 @@ public class PreconditionTest {
         Assert.assertFalse(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertFalse(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
     }
 
     @Test
@@ -124,12 +136,16 @@ public class PreconditionTest {
         Assert.assertFalse(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertFalse(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
     }
 
     @Test
     public void test_00_illegalInput() throws Exception {
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn("this input is invalid");
         Assert.assertFalse(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
     }
 
     @Test
@@ -140,6 +156,8 @@ public class PreconditionTest {
         Assert.assertFalse(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertFalse(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
     }
 
     @Test
@@ -149,6 +167,8 @@ public class PreconditionTest {
         Assert.assertFalse(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertFalse(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
     }
 
     @Test
@@ -158,6 +178,8 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
     }
 
     @Test
@@ -168,6 +190,8 @@ public class PreconditionTest {
         Assert.assertFalse(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertFalse(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
     }
 
     @Test
@@ -178,6 +202,8 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
     }
 
     @Test
@@ -190,6 +216,8 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
     }
 
     @Test
@@ -202,6 +230,8 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
     }
 
     @Test
@@ -215,6 +245,8 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
     }
 
     @Test
@@ -228,6 +260,8 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
     }
 
     @Test
@@ -242,6 +276,8 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
     }
 
     @Test
@@ -256,6 +292,8 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
     }
 
     @Test
@@ -270,6 +308,8 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
     }
 
     @Test
@@ -284,6 +324,8 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
     }
 
     @Test
@@ -298,6 +340,8 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
     }
 
     @Test
@@ -312,6 +356,8 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
     }
 
     @Test
@@ -326,5 +372,7 @@ public class PreconditionTest {
         Assert.assertTrue(Precondition.verify(store, request));
         Mockito.when(request.getHeader(Precondition.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
+
+        Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
     }
 }
