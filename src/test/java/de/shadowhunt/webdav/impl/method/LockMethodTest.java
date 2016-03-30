@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import de.shadowhunt.ContentNormalizer;
 import de.shadowhunt.TestResponse;
+import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
@@ -72,18 +73,13 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop xmlns:D=\"DAV:\">", //
                 "<D:lockdiscovery>", //
                 "<D:activelock>", //
-                "<D:lockscope>", //
-                "<D:exclusive/>", //
-                "</D:lockscope>", //
-                "<D:locktype>", //
-                "<D:write/>", //
-                "</D:locktype>", //
+                "<D:lockscope><D:exclusive/></D:lockscope>", //
+                "<D:locktype><D:write/></D:locktype>", //
                 "<D:depth>infinity</D:depth>", //
                 "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner></D:owner>", //
-                "<D:locktoken>", //
-                "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
-                "</D:locktoken>", //
+                "<D:lockroot><D:href>/non_exisiting.txt</D:href></D:lockroot>", //
+                "<D:locktoken><D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href></D:locktoken>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //
                 "</D:prop>", //
@@ -106,18 +102,13 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop xmlns:D=\"DAV:\">", //
                 "<D:lockdiscovery>", //
                 "<D:activelock>", //
-                "<D:lockscope>", //
-                "<D:exclusive/>", //
-                "</D:lockscope>", //
-                "<D:locktype>", //
-                "<D:write/>", //
-                "</D:locktype>", //
+                "<D:lockscope><D:exclusive/></D:lockscope>", //
+                "<D:locktype><D:write/></D:locktype>", //
                 "<D:depth>infinity</D:depth>", //
                 "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner></D:owner>", //
-                "<D:locktoken>", //
-                "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
-                "</D:locktoken>", //
+                "<D:lockroot><D:href>/item.txt</D:href></D:lockroot>", //
+                "<D:locktoken><D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href></D:locktoken>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //
                 "</D:prop>", //
@@ -128,7 +119,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     @Test
     public void test01_exisitingNotLocked_complete_body() throws Exception {
         final WebDavPath path = WebDavPath.create(UUID.randomUUID() + ".txt");
-        createItem(path, "test", false);
+        final WebDavEntity item = createItem(path, "test", false);
         final WebDavMethod method = new LockMethod();
 
         final String input = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
@@ -150,18 +141,13 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop xmlns:D=\"DAV:\">", //
                 "<D:lockdiscovery>", //
                 "<D:activelock>", //
-                "<D:lockscope>", //
-                "<D:exclusive/>", //
-                "</D:lockscope>", //
-                "<D:locktype>", //
-                "<D:write/>", //
-                "</D:locktype>", //
+                "<D:lockscope><D:exclusive/></D:lockscope>", //
+                "<D:locktype><D:write/></D:locktype>", //
                 "<D:depth>infinity</D:depth>", //
                 "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner>test</D:owner>", //
-                "<D:locktoken>", //
-                "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
-                "</D:locktoken>", //
+                "<D:lockroot><D:href>" + item.getPath() + "</D:href></D:lockroot>", //
+                "<D:locktoken><D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href></D:locktoken>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //
                 "</D:prop>", //
@@ -172,7 +158,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     @Test
     public void test01_exisitingNotLocked_incomplete_body() throws Exception {
         final WebDavPath path = WebDavPath.create(UUID.randomUUID() + ".txt");
-        createItem(path, "test", false);
+        final WebDavEntity item = createItem(path, "test", false);
         final WebDavMethod method = new LockMethod();
 
         final String input = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
@@ -190,18 +176,13 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop xmlns:D=\"DAV:\">", //
                 "<D:lockdiscovery>", //
                 "<D:activelock>", //
-                "<D:lockscope>", //
-                "<D:exclusive/>", //
-                "</D:lockscope>", //
-                "<D:locktype>", //
-                "<D:write/>", //
-                "</D:locktype>", //
+                "<D:lockscope><D:exclusive/></D:lockscope>", //
+                "<D:locktype><D:write/></D:locktype>", //
                 "<D:depth>infinity</D:depth>", //
                 "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner></D:owner>", //
-                "<D:locktoken>", //
-                "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
-                "</D:locktoken>", //
+                "<D:lockroot><D:href>" + item.getPath() + "</D:href></D:lockroot>", //
+                "<D:locktoken><D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href></D:locktoken>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //
                 "</D:prop>", //
@@ -226,18 +207,13 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop xmlns:D=\"DAV:\">", //
                 "<D:lockdiscovery>", //
                 "<D:activelock>", //
-                "<D:lockscope>", //
-                "<D:exclusive/>", //
-                "</D:lockscope>", //
-                "<D:locktype>", //
-                "<D:write/>", //
-                "</D:locktype>", //
+                "<D:lockscope><D:exclusive/></D:lockscope>", //
+                "<D:locktype><D:write/></D:locktype>", //
                 "<D:depth>infinity</D:depth>", //
                 "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner></D:owner>", //
-                "<D:locktoken>", //
-                "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
-                "</D:locktoken>", //
+                "<D:lockroot><D:href>/locked_item.txt</D:href></D:lockroot>", //
+                "<D:locktoken><D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href></D:locktoken>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //
                 "</D:prop>", //

@@ -29,6 +29,7 @@ import de.shadowhunt.webdav.PropertyIdentifier;
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavLock;
+import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
@@ -97,6 +98,13 @@ class LockDiscoveryResponse extends AbstractBasicResponse {
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "owner");
             writer.writeCharacters(lock.getOwner());
             writer.writeEndElement();
+
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "lockroot");
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "href");
+            final WebDavPath root = lock.getRoot();
+            writer.writeCharacters(root.getValue());
+            writer.writeEndElement(); // href
+            writer.writeEndElement(); // locktoken
 
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktoken");
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "href");
