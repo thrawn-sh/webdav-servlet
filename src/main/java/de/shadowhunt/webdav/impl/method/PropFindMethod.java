@@ -211,8 +211,10 @@ public class PropFindMethod extends AbstractWebDavMethod {
     }
 
     private Collection<WebDavProperty> merge(final Collection<WebDavProperty> live, final Collection<WebDavProperty> dead) {
-        live.addAll(dead);
-        return live;
+        final Collection<WebDavProperty> merged = new ArrayList<>(live.size() + dead.size());
+        merged.addAll(live);
+        merged.addAll(dead);
+        return merged;
     }
 
     @Override
