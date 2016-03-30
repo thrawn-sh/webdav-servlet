@@ -31,6 +31,7 @@ import java.util.Optional;
 
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavException;
+import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
@@ -64,9 +65,10 @@ class HtmlListingResponse extends AbstractBasicResponse {
 
     @Override
     protected void write0(final WebDavResponse response) throws IOException {
-        response.setStatus(WebDavResponse.Status.SC_OK);
+        response.addHeader("Cache-Control", "no-store");
         response.setCharacterEncoding(DEFAULT_ENCODING);
         response.setContentType("text/html");
+        response.setStatus(WebDavResponse.Status.SC_OK);
 
         final WebDavRequest request = response.getRequest();
         final WebDavPath base = WebDavPath.create(request.getBase());
@@ -104,18 +106,27 @@ class HtmlListingResponse extends AbstractBasicResponse {
 
             Collections.sort(entities);
             for (final WebDavEntity entity : entities) {
+                final Optional<WebDavLock> lock = entity.getLock();
                 final String entityName = entity.getName();
                 final WebDavPath entityPath = entity.getPath();
                 final String link = convertToLink(base.append(entityPath));
                 final String entityNameHtml = StringEscapeUtils.escapeHtml4(entityName);
                 if (WebDavEntity.Type.COLLECTION == entity.getType()) {
-                    writer.print("<tr class=\"folder\"><td colspan=\"3\"><a href=\"");
+                    writer.print("<tr class=\"folder");
+                    if (lock.isPresent()) {
+                        writer.print(" lock");
+                    }
+                    writer.print("\"><td colspan=\"3\"><a href=\"");
                     writer.print(link);
                     writer.print("/\">");
                     writer.print(entityNameHtml);
                     writer.print("</a></td></tr>");
                 } else {
-                    writer.print("<tr class=\"file\"><td class=\"name\"><a href=\"");
+                    writer.print("<tr class=\"file");
+                    if (lock.isPresent()) {
+                        writer.print(" lock");
+                    }
+                    writer.print("\"><td class=\"name\"><a href=\"");
                     writer.print(link);
                     writer.print("\">");
                     writer.print(entityNameHtml);
