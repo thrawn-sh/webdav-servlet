@@ -16,14 +16,11 @@
  */
 package de.shadowhunt.servlet;
 
-import java.io.Serializable;
 import java.util.Optional;
 
 import de.shadowhunt.webdav.WebDavConfig;
 
-class HttpServletConfig implements WebDavConfig, Serializable {
-
-    private static final long serialVersionUID = 1L;
+class HttpServletConfig implements WebDavConfig {
 
     private volatile boolean allowInfiniteDepthRequests = false;
 

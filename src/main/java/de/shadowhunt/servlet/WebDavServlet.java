@@ -51,7 +51,7 @@ public class WebDavServlet extends HttpServlet {
 
     public static final String WRITEABLE = "writeable";
 
-    protected WebDavConfig config;
+    protected transient WebDavConfig config;
 
     protected transient WebDavStore store;
 
