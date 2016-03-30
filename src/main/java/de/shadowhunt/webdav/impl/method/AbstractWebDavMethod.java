@@ -80,7 +80,16 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
         if (INFINITY.equalsIgnoreCase(depth)) {
             return Integer.MAX_VALUE;
         }
-        return Integer.parseInt(depth);
+
+        final int value = Integer.parseInt(depth);
+        if (value <= 0) {
+            return 0;
+        }
+
+        if (value > 1) {
+            return Integer.MAX_VALUE;
+        }
+        return 1;
     }
 
     @Override
