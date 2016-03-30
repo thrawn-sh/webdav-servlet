@@ -151,6 +151,7 @@ public class PropsLitmusTest extends AbstractLitmusTest {
                 "<D:getcontentlength>32</D:getcontentlength>", //
                 "<D:getetag>0000000000</D:getetag>", //
                 "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
+                "<D:supportedlock><D:lockentry><D:lockscope><D:exclusive/></D:lockscope><D:locktype><D:write/></D:locktype></D:lockentry></D:supportedlock>", //
                 "<ns1:prop0>value0</ns1:prop0>", //
                 "<ns1:prop1>value1</ns1:prop1>", //
                 "<ns1:prop2>value2</ns1:prop2>", //

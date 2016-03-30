@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -39,12 +40,14 @@ import javax.xml.xpath.XPathFactory;
 import de.shadowhunt.webdav.PropertyIdentifier;
 import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavEntity;
-import de.shadowhunt.webdav.WebDavLock;
+import de.shadowhunt.webdav.WebDavLock.LockScope;
+import de.shadowhunt.webdav.WebDavLock.LockType;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavProperty;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.WebDavStore;
+import de.shadowhunt.webdav.WebDavStore.SupportedLock;
 import de.shadowhunt.webdav.impl.AbstractWebDavProperty;
 import de.shadowhunt.webdav.impl.StringWebDavProperty;
 
@@ -71,6 +74,39 @@ public class PropFindMethod extends AbstractWebDavMethod {
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.RESOURCE_TYPE_IDENTIFIER.getName());
             writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, "collection");
             writer.writeEndElement();
+        }
+    }
+
+    private static final class SupportedLocksProperty extends AbstractWebDavProperty {
+
+        private Set<SupportedLock> locks;
+
+        private SupportedLocksProperty(final Set<SupportedLock> locks) {
+            super(PropertyIdentifier.RESOURCE_TYPE_IDENTIFIER);
+            this.locks = locks;
+        }
+
+        @Override
+        public String getValue() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void write(final XMLStreamWriter writer) throws XMLStreamException {
+            for (final SupportedLock lock : locks) {
+                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.LOCK_IDENTIFIER.getName());
+                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "lockentry");
+                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "lockscope");
+                final LockScope scope = lock.getScope();
+                writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, scope.name().toLowerCase(Locale.US));
+                writer.writeEndElement();
+                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktype");
+                final LockType type = lock.getType();
+                writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, type.name().toLowerCase(Locale.US));
+                writer.writeEndElement();
+                writer.writeEndElement();
+                writer.writeEndElement();
+            }
         }
     }
 
@@ -113,7 +149,9 @@ public class PropFindMethod extends AbstractWebDavMethod {
         }
     }
 
-    private static Collection<WebDavProperty> entityToProperties(final WebDavEntity entity) {
+    private static Collection<WebDavProperty> entityToProperties(final WebDavStore store, final WebDavPath path) {
+        final WebDavEntity entity = store.getEntity(path);
+
         final Collection<WebDavProperty> result = new ArrayList<>();
         result.add(new StringWebDavProperty(PropertyIdentifier.DISPLAY_NAME_IDENTIFIER, entity.getName()));
         result.add(new StringWebDavProperty(PropertyIdentifier.CONTENT_LENGTH_IDENTIFIER, Long.toString(entity.getSize())));
@@ -125,8 +163,8 @@ public class PropFindMethod extends AbstractWebDavMethod {
         final Optional<String> etag = entity.getEtag();
         etag.ifPresent(x -> result.add(new StringWebDavProperty(PropertyIdentifier.ETAG_IDENTIFIER, etag.get())));
 
-        final Optional<WebDavLock> lock = entity.getLock();
-        lock.ifPresent(x -> result.add(x.toProperty()));
+        final Set<SupportedLock> supportedLocks = store.getSupportedLocks(path);
+        result.add(new SupportedLocksProperty(supportedLocks));
 
         return result;
 
@@ -146,8 +184,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
             return;
         }
 
-        final WebDavEntity entity = store.getEntity(path);
-        final Collection<WebDavProperty> liveProperties = entityToProperties(entity);
+        final Collection<WebDavProperty> liveProperties = entityToProperties(store, path);
         final Collection<WebDavProperty> deadProperties = store.getProperties(path);
         final Collection<WebDavProperty> merged = merge(liveProperties, deadProperties);
         map.put(path, merged);

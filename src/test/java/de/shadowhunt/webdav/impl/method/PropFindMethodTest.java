@@ -185,6 +185,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:getcontentlength>7</D:getcontentlength>", //
                 "<D:getetag>0000000000</D:getetag>", //
                 "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
+                "<D:supportedlock><D:lockentry><D:lockscope><D:exclusive/></D:lockscope><D:locktype><D:write/></D:locktype></D:lockentry></D:supportedlock>", //
                 "<ns1:foo>bar_foo_content</ns1:foo>", //
                 "<ns2:bar>foo_bar_content</ns2:bar>", //
                 "<ns2:foo>foo_foo_content</ns2:foo>", //

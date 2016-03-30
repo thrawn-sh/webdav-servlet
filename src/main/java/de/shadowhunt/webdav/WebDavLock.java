@@ -48,6 +48,4 @@ public interface WebDavLock {
     UUID getToken();
 
     LockType getType();
-
-    WebDavProperty toProperty();
 }

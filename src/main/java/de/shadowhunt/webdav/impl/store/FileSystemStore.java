@@ -31,6 +31,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -72,6 +74,8 @@ public class FileSystemStore implements WebDavStore {
 
     private final File resourceRoot;
 
+    private final Set<SupportedLock> supportedLocks;
+
     public FileSystemStore(final File root) {
         this(root, false);
     }
@@ -91,6 +95,10 @@ public class FileSystemStore implements WebDavStore {
         if (!metaRoot.exists() && !metaRoot.mkdirs()) {
             throw new WebDavException("metaRoot path: " + metaRoot + " does not exist and can not be created");
         }
+
+        final Set<SupportedLock> locks = new TreeSet<>();
+        locks.add(EXCLUSIV_WRITE_LOCK);
+        supportedLocks = Collections.unmodifiableSet(locks);
     }
 
     private String calculateEtag(final WebDavPath path) {
@@ -316,6 +324,11 @@ public class FileSystemStore implements WebDavStore {
 
     private File getPropertiesFile(final WebDavPath path) throws WebDavException {
         return new File(metaRoot, path.getValue() + "_dead-properties");
+    }
+
+    @Override
+    public Set<SupportedLock> getSupportedLocks(final WebDavPath path) throws WebDavException {
+        return supportedLocks;
     }
 
     @Override
