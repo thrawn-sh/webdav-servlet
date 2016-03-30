@@ -34,6 +34,8 @@ public interface WebDavStore {
         ALLOW, DENY, REQUIRE_AUTHENTICATION;
     }
 
+    WebDavLock convertLock(WebDavLock lock) throws WebDavException;
+
     void createCollection(WebDavPath path) throws WebDavException;
 
     void createItem(WebDavPath path, InputStream content) throws WebDavException;

@@ -23,6 +23,10 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 public interface WebDavLock {
 
+    enum LockNature {
+        EXPLICIT, IMPLICIT;
+    }
+
     enum LockScope {
         EXCLUSIVE, SHARED;
     }
@@ -32,6 +36,8 @@ public interface WebDavLock {
     }
 
     String PREFIX = "urn:uuid:";
+
+    LockNature getNature();
 
     String getOwner();
 
@@ -44,5 +50,4 @@ public interface WebDavLock {
     LockType getType();
 
     WebDavProperty toProperty();
-
 }

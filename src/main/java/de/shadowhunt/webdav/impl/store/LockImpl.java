@@ -56,6 +56,8 @@ final class LockImpl implements WebDavLock {
         }
     }
 
+    private final LockNature nature;
+
     private final String owner;
 
     private final LockScope scope;
@@ -66,11 +68,12 @@ final class LockImpl implements WebDavLock {
 
     private final LockType type;
 
-    LockImpl(final UUID token, final LockScope scope, final LockType type, final int timeoutInSeconds, final String owner) {
+    LockImpl(final UUID token, final LockScope scope, final LockType type, final LockNature nature, final int timeoutInSeconds, final String owner) {
+        this.nature = nature;
         this.owner = owner;
-        this.token = token;
         this.scope = scope;
         this.timeoutInSeconds = timeoutInSeconds;
+        this.token = token;
         this.type = type;
     }
 
@@ -94,6 +97,11 @@ final class LockImpl implements WebDavLock {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public LockNature getNature() {
+        return nature;
     }
 
     @Override
