@@ -38,7 +38,7 @@ public class WebDavLockBuilderImpl implements WebDavLockBuilder {
     @Override
     public WebDavLock build() {
         final UUID token = UUID.randomUUID();
-        return new LockImpl(token, scope, type, timeoutInSeconds, owner);
+        return new LockImpl(token, depth, scope, type, timeoutInSeconds, owner);
     }
 
     @Override

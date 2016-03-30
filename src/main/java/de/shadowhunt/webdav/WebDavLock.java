@@ -35,6 +35,8 @@ public interface WebDavLock {
 
     String PREFIX = "urn:uuid:";
 
+    int getDepth();
+
     String getOwner();
 
     LockScope getScope();

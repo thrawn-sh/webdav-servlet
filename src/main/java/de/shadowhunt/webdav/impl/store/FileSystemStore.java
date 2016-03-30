@@ -56,6 +56,8 @@ import org.apache.commons.io.IOUtils;
 
 public class FileSystemStore implements WebDavStore {
 
+    private static final String LOCK_DEPTH = "depth";
+
     private static final String LOCK_OWNER = "owner";
 
     private static final String LOCK_SCOPE = "scope";
@@ -217,6 +219,8 @@ public class FileSystemStore implements WebDavStore {
                 throw new WebDavException("can not load lock for " + path, e);
             }
 
+            final String depthProperty = properties.getProperty(LOCK_DEPTH);
+            final int depth = Integer.parseInt(depthProperty);
             final String owner = properties.getProperty(LOCK_OWNER);
             final String scopeProperty = properties.getProperty(LOCK_SCOPE);
             final LockScope scope = LockScope.valueOf(scopeProperty);
@@ -224,7 +228,7 @@ public class FileSystemStore implements WebDavStore {
             final UUID token = UUID.fromString(tokenProperty);
             final String typeProperty = properties.getProperty(LOCK_TYPE);
             final LockType type = LockType.valueOf(typeProperty);
-            return Optional.of(new LockImpl(token, scope, type, -1, owner));
+            return Optional.of(new LockImpl(token, depth, scope, type, -1, owner));
         }
     }
 
@@ -346,6 +350,8 @@ public class FileSystemStore implements WebDavStore {
             final File lockFile = getLockFile(path);
             try {
                 final Properties store = new Properties();
+                final String depth = Integer.toString(lock.getDepth());
+                store.put(LOCK_DEPTH, depth);
                 final String owner = lock.getOwner();
                 store.put(LOCK_OWNER, owner);
                 final LockScope scope = lock.getScope();

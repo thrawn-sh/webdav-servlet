@@ -74,16 +74,24 @@ class LockDiscoveryResponse extends AbstractBasicResponse {
             writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, lock.getType().name().toLowerCase(Locale.US));
             writer.writeEndElement();
 
-            final int timeout = lock.getTimeoutInSeconds();
-            if (timeout >= 0) {
-                writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "timeout");
-                writer.writeCharacters("Seconds-");
-                writer.writeCharacters(Integer.toString(timeout));
-                writer.writeEndElement();
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "depth");
+            final int depth = lock.getDepth();
+            if (depth == Integer.MAX_VALUE) {
+                writer.writeCharacters("infinity");
+            } else {
+                writer.writeCharacters(Integer.toString(depth));
             }
 
-            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "depth");
-            writer.writeCharacters("0");
+            writer.writeEndElement();
+
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "timeout");
+            final int timeout = lock.getTimeoutInSeconds();
+            if (timeout >= 0) {
+                writer.writeCharacters("Seconds-");
+                writer.writeCharacters(Integer.toString(timeout));
+            } else {
+                writer.writeCharacters("Infinite");
+            }
             writer.writeEndElement();
 
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "owner");

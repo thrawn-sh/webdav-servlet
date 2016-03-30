@@ -78,8 +78,8 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:locktype>", //
                 "<D:write/>", //
                 "</D:locktype>", //
-                // "<D:timeout>Seconds-3600</D:timeout>", //
-                "<D:depth>0</D:depth>", //
+                "<D:depth>infinity</D:depth>", //
+                "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner></D:owner>", //
                 "<D:locktoken>", //
                 "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
@@ -112,8 +112,8 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:locktype>", //
                 "<D:write/>", //
                 "</D:locktype>", //
-                // "<D:timeout>Seconds-3600</D:timeout>", //
-                "<D:depth>0</D:depth>", //
+                "<D:depth>infinity</D:depth>", //
+                "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner></D:owner>", //
                 "<D:locktoken>", //
                 "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
@@ -156,8 +156,8 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:locktype>", //
                 "<D:write/>", //
                 "</D:locktype>", //
-                // "<D:timeout>Seconds-3600</D:timeout>", //
-                "<D:depth>0</D:depth>", //
+                "<D:depth>infinity</D:depth>", //
+                "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner>test</D:owner>", //
                 "<D:locktoken>", //
                 "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
@@ -196,8 +196,8 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:locktype>", //
                 "<D:write/>", //
                 "</D:locktype>", //
-                // "<D:timeout>Seconds-3600</D:timeout>", //
-                "<D:depth>0</D:depth>", //
+                "<D:depth>infinity</D:depth>", //
+                "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner></D:owner>", //
                 "<D:locktoken>", //
                 "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
@@ -232,8 +232,8 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:locktype>", //
                 "<D:write/>", //
                 "</D:locktype>", //
-                // "<D:timeout>Seconds-3600</D:timeout>", //
-                "<D:depth>0</D:depth>", //
+                "<D:depth>infinity</D:depth>", //
+                "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner></D:owner>", //
                 "<D:locktoken>", //
                 "<D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href>", //
