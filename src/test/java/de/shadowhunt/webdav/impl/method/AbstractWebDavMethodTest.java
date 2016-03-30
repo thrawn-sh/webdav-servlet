@@ -27,8 +27,7 @@ import de.shadowhunt.webdav.PropertyIdentifier;
 import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavLock;
-import de.shadowhunt.webdav.WebDavLock.LockScope;
-import de.shadowhunt.webdav.WebDavLock.LockType;
+import de.shadowhunt.webdav.WebDavLockBuilder;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
@@ -84,7 +83,8 @@ public abstract class AbstractWebDavMethodTest {
         createCollection0(path.getParent(), false);
         store.createItem(path, new ByteArrayInputStream(content.getBytes()));
         if (locked) {
-            final WebDavLock lock = store.createLock(Optional.of(LockScope.EXCLUSIVE), Optional.of(LockType.WRITE), Optional.empty(), Optional.empty());
+            final WebDavLockBuilder lockBuilder = store.createLockBuilder();
+            final WebDavLock lock = lockBuilder.build();
             store.lock(path, lock);
         }
         setProperties(path);
@@ -103,7 +103,8 @@ public abstract class AbstractWebDavMethodTest {
             return exisitingLock.get();
         }
 
-        final WebDavLock lock = store.createLock(Optional.of(LockScope.EXCLUSIVE), Optional.of(LockType.WRITE), Optional.empty(), Optional.empty());
+        final WebDavLockBuilder lockBuilder = store.createLockBuilder();
+        final WebDavLock lock = lockBuilder.build();
         store.lock(path, lock);
         return lock;
     }

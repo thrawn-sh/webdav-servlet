@@ -34,6 +34,7 @@ import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavLock.LockScope;
 import de.shadowhunt.webdav.WebDavLock.LockType;
+import de.shadowhunt.webdav.WebDavLockBuilder;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse.Status;
@@ -69,8 +70,11 @@ public class LockMethod extends AbstractWebDavMethod {
     }
 
     private WebDavLock determineLock(final WebDavStore store, final WebDavRequest request) throws IOException {
+        final WebDavLockBuilder lockBuilder = store.createLockBuilder();
+
         final WebDavPath path = request.getPath();
         final Optional<Integer> timeoutInSeconds = getTimeoutInSeconds(request);
+        timeoutInSeconds.ifPresent(x -> lockBuilder.setTimeoutInSeconds(x));
 
         final Document document = PropertiesMessageHelper.parse(request.getInputStream());
         if (document != null) {
@@ -79,9 +83,14 @@ public class LockMethod extends AbstractWebDavMethod {
             checkLockTokenOnEntity(entity, tokens);
 
             final Optional<String> owner = getOwner(document);
+            owner.ifPresent(x -> lockBuilder.setOwner(x));
+
             final Optional<LockScope> scope = getScope(document);
+            scope.ifPresent(x -> lockBuilder.setScope(x));
+
             final Optional<LockType> type = getType(document);
-            return store.createLock(scope, type, timeoutInSeconds, owner);
+            type.ifPresent(x -> lockBuilder.setType(x));
+            return lockBuilder.build();
         }
 
         final WebDavEntity entity = store.getEntity(path);
@@ -90,7 +99,7 @@ public class LockMethod extends AbstractWebDavMethod {
             return lock.get();
         }
 
-        return store.createLock(Optional.empty(), Optional.empty(), timeoutInSeconds, Optional.empty());
+        return lockBuilder.build();
     }
 
     @Override

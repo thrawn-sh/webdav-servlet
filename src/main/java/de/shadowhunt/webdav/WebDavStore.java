@@ -101,13 +101,11 @@ public interface WebDavStore {
 
     SupportedLock EXCLUSIV_WRITE_LOCK = new SupportedLock(LockScope.EXCLUSIVE, LockType.WRITE);
 
-    WebDavLock convertLock(WebDavLock lock) throws WebDavException;
-
     void createCollection(WebDavPath path) throws WebDavException;
 
     void createItem(WebDavPath path, InputStream content) throws WebDavException;
 
-    WebDavLock createLock(Optional<LockScope> scope, Optional<LockType> type, Optional<Integer> timeoutInSeconds, Optional<String> owner) throws WebDavException;
+    WebDavLockBuilder createLockBuilder();
 
     void delete(WebDavPath path) throws WebDavException;
 

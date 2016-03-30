@@ -25,8 +25,6 @@ import de.shadowhunt.webdav.WebDavLock;
 @Immutable
 final class LockImpl implements WebDavLock {
 
-    private final LockNature nature;
-
     private final String owner;
 
     private final LockScope scope;
@@ -37,8 +35,7 @@ final class LockImpl implements WebDavLock {
 
     private final LockType type;
 
-    LockImpl(final UUID token, final LockScope scope, final LockType type, final LockNature nature, final int timeoutInSeconds, final String owner) {
-        this.nature = nature;
+    LockImpl(final UUID token, final LockScope scope, final LockType type, final int timeoutInSeconds, final String owner) {
         this.owner = owner;
         this.scope = scope;
         this.timeoutInSeconds = timeoutInSeconds;
@@ -66,11 +63,6 @@ final class LockImpl implements WebDavLock {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public LockNature getNature() {
-        return nature;
     }
 
     @Override

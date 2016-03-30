@@ -16,32 +16,20 @@
  */
 package de.shadowhunt.webdav;
 
-import java.util.UUID;
+import de.shadowhunt.webdav.WebDavLock.LockScope;
+import de.shadowhunt.webdav.WebDavLock.LockType;
 
-import javax.annotation.concurrent.Immutable;
+public interface WebDavLockBuilder {
 
-@Immutable
-public interface WebDavLock {
+    WebDavLock build();
 
-    enum LockScope {
-        EXCLUSIVE, SHARED;
-    }
+    void setDepth(int depth);
 
-    enum LockType {
-        READ, WRITE;
-    }
+    void setOwner(String owner);
 
-    int INFINITY = Integer.MAX_VALUE;
+    void setScope(LockScope scope);
 
-    String PREFIX = "urn:uuid:";
+    void setTimeoutInSeconds(int timeoutInSeconds);
 
-    String getOwner();
-
-    LockScope getScope();
-
-    int getTimeoutInSeconds();
-
-    UUID getToken();
-
-    LockType getType();
+    void setType(LockType type);
 }

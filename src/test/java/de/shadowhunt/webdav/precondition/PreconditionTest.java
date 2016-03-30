@@ -28,8 +28,7 @@ import java.util.UUID;
 import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavLock;
-import de.shadowhunt.webdav.WebDavLock.LockScope;
-import de.shadowhunt.webdav.WebDavLock.LockType;
+import de.shadowhunt.webdav.WebDavLockBuilder;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavStore;
@@ -85,7 +84,8 @@ public class PreconditionTest {
 
         store.createItem(ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));
         store.createItem(LOCKED_ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));
-        final WebDavLock lock = store.createLock(Optional.of(LockScope.EXCLUSIVE), Optional.of(LockType.WRITE), Optional.empty(), Optional.empty());
+        final WebDavLockBuilder lockBuilder = store.createLockBuilder();
+        final WebDavLock lock = lockBuilder.build();
         store.lock(LOCKED_ITEM, lock);
 
         TOKENS.clear();

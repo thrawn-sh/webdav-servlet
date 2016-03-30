@@ -41,9 +41,9 @@ import de.shadowhunt.webdav.PropertyIdentifier;
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavLock;
-import de.shadowhunt.webdav.WebDavLock.LockNature;
 import de.shadowhunt.webdav.WebDavLock.LockScope;
 import de.shadowhunt.webdav.WebDavLock.LockType;
+import de.shadowhunt.webdav.WebDavLockBuilder;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavProperty;
@@ -55,8 +55,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 public class FileSystemStore implements WebDavStore {
-
-    private static final String LOCK_NATURE = "nature";
 
     private static final String LOCK_OWNER = "owner";
 
@@ -131,14 +129,6 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public WebDavLock convertLock(final WebDavLock lock) throws WebDavException {
-        if (lock.getNature() == LockNature.IMPLICIT) {
-            return lock;
-        }
-        return new LockImpl(lock.getToken(), lock.getScope(), lock.getType(), LockNature.IMPLICIT, lock.getTimeoutInSeconds(), lock.getOwner());
-    }
-
-    @Override
     public void createCollection(final WebDavPath path) throws WebDavException {
         synchronized (monitor) {
             createFolder(path, getContentFile(path, false));
@@ -171,11 +161,8 @@ public class FileSystemStore implements WebDavStore {
     }
 
     @Override
-    public WebDavLock createLock(final Optional<LockScope> scope, final Optional<LockType> type, final Optional<Integer> timeoutInSeconds, final Optional<String> owner) {
-        // ignore requested scope, type and timeout
-        final UUID uuid = UUID.randomUUID();
-        final String ownerValue = owner.orElse("");
-        return new LockImpl(uuid, LockScope.EXCLUSIVE, LockType.WRITE, LockNature.EXPLICIT, -1, ownerValue);
+    public WebDavLockBuilder createLockBuilder() {
+        return new WebDavLockBuilderImpl();
     }
 
     private PropertyIdentifier createPropertyIdentifier(final String elementName) {
@@ -230,8 +217,6 @@ public class FileSystemStore implements WebDavStore {
                 throw new WebDavException("can not load lock for " + path, e);
             }
 
-            final String natureProperty = properties.getProperty(LOCK_NATURE);
-            final LockNature nature = LockNature.valueOf(natureProperty);
             final String owner = properties.getProperty(LOCK_OWNER);
             final String scopeProperty = properties.getProperty(LOCK_SCOPE);
             final LockScope scope = LockScope.valueOf(scopeProperty);
@@ -239,7 +224,7 @@ public class FileSystemStore implements WebDavStore {
             final UUID token = UUID.fromString(tokenProperty);
             final String typeProperty = properties.getProperty(LOCK_TYPE);
             final LockType type = LockType.valueOf(typeProperty);
-            return Optional.of(new LockImpl(token, scope, type, nature, -1, owner));
+            return Optional.of(new LockImpl(token, scope, type, -1, owner));
         }
     }
 
@@ -361,9 +346,6 @@ public class FileSystemStore implements WebDavStore {
             final File lockFile = getLockFile(path);
             try {
                 final Properties store = new Properties();
-                final LockNature nature = lock.getNature();
-                final String natureProperty = nature.toString();
-                store.put(LOCK_NATURE, natureProperty);
                 final String owner = lock.getOwner();
                 store.put(LOCK_OWNER, owner);
                 final LockScope scope = lock.getScope();
