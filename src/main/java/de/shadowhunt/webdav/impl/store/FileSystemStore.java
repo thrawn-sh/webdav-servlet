@@ -66,6 +66,8 @@ public class FileSystemStore implements WebDavStore {
 
     private static final String LOCK_TYPE = "type";
 
+    private static final String LOCK_ROOT = "root";
+
     private static final MimetypesFileTypeMap MIME_TYPES = new MimetypesFileTypeMap();
 
     private final File metaRoot;
@@ -222,13 +224,15 @@ public class FileSystemStore implements WebDavStore {
             final String depthProperty = properties.getProperty(LOCK_DEPTH);
             final int depth = Integer.parseInt(depthProperty);
             final String owner = properties.getProperty(LOCK_OWNER);
+            final String rootProperty = properties.getProperty(LOCK_ROOT);
+            final WebDavPath root = WebDavPath.create(rootProperty);
             final String scopeProperty = properties.getProperty(LOCK_SCOPE);
             final LockScope scope = LockScope.valueOf(scopeProperty);
             final String tokenProperty = properties.getProperty(LOCK_TOKEN);
             final UUID token = UUID.fromString(tokenProperty);
             final String typeProperty = properties.getProperty(LOCK_TYPE);
             final LockType type = LockType.valueOf(typeProperty);
-            return Optional.of(new LockImpl(token, depth, scope, type, -1, owner));
+            return Optional.of(new LockImpl(token, root, depth, scope, type, -1, owner));
         }
     }
 
@@ -354,6 +358,9 @@ public class FileSystemStore implements WebDavStore {
                 store.put(LOCK_DEPTH, depth);
                 final String owner = lock.getOwner();
                 store.put(LOCK_OWNER, owner);
+                final WebDavPath root = lock.getRoot();
+                final String rootProperty = root.getValue();
+                store.put(LOCK_ROOT, rootProperty);
                 final LockScope scope = lock.getScope();
                 final String scopeProperty = scope.name();
                 store.put(LOCK_SCOPE, scopeProperty);

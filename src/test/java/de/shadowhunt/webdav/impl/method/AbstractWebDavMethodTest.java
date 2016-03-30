@@ -84,6 +84,7 @@ public abstract class AbstractWebDavMethodTest {
         store.createItem(path, new ByteArrayInputStream(content.getBytes()));
         if (locked) {
             final WebDavLockBuilder lockBuilder = store.createLockBuilder();
+            lockBuilder.setRoot(path);
             final WebDavLock lock = lockBuilder.build();
             store.lock(path, lock);
         }
@@ -104,6 +105,7 @@ public abstract class AbstractWebDavMethodTest {
         }
 
         final WebDavLockBuilder lockBuilder = store.createLockBuilder();
+        lockBuilder.setRoot(path);
         final WebDavLock lock = lockBuilder.build();
         store.lock(path, lock);
         return lock;

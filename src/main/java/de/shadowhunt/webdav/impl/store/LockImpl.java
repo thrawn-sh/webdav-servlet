@@ -21,6 +21,7 @@ import java.util.UUID;
 import javax.annotation.concurrent.Immutable;
 
 import de.shadowhunt.webdav.WebDavLock;
+import de.shadowhunt.webdav.WebDavPath;
 
 @Immutable
 final class LockImpl implements WebDavLock {
@@ -28,6 +29,8 @@ final class LockImpl implements WebDavLock {
     private final int depth;
 
     private final String owner;
+
+    private final WebDavPath root;
 
     private final LockScope scope;
 
@@ -37,9 +40,10 @@ final class LockImpl implements WebDavLock {
 
     private final LockType type;
 
-    LockImpl(final UUID token, final int depth, final LockScope scope, final LockType type, final int timeoutInSeconds, final String owner) {
+    LockImpl(final UUID token, final WebDavPath root, final int depth, final LockScope scope, final LockType type, final int timeoutInSeconds, final String owner) {
         this.depth = depth;
         this.owner = owner;
+        this.root = root;
         this.scope = scope;
         this.timeoutInSeconds = timeoutInSeconds;
         this.token = token;
@@ -79,6 +83,11 @@ final class LockImpl implements WebDavLock {
     }
 
     @Override
+    public WebDavPath getRoot() {
+        return root;
+    }
+
+    @Override
     public LockScope getScope() {
         return scope;
     }
@@ -108,6 +117,6 @@ final class LockImpl implements WebDavLock {
 
     @Override
     public String toString() {
-        return "LockImpl [depth=" + depth + ", owner=" + owner + ", scope=" + scope + ", timeoutInSeconds=" + timeoutInSeconds + ", token=" + token + ", type=" + type + "]";
+        return "LockImpl [root=" + root + ", depth=" + depth + ", owner=" + owner + ", scope=" + scope + ", timeoutInSeconds=" + timeoutInSeconds + ", token=" + token + ", type=" + type + "]";
     }
 }

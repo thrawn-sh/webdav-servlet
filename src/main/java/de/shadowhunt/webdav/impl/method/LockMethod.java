@@ -73,6 +73,8 @@ public class LockMethod extends AbstractWebDavMethod {
         final WebDavLockBuilder lockBuilder = store.createLockBuilder();
 
         final WebDavPath path = request.getPath();
+        lockBuilder.setRoot(path);
+
         final Optional<Integer> timeoutInSeconds = getTimeoutInSeconds(request);
         timeoutInSeconds.ifPresent(x -> lockBuilder.setTimeoutInSeconds(x));
 

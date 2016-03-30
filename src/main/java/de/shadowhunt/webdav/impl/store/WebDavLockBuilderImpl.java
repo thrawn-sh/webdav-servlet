@@ -18,16 +18,20 @@ package de.shadowhunt.webdav.impl.store;
 
 import java.util.UUID;
 
+import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavLock.LockScope;
 import de.shadowhunt.webdav.WebDavLock.LockType;
 import de.shadowhunt.webdav.WebDavLockBuilder;
+import de.shadowhunt.webdav.WebDavPath;
 
 public class WebDavLockBuilderImpl implements WebDavLockBuilder {
 
     private int depth = WebDavLock.INFINITY;
 
     private String owner = "";
+
+    private WebDavPath root = null;
 
     private LockScope scope = LockScope.EXCLUSIVE;
 
@@ -38,7 +42,10 @@ public class WebDavLockBuilderImpl implements WebDavLockBuilder {
     @Override
     public WebDavLock build() {
         final UUID token = UUID.randomUUID();
-        return new LockImpl(token, depth, scope, type, timeoutInSeconds, owner);
+        if (root == null) {
+            throw new WebDavException("lock root must be defined");
+        }
+        return new LockImpl(token, root, depth, scope, type, timeoutInSeconds, owner);
     }
 
     @Override
@@ -49,6 +56,11 @@ public class WebDavLockBuilderImpl implements WebDavLockBuilder {
     @Override
     public void setOwner(final String owner) {
         this.owner = owner;
+    }
+
+    @Override
+    public void setRoot(final WebDavPath root) {
+        this.root = root;
     }
 
     @Override

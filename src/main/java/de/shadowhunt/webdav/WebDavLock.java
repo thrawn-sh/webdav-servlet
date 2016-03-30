@@ -39,6 +39,8 @@ public interface WebDavLock {
 
     String getOwner();
 
+    WebDavPath getRoot();
+
     LockScope getScope();
 
     int getTimeoutInSeconds();

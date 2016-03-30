@@ -27,6 +27,8 @@ public interface WebDavLockBuilder {
 
     void setOwner(String owner);
 
+    void setRoot(WebDavPath root);
+
     void setScope(LockScope scope);
 
     void setTimeoutInSeconds(int timeoutInSeconds);
