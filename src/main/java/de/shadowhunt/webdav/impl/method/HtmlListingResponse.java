@@ -48,8 +48,11 @@ class HtmlListingResponse extends AbstractBasicResponse {
 
     private final List<WebDavEntity> entities;
 
-    HtmlListingResponse(final WebDavEntity root, final List<WebDavEntity> entities, final Optional<String> css) {
+    private final WebDavEntity parent;
+
+    HtmlListingResponse(final WebDavEntity parent, final WebDavEntity root, final List<WebDavEntity> entities, final Optional<String> css) {
         super(root);
+        this.parent = parent;
         this.entities = entities;
         this.css = css.orElse(null);
     }
@@ -96,48 +99,17 @@ class HtmlListingResponse extends AbstractBasicResponse {
             writer.print("<th class=\"name\">Name</th>");
             writer.print("<th class=\"size\">Size</th>");
             writer.print("<th class=\"modified\">Modified</th>");
+            writer.print("<th class=\"operation\">Operations</th>");
             writer.print("</tr></thead><tbody>");
 
-            final WebDavPath parent = path.getParent();
-            final String escapedParentLink = convertToLink(base.append(parent));
-            writer.print("<tr class=\"folder parent\"><td colspan=\"3\"><a href=\"");
-            writer.print(escapedParentLink);
-            writer.print("/\">Parent</a></td></tr>");
+            writeCollection(writer, parent, base);
 
             Collections.sort(entities);
             for (final WebDavEntity entity : entities) {
-                final Optional<WebDavLock> lock = entity.getLock();
-                final String entityName = entity.getName();
-                final WebDavPath entityPath = entity.getPath();
-                final String link = convertToLink(base.append(entityPath));
-                final String entityNameHtml = StringEscapeUtils.escapeHtml4(entityName);
                 if (WebDavEntity.Type.COLLECTION == entity.getType()) {
-                    writer.print("<tr class=\"folder");
-                    if (lock.isPresent()) {
-                        writer.print(" lock");
-                    }
-                    writer.print("\"><td colspan=\"3\"><a href=\"");
-                    writer.print(link);
-                    writer.print("/\">");
-                    writer.print(entityNameHtml);
-                    writer.print("</a></td></tr>");
+                    writeCollection(writer, entity, base);
                 } else {
-                    writer.print("<tr class=\"file");
-                    if (lock.isPresent()) {
-                        writer.print(" lock");
-                    }
-                    writer.print("\"><td class=\"name\"><a href=\"");
-                    writer.print(link);
-                    writer.print("\">");
-                    writer.print(entityNameHtml);
-                    writer.print("</a></td><td class=\"size\">");
-                    final String size = FileUtils.byteCountToDisplaySize(entity.getSize());
-                    writer.print(size);
-                    writer.print("</td><td class=\"modified\">");
-                    final Date lastModified = entity.getLastModified();
-                    final String formattedDate = dateFormat.format(lastModified);
-                    writer.print(formattedDate);
-                    writer.print("</td></tr>");
+                    writeItem(writer, entity, base);
                 }
             }
 
@@ -145,5 +117,84 @@ class HtmlListingResponse extends AbstractBasicResponse {
             writer.print("</body></html>");
             writer.close();
         }
+    }
+
+    private void writeCollection(final PrintWriter writer, final WebDavEntity entity, final WebDavPath base) {
+        final WebDavPath path = entity.getPath();
+        final String link = convertToLink(base.append(path));
+
+        writer.print("<tr class=\"folder");
+        if (parent.equals(entity)) {
+            writer.print(" parent");
+        } else {
+            final Optional<WebDavLock> lock = entity.getLock();
+            if (lock.isPresent()) {
+                writer.print(" lock");
+            }
+        }
+        writer.print("\"><td class=\"name\"><a href=\"");
+        writer.print(link);
+        writer.print("/\">");
+        if (parent.equals(entity)) {
+            writer.print("..");
+        } else {
+            final String name = entity.getName();
+            final String nameHtml = StringEscapeUtils.escapeHtml4(name);
+            writer.print(nameHtml);
+        }
+        writer.print("</a></td>");
+
+        writer.print("<td class=\"size\">");
+        final String size = FileUtils.byteCountToDisplaySize(entity.getSize());
+        writer.print(size);
+        writer.print("</td>");
+
+        writer.print("<td class=\"modified\">");
+        final Date lastModified = entity.getLastModified();
+        final String formattedDate = dateFormat.format(lastModified);
+        writer.print(formattedDate);
+        writer.print("</td>");
+
+        writer.print("<td class=\"operation\"></td>");
+        writer.print("</tr>");
+    }
+
+    private void writeItem(final PrintWriter writer, final WebDavEntity entity, final WebDavPath base) {
+        final WebDavPath path = entity.getPath();
+        final String link = convertToLink(base.append(path));
+
+        final String name = entity.getName();
+        final String nameHtml = StringEscapeUtils.escapeHtml4(name);
+
+        writer.print("<tr class=\"file");
+        final Optional<WebDavLock> lock = entity.getLock();
+        if (lock.isPresent()) {
+            writer.print(" lock");
+        }
+        writer.print("\">");
+
+        writer.print("<td class=\"name\"><a href=\"");
+        writer.print(link);
+        writer.print("\">");
+        writer.print(nameHtml);
+        writer.print("</a></td>");
+
+        writer.print("<td class=\"size\">");
+        final String size = FileUtils.byteCountToDisplaySize(entity.getSize());
+        writer.print(size);
+        writer.print("</td>");
+
+        writer.print("<td class=\"modified\">");
+        final Date lastModified = entity.getLastModified();
+        final String formattedDate = dateFormat.format(lastModified);
+        writer.print(formattedDate);
+        writer.print("</td>");
+
+        writer.print("<td class=\"operation\">");
+        writer.print("<a href=\"");
+        writer.print(link);
+        writer.print("\" download></a>");
+        writer.print("</td>");
+        writer.print("</tr>");
     }
 }

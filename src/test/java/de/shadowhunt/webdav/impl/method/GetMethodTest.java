@@ -98,25 +98,27 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
                 "<th class=\"name\">Name</th>", //
                 "<th class=\"size\">Size</th>", //
                 "<th class=\"modified\">Modified</th>", //
+                "<th class=\"operation\">Operations</th>", //
                 "</tr>", //
                 "</thead>", //
                 "<tbody>", //
                 "<tr class=\"folder parent\">", //
-                "<td colspan=\"3\">", //
-                "<a href=\"/webdav/\">Parent</a>", //
-                "</td>", //
+                "<td class=\"name\"><a href=\"/webdav/\">..</a></td>", //
+                "<td class=\"size\">0 bytes</td>", //
+                "<td class=\"modified\">1970-01-01 01:00:00</td>", //
+                "<td class=\"operation\"></td>", //
                 "</tr>", //
                 "<tr class=\"folder\">", //
-                "<td colspan=\"3\">", //
-                "<a href=\"/webdav/collection/\">collection</a>", //
-                "</td>", //
+                "<td class=\"name\"><a href=\"/webdav/collection/\">collection</a></td>", //
+                "<td class=\"size\">0 bytes</td>", //
+                "<td class=\"modified\">1970-01-01 01:00:00</td>", //
+                "<td class=\"operation\"></td>", //
                 "</tr>", //
                 "<tr class=\"file\">", //
-                "<td class=\"name\">", //
-                "<a href=\"/webdav/item.txt\">item.txt</a>", //
-                "</td>", //
+                "<td class=\"name\"><a href=\"/webdav/item.txt\">item.txt</a></td>", //
                 "<td class=\"size\">7 bytes</td>", //
                 "<td class=\"modified\">1970-01-01 01:00:00</td>", //
+                "<td class=\"operation\"><a href=\"/webdav/item.txt\" download></a></td>", //
                 "</tr>", //
                 "</tbody>", //
                 "</table>", //

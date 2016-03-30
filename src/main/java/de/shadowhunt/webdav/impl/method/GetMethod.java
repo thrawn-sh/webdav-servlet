@@ -59,8 +59,9 @@ public class GetMethod extends AbstractWebDavMethod {
 
         final WebDavConfig config = request.getConfig();
         if (config.isShowCollectionListings()) {
+            final WebDavEntity parent = store.getEntity(target.getParent());
             final List<WebDavEntity> entities = getEntities(store, target);
-            return new HtmlListingResponse(entity, entities, config.getCssForCollectionListings());
+            return new HtmlListingResponse(parent, entity, entities, config.getCssForCollectionListings());
         }
 
         return AbstractBasicResponse.createForbidden(entity);
