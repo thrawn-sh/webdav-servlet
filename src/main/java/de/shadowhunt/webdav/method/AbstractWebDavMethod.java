@@ -75,7 +75,7 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
     }
 
     protected int determineDepth(final WebDavRequest request) {
-        final String depth = request.getHeader("Depth", INFINITY);
+        final String depth = request.getHeader(WebDavRequest.DEPTH_HEADER, INFINITY);
         if (INFINITY.equalsIgnoreCase(depth)) {
             return Integer.MAX_VALUE;
         }

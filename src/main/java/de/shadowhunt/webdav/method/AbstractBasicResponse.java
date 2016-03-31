@@ -38,27 +38,19 @@ import org.apache.commons.lang3.time.FastDateFormat;
 
 abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
-    public static final String ALLOW_HEADER = "Allow";
-
     private static final String COLLECTION;
 
     private static final String COLLECTION_READ_ONLY;
 
-    public static final String DAV_HEADER = "DAV";
-
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     public static final String DEFAULT_ENCODING = DEFAULT_CHARSET.name();
-
-    private static final String ETAG_HEADER = "ETag";
 
     private static final FastDateFormat HTTP_DATE_FORMATTER = FastDateFormat.getInstance("EEE, dd MMM yyyy HH:mm:ss zzz");
 
     private static final String ITEM;
 
     private static final String ITEM_READ_ONLY;
-
-    public static final String MS_AUTHOR_HEADER = "MS-Author-Via";
 
     private static final String NON_EXISTING;
 
@@ -244,14 +236,14 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
         final WebDavRequest request = response.getRequest();
         final WebDavConfig config = request.getConfig();
 
-        response.addHeader(ALLOW_HEADER, getAllowedMethods(entity, config));
-        response.addHeader(DAV_HEADER, "1,2");
-        response.addHeader(MS_AUTHOR_HEADER, "DAV"); // MS required header
+        response.addHeader(WebDavResponse.ALLOW_HEADER, getAllowedMethods(entity, config));
+        response.addHeader(WebDavResponse.DAV_HEADER, "1,2");
+        response.addHeader(WebDavResponse.MS_AUTHOR_HEADER, "DAV"); // MS required header
         if (entity != null) {
             final Optional<String> etag = entity.getEtag();
-            etag.ifPresent(x -> response.addHeader(ETAG_HEADER, x));
+            etag.ifPresent(x -> response.addHeader(WebDavResponse.ETAG_HEADER, x));
 
-            response.addHeader("Last-Modified", HTTP_DATE_FORMATTER.format(entity.getLastModified()));
+            response.addHeader(WebDavResponse.LAST_MODIFIED_HEADER, HTTP_DATE_FORMATTER.format(entity.getLastModified()));
         }
         write0(response);
     }

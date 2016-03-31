@@ -52,8 +52,6 @@ public final class Precondition {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Precondition.class);
 
-    public static final String PRECONDITION_HEADER = "If";
-
     private static <R> Optional<R> evaluate(final String precondition, final AbstractAggregator<R> aggregator) {
         try {
             final CharStream stream = new ANTLRInputStream(precondition);
@@ -78,7 +76,7 @@ public final class Precondition {
     }
 
     public static Map<WebDavPath, UUID> getTokens(final WebDavRequest request) {
-        final String precondition = request.getHeader(PRECONDITION_HEADER, "");
+        final String precondition = request.getHeader(WebDavRequest.PRECONDITION_HEADER, "");
         if (StringUtils.isEmpty(precondition)) {
             return Collections.emptyMap();
         }
@@ -88,7 +86,7 @@ public final class Precondition {
     }
 
     public static boolean verify(final WebDavStore store, final WebDavRequest request) {
-        final String precondition = request.getHeader(PRECONDITION_HEADER, "");
+        final String precondition = request.getHeader(WebDavRequest.PRECONDITION_HEADER, "");
         if (StringUtils.isEmpty(precondition)) {
             return true;
         }

@@ -67,7 +67,7 @@ class HtmlListingResponse extends AbstractBasicResponse {
 
     @Override
     protected void write0(final WebDavResponse response) throws IOException {
-        response.addHeader("Cache-Control", "no-store");
+        response.addHeader(WebDavResponse.CACHE_CONTROL_HEADER, "no-store");
         response.setCharacterEncoding(DEFAULT_ENCODING);
         response.setContentType("text/html");
         response.setStatus(WebDavResponse.Status.SC_OK);

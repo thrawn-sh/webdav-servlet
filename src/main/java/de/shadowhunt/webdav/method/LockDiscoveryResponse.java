@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 import de.shadowhunt.webdav.property.PropertyIdentifier;
@@ -34,8 +35,6 @@ import de.shadowhunt.webdav.store.WebDavEntity;
 import de.shadowhunt.webdav.store.WebDavLock;
 
 class LockDiscoveryResponse extends AbstractBasicResponse {
-
-    public static final String LOCK_TOKEN = "Lock-Token";
 
     private final Status status;
 
@@ -52,7 +51,7 @@ class LockDiscoveryResponse extends AbstractBasicResponse {
         response.setCharacterEncoding(DEFAULT_ENCODING);
         response.setContentType("application/xml");
         final UUID token = lock.getToken();
-        response.addHeader(LOCK_TOKEN, "<" + WebDavLock.PREFIX + token + ">");
+        response.addHeader(WebDavRequest.LOCKTOKEN_HEADER, "<" + WebDavLock.PREFIX + token + ">");
         response.setStatus(status);
 
         try {

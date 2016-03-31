@@ -46,6 +46,18 @@ public interface WebDavResponse {
         }
     }
 
+    String ALLOW_HEADER = "Allow";
+
+    String CACHE_CONTROL_HEADER = "Cache-Control";
+
+    String DAV_HEADER = "DAV";
+
+    String ETAG_HEADER = "ETag";
+
+    String LAST_MODIFIED_HEADER = "Last-Modified";
+
+    String MS_AUTHOR_HEADER = "MS-Author-Via";
+
     void addHeader(final String name, final String value);
 
     OutputStream getOutputStream() throws IOException;
