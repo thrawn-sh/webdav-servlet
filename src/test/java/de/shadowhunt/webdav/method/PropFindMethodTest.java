@@ -217,6 +217,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop>", //
                 "<D:displayname/>", //
                 "<D:getcontentlength/>", //
+                "<D:getcontenttype/>", //
                 "<D:getetag/>", //
                 "<D:getlastmodified/>", //
                 "<D:resourcetype/>", //

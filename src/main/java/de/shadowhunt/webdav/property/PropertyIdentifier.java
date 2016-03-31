@@ -76,24 +76,24 @@ public final class PropertyIdentifier implements Comparable<PropertyIdentifier> 
         DAV_NAMESPACE = "DAV:";
         DEFAULT_DAV_PREFIX = "D";
 
-        CREATION_DATE_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "creationdate");
-        DISPLAY_NAME_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "displayname");
         CONTENT_LENGTH_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "getcontentlength");
         CONTENT_TYPE_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "getcontenttype");
+        CREATION_DATE_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "creationdate");
+        DISPLAY_NAME_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "displayname");
         ETAG_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "getetag");
         LAST_MODIFIED_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "getlastmodified");
-        RESOURCE_TYPE_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "resourcetype");
         LOCK_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "supportedlock");
+        RESOURCE_TYPE_IDENTIFIER = new PropertyIdentifier(DAV_NAMESPACE, "resourcetype");
 
         final Set<PropertyIdentifier> properties = new TreeSet<>();
+        properties.add(CONTENT_LENGTH_IDENTIFIER); // getSize
+        properties.add(CONTENT_TYPE_IDENTIFIER); // getContentType
         // properties.add(CREATION_DATE_PROPERTY); // not supported
         properties.add(DISPLAY_NAME_IDENTIFIER); // getName
-        properties.add(CONTENT_LENGTH_IDENTIFIER); // getSize
-        // properties.add(CONTENT_TYPE_PROPERTY); // not supported
         properties.add(ETAG_IDENTIFIER); // getEtag
         properties.add(LAST_MODIFIED_IDENTIFIER); // getLastModified
-        properties.add(RESOURCE_TYPE_IDENTIFIER); // getScope
         properties.add(LOCK_IDENTIFIER); // getLock
+        properties.add(RESOURCE_TYPE_IDENTIFIER); // getScope
         SUPPORTED_LIVE_PROPERTIES = Collections.unmodifiableSet(properties);
     }
 
