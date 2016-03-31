@@ -71,7 +71,7 @@ public class PropsLitmusTest extends AbstractLitmusTest {
                 "<D:prop>", //
                 "<D:displayname>litmus</D:displayname>", //
                 "<D:getcontentlength>0</D:getcontentlength>", //
-                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
+                "<D:getlastmodified>Thu, 01 Jan 1970 01:00:00 +0100</D:getlastmodified>", //
                 "<D:resourcetype>", //
                 "<D:collection/>", //
                 "</D:resourcetype>", //
@@ -150,7 +150,7 @@ public class PropsLitmusTest extends AbstractLitmusTest {
                 "<D:displayname>prop</D:displayname>", //
                 "<D:getcontentlength>32</D:getcontentlength>", //
                 "<D:getetag>0000000000</D:getetag>", //
-                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
+                "<D:getlastmodified>Thu, 01 Jan 1970 01:00:00 +0100</D:getlastmodified>", //
                 "<D:supportedlock><D:lockentry><D:lockscope><D:exclusive/></D:lockscope><D:locktype><D:write/></D:locktype></D:lockentry></D:supportedlock>", //
                 "<ns1:prop0>value0</ns1:prop0>", //
                 "<ns1:prop1>value1</ns1:prop1>", //

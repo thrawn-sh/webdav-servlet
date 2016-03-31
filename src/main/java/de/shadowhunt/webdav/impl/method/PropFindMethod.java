@@ -130,7 +130,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
 
     private static final XPathExpression ALL_EXPRESSION;
 
-    private static final FastDateFormat RFC_882_FORMATTER = FastDateFormat.getInstance("EEE, d MMM yyyy HH:mm:ss Z");
+    private static final FastDateFormat RFC_882_FORMATTER = FastDateFormat.getInstance("EEE, dd MMM yyyy HH:mm:ss Z");
 
     private static final XPathExpression NAME_EXPRESSION;
 

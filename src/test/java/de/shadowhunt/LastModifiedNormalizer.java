@@ -18,9 +18,9 @@ package de.shadowhunt;
 
 public class LastModifiedNormalizer implements ContentNormalizer {
 
-    private static final String REGEX = "<D:getlastmodified>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}</D:getlastmodified>";
+    private static final String REGEX = "<D:getlastmodified>..., \\d{2} ... \\d{4} \\d{2}:\\d{2}:\\d{2} .\\d{4}</D:getlastmodified>";
 
-    private static final String REPLACEMENT = "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>";
+    private static final String REPLACEMENT = "<D:getlastmodified>Thu, 01 Jan 1970 01:00:00 +0100</D:getlastmodified>";
 
     @Override
     public String normalize(final String content) {

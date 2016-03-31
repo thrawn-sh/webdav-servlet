@@ -184,7 +184,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:displayname>item.txt</D:displayname>", //
                 "<D:getcontentlength>7</D:getcontentlength>", //
                 "<D:getetag>0000000000</D:getetag>", //
-                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
+                "<D:getlastmodified>Thu, 01 Jan 1970 01:00:00 +0100</D:getlastmodified>", //
                 "<D:supportedlock><D:lockentry><D:lockscope><D:exclusive/></D:lockscope><D:locktype><D:write/></D:locktype></D:lockentry></D:supportedlock>", //
                 "<ns1:foo>bar_foo_content</ns1:foo>", //
                 "<ns2:bar>foo_bar_content</ns2:bar>", //
@@ -254,7 +254,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop>", //
                 "<D:displayname>collection</D:displayname>", //
                 "<D:getcontentlength>0</D:getcontentlength>", //
-                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
+                "<D:getlastmodified>Thu, 01 Jan 1970 01:00:00 +0100</D:getlastmodified>", //
                 "<D:resourcetype>", //
                 "<D:collection/>", //
                 "</D:resourcetype>", //
@@ -272,7 +272,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:displayname>item.txt</D:displayname>", //
                 "<D:getcontentlength>4</D:getcontentlength>", //
                 "<D:getetag>0000000000</D:getetag>", //
-                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
+                "<D:getlastmodified>Thu, 01 Jan 1970 01:00:00 +0100</D:getlastmodified>", //
                 "<D:supportedlock>", //
                 "<D:lockentry>", //
                 "<D:lockscope>", //
@@ -296,7 +296,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
                 "<D:prop>", //
                 "<D:displayname>level1</D:displayname>", //
                 "<D:getcontentlength>0</D:getcontentlength>", //
-                "<D:getlastmodified>1970-01-01 01:00:00</D:getlastmodified>", //
+                "<D:getlastmodified>Thu, 01 Jan 1970 01:00:00 +0100</D:getlastmodified>", //
                 "<D:resourcetype>", //
                 "<D:collection/>", //
                 "</D:resourcetype>", //
