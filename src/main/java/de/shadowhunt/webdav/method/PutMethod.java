@@ -38,7 +38,7 @@ public class PutMethod extends AbstractWebDavMethod {
         final WebDavPath path = request.getPath();
         if (store.exists(path)) {
             final WebDavEntity entity = store.getEntity(path);
-            final Map<WebDavPath, UUID> tokens = deterimineLockTokens(request);
+            final Map<WebDavPath, UUID> tokens = determineLockTokens(request);
             checkUp(store, path, tokens);
 
             if (entity.getType() == WebDavEntity.Type.COLLECTION) {

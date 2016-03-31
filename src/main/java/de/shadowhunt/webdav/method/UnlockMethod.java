@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class UnlockMethod extends AbstractWebDavMethod {
 
-    protected Optional<UUID> deterimineLockToken(final WebDavRequest request) {
+    protected Optional<UUID> determineLockToken(final WebDavRequest request) {
         String token = request.getHeader(LockDiscoveryResponse.LOCK_TOKEN, "");
         if (StringUtils.isBlank(token)) {
             return Optional.empty();
@@ -72,19 +72,19 @@ public class UnlockMethod extends AbstractWebDavMethod {
             return AbstractBasicResponse.createBadRequest(entity);
         }
 
-        final Optional<UUID> token = deterimineLockToken(request);
+        final Optional<UUID> token = determineLockToken(request);
         if (!token.isPresent()) {
             return AbstractBasicResponse.createLocked(entity);
         }
 
         final WebDavLock webdavLock = lock.get();
-        unlockRecurively(store, webdavLock.getRoot());
+        unlockRecursively(store, webdavLock.getRoot());
         return AbstractBasicResponse.createNoContent(entity);
     }
 
-    private void unlockRecurively(final WebDavStore store, final WebDavPath path) {
+    private void unlockRecursively(final WebDavStore store, final WebDavPath path) {
         for (final WebDavPath child : store.list(path)) {
-            unlockRecurively(store, child);
+            unlockRecursively(store, child);
         }
         store.unlock(path);
     }

@@ -46,7 +46,7 @@ class PreconditionValidator extends AbstractAggregator<Boolean> {
 
     static final UUID UUID_ZERO = new UUID(0L, 0L);
 
-    private final ParseTreeProperty<Boolean> evaluatuion = new ParseTreeProperty<>();
+    private final ParseTreeProperty<Boolean> evaluation = new ParseTreeProperty<>();
 
     private final ParseTreeProperty<WebDavPath> paths = new ParseTreeProperty<>();
 
@@ -85,7 +85,7 @@ class PreconditionValidator extends AbstractAggregator<Boolean> {
 
     private boolean evaluateListContexts(final List<ListContext> contexts) {
         for (final ListContext context : contexts) {
-            if (evaluatuion.get(context)) {
+            if (evaluation.get(context)) {
                 return true;
             }
         }
@@ -95,34 +95,34 @@ class PreconditionValidator extends AbstractAggregator<Boolean> {
     @Override
     public void exitCondition(final ConditionContext ctx) {
         final MatchContext match = ctx.match();
-        final boolean result = evaluatuion.get(match);
+        final boolean result = evaluation.get(match);
         if (ctx.NOT() == null) {
-            evaluatuion.put(ctx, result);
+            evaluation.put(ctx, result);
         } else {
-            evaluatuion.put(ctx, !result);
+            evaluation.put(ctx, !result);
         }
     }
 
     @Override
     public void exitExplicitResourceList(final ExplicitResourceListContext ctx) {
         final boolean result = evaluateListContexts(ctx.list());
-        evaluatuion.put(ctx, result);
+        evaluation.put(ctx, result);
     }
 
     @Override
     public void exitImplicitResourceList(final ImplicitResourceListContext ctx) {
         final boolean result = evaluateListContexts(ctx.list());
-        evaluatuion.put(ctx, result);
+        evaluation.put(ctx, result);
     }
 
     @Override
     public void exitList(final ListContext ctx) {
         boolean result = true;
         for (final ConditionContext context : ctx.condition()) {
-            final boolean conditionResult = evaluatuion.get(context);
+            final boolean conditionResult = evaluation.get(context);
             result &= conditionResult;
         }
-        evaluatuion.put(ctx, result);
+        evaluation.put(ctx, result);
     }
 
     @Override
@@ -131,12 +131,12 @@ class PreconditionValidator extends AbstractAggregator<Boolean> {
         final WebDavPath path = paths.get(parent);
         if (path == null) {
             // explicitResourceList where the resource does not belong to the store
-            evaluatuion.put(ctx, false);
+            evaluation.put(ctx, false);
             return;
         }
 
         if (!store.exists(path)) {
-            evaluatuion.put(ctx, false);
+            evaluation.put(ctx, false);
             return;
         }
 
@@ -150,10 +150,10 @@ class PreconditionValidator extends AbstractAggregator<Boolean> {
         }
 
         if (result.isPresent()) {
-            evaluatuion.put(ctx, result.get());
+            evaluation.put(ctx, result.get());
         } else {
             // fallback
-            evaluatuion.put(ctx, false);
+            evaluation.put(ctx, false);
         }
     }
 
@@ -176,7 +176,7 @@ class PreconditionValidator extends AbstractAggregator<Boolean> {
         final int children = context.getChildCount();
         for (int c = 0; c < children; c++) {
             final ParseTree child = context.getChild(c);
-            if (evaluatuion.get(child)) {
+            if (evaluation.get(child)) {
                 return Optional.of(Boolean.TRUE);
             }
         }

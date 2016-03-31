@@ -24,7 +24,7 @@ import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.store.WebDavEntity;
 import de.shadowhunt.webdav.store.WebDavLock;
 
-class FileSystemEntiy implements WebDavEntity {
+class FileSystemEntity implements WebDavEntity {
 
     private final String etag;
 
@@ -42,7 +42,7 @@ class FileSystemEntiy implements WebDavEntity {
 
     private final Type type;
 
-    FileSystemEntiy(final WebDavPath path, final Date lastModified, final Optional<WebDavLock> lock) {
+    FileSystemEntity(final WebDavPath path, final Date lastModified, final Optional<WebDavLock> lock) {
         this.etag = null;
         this.hash = null;
         this.lastModified = new Date(lastModified.getTime());
@@ -53,7 +53,7 @@ class FileSystemEntiy implements WebDavEntity {
         this.type = Type.COLLECTION;
     }
 
-    FileSystemEntiy(final WebDavPath path, final String hash, final Date lastModified, final long size, final String mimeType, final Optional<WebDavLock> lock, final String etag) {
+    FileSystemEntity(final WebDavPath path, final String hash, final Date lastModified, final long size, final String mimeType, final Optional<WebDavLock> lock, final String etag) {
         this.etag = Objects.requireNonNull(etag, "etag must not be null");
         this.hash = Objects.requireNonNull(hash, "hash must not be null");
         this.lastModified = new Date(lastModified.getTime());
@@ -84,7 +84,7 @@ class FileSystemEntiy implements WebDavEntity {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final FileSystemEntiy other = (FileSystemEntiy) obj;
+        final FileSystemEntity other = (FileSystemEntity) obj;
         if (path == null) {
             if (other.path != null) {
                 return false;
@@ -154,6 +154,6 @@ class FileSystemEntiy implements WebDavEntity {
 
     @Override
     public String toString() {
-        return "FileSystemEntiy [path=" + path + ", type=" + type + ", etag=" + etag + ", hash=" + hash + ", lastModified=" + lastModified + ", lock=" + lock + ", mimeType=" + mimeType + ", size=" + size + "]";
+        return "FileSystemEntity [path=" + path + ", type=" + type + ", etag=" + etag + ", hash=" + hash + ", lastModified=" + lastModified + ", lock=" + lock + ", mimeType=" + mimeType + ", size=" + size + "]";
     }
 }

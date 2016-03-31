@@ -56,26 +56,26 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
         final UnlockMethod method = new UnlockMethod();
 
         Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn(null);
-        Assert.assertEquals("must match", Optional.empty(), method.deterimineLockToken(request));
+        Assert.assertEquals("must match", Optional.empty(), method.determineLockToken(request));
 
         Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn("");
-        Assert.assertEquals("must match", Optional.empty(), method.deterimineLockToken(request));
+        Assert.assertEquals("must match", Optional.empty(), method.determineLockToken(request));
 
         Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn("<test");
-        Assert.assertEquals("must match", Optional.empty(), method.deterimineLockToken(request));
+        Assert.assertEquals("must match", Optional.empty(), method.determineLockToken(request));
 
         Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn("test>");
-        Assert.assertEquals("must match", Optional.empty(), method.deterimineLockToken(request));
+        Assert.assertEquals("must match", Optional.empty(), method.determineLockToken(request));
 
         Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn("<test>");
-        Assert.assertEquals("must match", Optional.empty(), method.deterimineLockToken(request));
+        Assert.assertEquals("must match", Optional.empty(), method.determineLockToken(request));
 
         Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn("<" + WebDavLock.PREFIX + "test>");
-        Assert.assertEquals("must match", Optional.empty(), method.deterimineLockToken(request));
+        Assert.assertEquals("must match", Optional.empty(), method.determineLockToken(request));
 
         final UUID uuid = UUID.randomUUID();
         Mockito.when(request.getHeader(Matchers.eq(LockDiscoveryResponse.LOCK_TOKEN), Matchers.anyString())).thenReturn("<" + WebDavLock.PREFIX + uuid + ">");
-        Assert.assertEquals("must match", Optional.of(uuid), method.deterimineLockToken(request));
+        Assert.assertEquals("must match", Optional.of(uuid), method.determineLockToken(request));
     }
 
     @Test

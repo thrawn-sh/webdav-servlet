@@ -100,7 +100,7 @@ public class FileSystemStore implements WebDavStore {
         }
 
         final Set<SupportedLock> locks = new TreeSet<>();
-        locks.add(SupportedLock.EXCLUSIV_WRITE_LOCK);
+        locks.add(SupportedLock.EXCLUSIVE_WRITE_LOCK);
         supportedLocks = Collections.unmodifiableSet(locks);
     }
 
@@ -277,9 +277,9 @@ public class FileSystemStore implements WebDavStore {
                 final long size = calculateSize(file, path);
                 final String etag = calculateEtag(path);
                 final String mimeType = MIME_TYPES.getContentType(file);
-                return new FileSystemEntiy(path, hash, lastModified, size, mimeType, lock, etag);
+                return new FileSystemEntity(path, hash, lastModified, size, mimeType, lock, etag);
             }
-            return new FileSystemEntiy(path, lastModified, lock);
+            return new FileSystemEntity(path, lastModified, lock);
         }
     }
 

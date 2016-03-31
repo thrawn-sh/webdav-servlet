@@ -24,7 +24,7 @@ import de.shadowhunt.webdav.store.WebDavLock.LockType;
 @Immutable
 public class SupportedLock implements Comparable<SupportedLock> {
 
-    public static final SupportedLock EXCLUSIV_WRITE_LOCK = new SupportedLock(LockScope.EXCLUSIVE, LockType.WRITE);
+    public static final SupportedLock EXCLUSIVE_WRITE_LOCK = new SupportedLock(LockScope.EXCLUSIVE, LockType.WRITE);
 
     private final LockScope scope;
 

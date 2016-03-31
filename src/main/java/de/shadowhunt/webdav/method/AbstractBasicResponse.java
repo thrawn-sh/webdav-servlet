@@ -52,7 +52,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
     private static final String ETAG_HEADER = "ETag";
 
-    private static final FastDateFormat HTTP_DATE_FORMATER = FastDateFormat.getInstance("EEE, dd MMM yyyy HH:mm:ss zzz");
+    private static final FastDateFormat HTTP_DATE_FORMATTER = FastDateFormat.getInstance("EEE, dd MMM yyyy HH:mm:ss zzz");
 
     private static final String ITEM;
 
@@ -251,7 +251,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
             final Optional<String> etag = entity.getEtag();
             etag.ifPresent(x -> response.addHeader(ETAG_HEADER, x));
 
-            response.addHeader("Last-Modified", HTTP_DATE_FORMATER.format(entity.getLastModified()));
+            response.addHeader("Last-Modified", HTTP_DATE_FORMATTER.format(entity.getLastModified()));
         }
         write0(response);
     }

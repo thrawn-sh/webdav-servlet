@@ -70,7 +70,7 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
         checkUp(store, path.getParent(), tokens);
     }
 
-    protected Map<WebDavPath, UUID> deterimineLockTokens(final WebDavRequest request) {
+    protected Map<WebDavPath, UUID> determineLockTokens(final WebDavRequest request) {
         return Precondition.getTokens(request);
     }
 

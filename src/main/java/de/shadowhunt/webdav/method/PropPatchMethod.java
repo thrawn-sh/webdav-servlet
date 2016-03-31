@@ -96,7 +96,7 @@ public class PropPatchMethod extends AbstractWebDavMethod {
         }
 
         final WebDavEntity entity = store.getEntity(path);
-        checkUp(store, path, deterimineLockTokens(request));
+        checkUp(store, path, determineLockTokens(request));
 
         final Document document = PropertiesMessageHelper.parse(request.getInputStream());
         if (document == null) {

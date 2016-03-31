@@ -78,7 +78,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
             return AbstractBasicResponse.createNotFound();
         }
 
-        final Map<WebDavPath, UUID> tokens = deterimineLockTokens(request);
+        final Map<WebDavPath, UUID> tokens = determineLockTokens(request);
 
         final WebDavEntity sourceEntity = store.getEntity(source);
 

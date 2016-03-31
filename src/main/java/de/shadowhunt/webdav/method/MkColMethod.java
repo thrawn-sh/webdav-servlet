@@ -65,7 +65,7 @@ public class MkColMethod extends AbstractWebDavMethod {
         }
 
         if (!store.exists(path)) {
-            checkUp(store, parent, deterimineLockTokens(request));
+            checkUp(store, parent, determineLockTokens(request));
             store.createCollection(path);
             final WebDavEntity entity = store.getEntity(path);
             return AbstractBasicResponse.createCreated(entity);
