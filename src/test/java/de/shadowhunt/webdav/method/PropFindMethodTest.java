@@ -43,15 +43,15 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
     @BeforeClass
     public static void fillStore() {
-        createItem(EXISITING_COLLECTION.append(WebDavPath.create("/item.txt")), "test", true);
-        createCollection(EXISITING_COLLECTION.append(WebDavPath.create("/level1/level2")), false);
+        createItem(EXISTING_COLLECTION.append(WebDavPath.create("/item.txt")), "test", true);
+        createCollection(EXISTING_COLLECTION.append(WebDavPath.create("/level1/level2")), false);
     }
 
     @Test
     public void test00_missing() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NOT_FOUND);
@@ -62,7 +62,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         final WebDavMethod method = new PropFindMethod();
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_FORBIDDEN);
@@ -74,7 +74,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><bad:a xmlns:bad=\"foo:\"/>".getBytes()));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_BAD_REQUEST);
@@ -85,7 +85,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         final WebDavMethod method = new PropFindMethod();
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_BAD_REQUEST);
@@ -99,7 +99,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"/>".getBytes()));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_BAD_REQUEST);
@@ -113,7 +113,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><prop xmlns:t=\"missing\"><t:foo/></prop></propfind>".getBytes()));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
@@ -141,7 +141,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><prop xmlns:t=\"foo\"><t:foo/></prop></propfind>".getBytes()));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
@@ -169,7 +169,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><allprop/></propfind>".getBytes()));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
@@ -204,7 +204,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><propname/></propfind>".getBytes()));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);
@@ -241,7 +241,7 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("1");
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><allprop/></propfind>".getBytes()));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_MULTISTATUS);

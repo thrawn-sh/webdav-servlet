@@ -83,24 +83,24 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new UnlockMethod();
 
-        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
     @Test
-    public void test01_exisitingNotLocked() throws Exception {
+    public void test01_existingNotLocked() throws Exception {
         final WebDavMethod method = new UnlockMethod();
 
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_BAD_REQUEST);
     }
 
     @Test
-    public void test02_exisitingLocked_lock() throws Exception {
+    public void test02_existingLocked_lock() throws Exception {
         final WebDavMethod method = new UnlockMethod();
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(true);
@@ -112,7 +112,7 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test02_exisitingLocked_unlock() throws Exception {
+    public void test02_existingLocked_unlock() throws Exception {
         final WebDavMethod method = new UnlockMethod();
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(true);

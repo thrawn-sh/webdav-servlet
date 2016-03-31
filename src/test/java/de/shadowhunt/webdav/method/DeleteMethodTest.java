@@ -40,25 +40,25 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
         final WebDavMethod method = new DeleteMethod();
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
-        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
     @Test
-    public void test01_exisitingItem() throws Exception {
+    public void test01_existingItem() throws Exception {
         final WebDavMethod method = new DeleteMethod();
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NO_CONTENT);
     }
 
     @Test
-    public void test02_exisitingCollection() throws Exception {
+    public void test02_existingCollection() throws Exception {
         final WebDavPath root = WebDavPath.create(UUID.randomUUID().toString());
         createItem(root.append("item.txt"), "test", false);
         createItem(root.append("collection/item.txt"), "test", false);
@@ -73,7 +73,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test(expected = WebDavException.class)
-    public void test03_exisitingCollection_not_enough_depth() throws Exception {
+    public void test03_existingCollection_not_enough_depth() throws Exception {
         final WebDavPath root = WebDavPath.create(UUID.randomUUID().toString());
         createItem(root.append("item.txt"), "test", false);
         final WebDavMethod method = new DeleteMethod();
@@ -88,7 +88,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test03_exisitingRootCollection() throws Exception {
+    public void test03_existingRootCollection() throws Exception {
         final WebDavMethod method = new DeleteMethod();
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(false);

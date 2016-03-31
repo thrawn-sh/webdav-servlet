@@ -35,7 +35,7 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new MkColMethod();
 
-        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CREATED);
@@ -54,20 +54,20 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test02_exisitingItem() throws Exception {
+    public void test02_existingItem() throws Exception {
         final WebDavMethod method = new MkColMethod();
 
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_METHOD_NOT_ALLOWED);
     }
 
     @Test
-    public void test03_exisitingCollection() throws Exception {
+    public void test03_existingCollection() throws Exception {
         final WebDavMethod method = new MkColMethod();
 
-        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_METHOD_NOT_ALLOWED);
@@ -78,7 +78,7 @@ public class MkColMethodTest extends AbstractWebDavMethodTest {
         final WebDavMethod method = new MkColMethod();
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("test".getBytes()));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_UNSUPPORTED_MEDIA_TYPE);

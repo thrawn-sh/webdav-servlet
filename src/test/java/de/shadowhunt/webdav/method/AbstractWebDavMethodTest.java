@@ -48,11 +48,11 @@ import org.mockito.MockitoAnnotations;
 
 public abstract class AbstractWebDavMethodTest {
 
-    protected static final WebDavPath EXISITING_COLLECTION = WebDavPath.create("/collection");
+    protected static final WebDavPath EXISTING_COLLECTION = WebDavPath.create("/collection");
 
-    protected static final WebDavPath EXISITING_ITEM = WebDavPath.create("/item.txt");
+    protected static final WebDavPath EXISTING_ITEM = WebDavPath.create("/item.txt");
 
-    protected static final WebDavPath NON_EXISITING = WebDavPath.create("/non_exisiting.txt");
+    protected static final WebDavPath NON_EXISTING = WebDavPath.create("/non_existing.txt");
 
     private static File root;
 
@@ -99,9 +99,9 @@ public abstract class AbstractWebDavMethodTest {
 
     protected static WebDavLock ensureLocked(final WebDavPath path) {
         final WebDavEntity entity = store.getEntity(path);
-        final Optional<WebDavLock> exisitingLock = entity.getLock();
-        if (exisitingLock.isPresent()) {
-            return exisitingLock.get();
+        final Optional<WebDavLock> existingLock = entity.getLock();
+        if (existingLock.isPresent()) {
+            return existingLock.get();
         }
 
         final WebDavLockBuilder lockBuilder = store.createLockBuilder();
@@ -116,8 +116,8 @@ public abstract class AbstractWebDavMethodTest {
         root = new File(new File(FileUtils.getTempDirectory(), "webdav-servlet-test"), UUID.randomUUID().toString());
         store = new FileSystemStore(root, true);
 
-        createCollection(EXISITING_COLLECTION, false);
-        createItem(EXISITING_ITEM, "example", false);
+        createCollection(EXISTING_COLLECTION, false);
+        createItem(EXISTING_ITEM, "example", false);
     }
 
     private static void setProperties(final WebDavPath path) {

@@ -51,19 +51,19 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new GetMethod();
 
-        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
     @Test
-    public void test01_exisitingItem() throws Exception {
+    public void test01_existingItem() throws Exception {
         final WebDavMethod method = new GetMethod();
 
         final String content = "example";
 
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_OK);
@@ -73,7 +73,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test02_exisitingCollectionListing() throws Exception {
+    public void test02_existingCollectionListing() throws Exception {
         final WebDavMethod method = new GetMethod();
 
         Mockito.when(config.getCssForCollectionListings()).thenReturn(Optional.empty());
@@ -127,12 +127,12 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test02_exisitingCollectionNoListing() throws Exception {
+    public void test02_existingCollectionNoListing() throws Exception {
         final WebDavMethod method = new GetMethod();
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(false);
 
-        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_FORBIDDEN);

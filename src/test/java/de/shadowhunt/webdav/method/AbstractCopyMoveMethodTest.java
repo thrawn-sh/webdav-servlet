@@ -45,14 +45,14 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
     public void test00_missingSource() throws Exception {
         final WebDavMethod method = createMethod();
 
-        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NOT_FOUND);
     }
 
     @Test
-    public void test01_exisitingSourceItem_missingTargetItem() throws Exception {
+    public void test01_existingSourceItem_missingTargetItem() throws Exception {
         final WebDavMethod method = createMethod();
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
@@ -64,7 +64,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
     }
 
     @Test
-    public void test01_exisitingSourceItem_missingTargetParent() throws Exception {
+    public void test01_existingSourceItem_missingTargetParent() throws Exception {
         final WebDavMethod method = createMethod();
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
@@ -76,7 +76,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
     }
 
     @Test
-    public void test02_exisitingSourceItem_exisitingTargetItem_noOverride() throws Exception {
+    public void test02_existingSourceItem_existingTargetItem_noOverride() throws Exception {
         final WebDavMethod method = createMethod();
 
         final WebDavPath target = WebDavPath.create("/target_item-02.txt");
@@ -92,7 +92,7 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
     }
 
     @Test
-    public void test03_exisitingSourceItem_exisitingTargetItem_override() throws Exception {
+    public void test03_existingSourceItem_existingTargetItem_override() throws Exception {
         final WebDavMethod method = createMethod();
 
         final WebDavPath target = WebDavPath.create("/target_item-03.txt");

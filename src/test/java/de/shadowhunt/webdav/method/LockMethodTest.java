@@ -63,7 +63,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
         final WebDavMethod method = new LockMethod();
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.TIMEOUT_HEADER), Matchers.anyString())).thenReturn(LockMethod.INFINITE);
-        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_CREATED);
@@ -79,7 +79,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:owner></D:owner>", //
                 "<D:timeout>Infinite</D:timeout>", //
                 "<D:locktoken><D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href></D:locktoken>", //
-                "<D:lockroot><D:href>/non_exisiting.txt</D:href></D:lockroot>", //
+                "<D:lockroot><D:href>/non_existing.txt</D:href></D:lockroot>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //
                 "</D:prop>", //
@@ -88,11 +88,11 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test01_exisitingNotLocked() throws Exception {
+    public void test01_existingNotLocked() throws Exception {
         final WebDavMethod method = new LockMethod();
 
         Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.TIMEOUT_HEADER), Matchers.anyString())).thenReturn(LockMethod.INFINITE);
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertBasicRequirements(response, Status.SC_OK);
@@ -117,7 +117,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test01_exisitingNotLocked_complete_body() throws Exception {
+    public void test01_existingNotLocked_complete_body() throws Exception {
         final WebDavPath path = WebDavPath.create(UUID.randomUUID() + ".txt");
         final WebDavEntity item = createItem(path, "test", false);
         final WebDavMethod method = new LockMethod();
@@ -156,7 +156,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test01_exisitingNotLocked_incomplete_body() throws Exception {
+    public void test01_existingNotLocked_incomplete_body() throws Exception {
         final WebDavPath path = WebDavPath.create(UUID.randomUUID() + ".txt");
         final WebDavEntity item = createItem(path, "test", false);
         final WebDavMethod method = new LockMethod();
@@ -191,7 +191,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test02_exisitingLocked() throws Exception {
+    public void test02_existingLocked() throws Exception {
         final WebDavMethod method = new LockMethod();
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(true);

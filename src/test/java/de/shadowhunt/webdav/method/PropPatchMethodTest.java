@@ -35,7 +35,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new PropPatchMethod();
 
-        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NOT_FOUND);
@@ -45,7 +45,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
     public void test01_missing_request_body() throws Exception {
         final WebDavMethod method = new PropPatchMethod();
 
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_BAD_REQUEST);
@@ -65,7 +65,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
                 "</propertyupdate>");
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CREATED);
@@ -85,7 +85,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
                 "</propertyupdate>");
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CREATED);
@@ -105,7 +105,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
                 "</propertyupdate>");
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CREATED);
@@ -125,7 +125,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
                 "</propertyupdate>");
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CREATED);

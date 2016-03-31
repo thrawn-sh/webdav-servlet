@@ -35,28 +35,28 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
         final WebDavMethod method = new PutMethod();
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("put_test".getBytes()));
-        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CREATED);
     }
 
     @Test
-    public void test01_exisitingItem() throws Exception {
+    public void test01_existingItem() throws Exception {
         final WebDavMethod method = new PutMethod();
 
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("put_test".getBytes()));
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_CREATED);
     }
 
     @Test
-    public void test02_exisitingCollection() throws Exception {
+    public void test02_existingCollection() throws Exception {
         final WebDavMethod method = new PutMethod();
 
-        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_METHOD_NOT_ALLOWED);

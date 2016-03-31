@@ -36,7 +36,7 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(config.isReadOnly()).thenReturn(true);
 
-        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NO_CONTENT);
@@ -49,7 +49,7 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(config.isReadOnly()).thenReturn(false);
 
-        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NO_CONTENT);
@@ -57,12 +57,12 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test01_exisitingItemReadOnly() throws Exception {
+    public void test01_existingItemReadOnly() throws Exception {
         final WebDavMethod method = new OptionsMethod();
 
         Mockito.when(config.isReadOnly()).thenReturn(true);
 
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NO_CONTENT);
@@ -70,12 +70,12 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test01_exisitingItemWritable() throws Exception {
+    public void test01_existingItemWritable() throws Exception {
         final WebDavMethod method = new OptionsMethod();
 
         Mockito.when(config.isReadOnly()).thenReturn(false);
 
-        Mockito.when(request.getPath()).thenReturn(EXISITING_ITEM);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NO_CONTENT);
@@ -83,12 +83,12 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test02_exisitingCollectionReadOnly() throws Exception {
+    public void test02_existingCollectionReadOnly() throws Exception {
         final WebDavMethod method = new OptionsMethod();
 
         Mockito.when(config.isReadOnly()).thenReturn(true);
 
-        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NO_CONTENT);
@@ -96,12 +96,12 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
     }
 
     @Test
-    public void test02_exisitingCollectionWritable() throws Exception {
+    public void test02_existingCollectionWritable() throws Exception {
         final WebDavMethod method = new OptionsMethod();
 
         Mockito.when(config.isReadOnly()).thenReturn(false);
 
-        Mockito.when(request.getPath()).thenReturn(EXISITING_COLLECTION);
+        Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.SC_NO_CONTENT);

@@ -52,7 +52,7 @@ import org.mockito.MockitoAnnotations;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PreconditionTest {
 
-    private static final String FOREIGN_RESOURCE = "http://www.example.net/webdav/non_exisiting.txt";
+    private static final String FOREIGN_RESOURCE = "http://www.example.net/webdav/non_existing.txt";
 
     private static final WebDavPath ITEM = WebDavPath.create("item.txt");
 
@@ -62,9 +62,9 @@ public class PreconditionTest {
 
     private static final String LOCKED_RESOURCE = "http://127.0.0.1:8080/webdav/locked.txt";
 
-    private static final WebDavPath NON_EXISITING = WebDavPath.create("non_exisiting.txt");
+    private static final WebDavPath NON_EXISTING = WebDavPath.create("non_existing.txt");
 
-    private static final String NON_EXISITING_RESOURCE = "http://127.0.0.1:8080/webdav/non_exisiting.txt";
+    private static final String NON_EXISTING_RESOURCE = "http://127.0.0.1:8080/webdav/non_existing.txt";
 
     private static File root;
 
@@ -108,7 +108,7 @@ public class PreconditionTest {
         Mockito.when(request.toPath(Matchers.eq(FOREIGN_RESOURCE))).thenReturn(Optional.empty());
         Mockito.when(request.toPath(Matchers.eq(ITEM_RESOURCE))).thenReturn(Optional.of(ITEM));
         Mockito.when(request.toPath(Matchers.eq(LOCKED_RESOURCE))).thenReturn(Optional.of(LOCKED_ITEM));
-        Mockito.when(request.toPath(Matchers.eq(NON_EXISITING_RESOURCE))).thenReturn(Optional.of(NON_EXISITING));
+        Mockito.when(request.toPath(Matchers.eq(NON_EXISTING_RESOURCE))).thenReturn(Optional.of(NON_EXISTING));
     }
 
     @Test
@@ -131,8 +131,8 @@ public class PreconditionTest {
     }
 
     @Test
-    public void test_00_explicit_non_exisiting() throws Exception {
-        final String precondition = "<" + NON_EXISITING_RESOURCE + "> (<DAV:no-lock>)";
+    public void test_00_explicit_non_existing() throws Exception {
+        final String precondition = "<" + NON_EXISTING_RESOURCE + "> (<DAV:no-lock>)";
         Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
         Assert.assertFalse(Precondition.verify(store, request));
         Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
@@ -150,10 +150,10 @@ public class PreconditionTest {
     }
 
     @Test
-    public void test_00_implicit_non_exisiting() throws Exception {
+    public void test_00_implicit_non_existing() throws Exception {
         final String precondition = "(<DAV:no-lock>)";
         Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
-        Mockito.when(request.getPath()).thenReturn(NON_EXISITING);
+        Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
         Assert.assertFalse(Precondition.verify(store, request));
         Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertFalse(Precondition.verify(store, request));
