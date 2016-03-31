@@ -22,7 +22,7 @@ import java.security.Principal;
 import java.util.Optional;
 import java.util.UUID;
 
-import de.shadowhunt.webdav.WebDavMethod.Method;
+import de.shadowhunt.webdav.method.WebDavMethod.Method;
 
 public interface WebDavRequest {
 

@@ -22,11 +22,8 @@ import java.util.UUID;
 
 import javax.annotation.CheckForNull;
 
-import de.shadowhunt.webdav.WebDavEntity;
-import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.precondition.PreconditionParser.ConditionContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.EtagContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.ExplicitResourceListContext;
@@ -36,6 +33,9 @@ import de.shadowhunt.webdav.precondition.PreconditionParser.LockContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.MatchContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.PreconditionContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.ResourceContext;
+import de.shadowhunt.webdav.store.WebDavEntity;
+import de.shadowhunt.webdav.store.WebDavLock;
+import de.shadowhunt.webdav.store.WebDavStore;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;

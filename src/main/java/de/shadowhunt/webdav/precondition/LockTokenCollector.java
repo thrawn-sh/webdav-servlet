@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.precondition.PreconditionParser.ConditionContext;
@@ -32,6 +31,7 @@ import de.shadowhunt.webdav.precondition.PreconditionParser.LockContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.MatchContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.PreconditionContext;
 import de.shadowhunt.webdav.precondition.PreconditionParser.ResourceContext;
+import de.shadowhunt.webdav.store.WebDavLock;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;

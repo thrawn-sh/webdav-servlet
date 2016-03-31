@@ -29,17 +29,17 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import de.shadowhunt.webdav.WebDavEntity;
-import de.shadowhunt.webdav.WebDavLock;
-import de.shadowhunt.webdav.WebDavLock.LockScope;
-import de.shadowhunt.webdav.WebDavLock.LockType;
-import de.shadowhunt.webdav.WebDavLockBuilder;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 import de.shadowhunt.webdav.property.PropertyIdentifier;
+import de.shadowhunt.webdav.store.WebDavEntity;
+import de.shadowhunt.webdav.store.WebDavLock;
+import de.shadowhunt.webdav.store.WebDavLockBuilder;
+import de.shadowhunt.webdav.store.WebDavStore;
+import de.shadowhunt.webdav.store.WebDavLock.LockScope;
+import de.shadowhunt.webdav.store.WebDavLock.LockType;
 import de.shadowhunt.webdav.WebDavResponseWriter;
-import de.shadowhunt.webdav.WebDavStore;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;

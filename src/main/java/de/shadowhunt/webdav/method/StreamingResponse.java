@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.store.WebDavEntity;
 
 import org.apache.commons.io.IOUtils;
 

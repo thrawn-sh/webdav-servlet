@@ -19,8 +19,6 @@ package de.shadowhunt.webdav.property;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import de.shadowhunt.webdav.WebDavProperty;
-
 import org.apache.commons.lang3.StringUtils;
 
 public abstract class AbstractWebDavProperty implements WebDavProperty, Comparable<WebDavProperty> {

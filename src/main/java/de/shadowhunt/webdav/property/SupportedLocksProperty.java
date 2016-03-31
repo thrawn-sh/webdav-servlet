@@ -22,9 +22,9 @@ import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import de.shadowhunt.webdav.WebDavLock.LockScope;
-import de.shadowhunt.webdav.WebDavLock.LockType;
-import de.shadowhunt.webdav.WebDavStore.SupportedLock;
+import de.shadowhunt.webdav.store.SupportedLock;
+import de.shadowhunt.webdav.store.WebDavLock.LockScope;
+import de.shadowhunt.webdav.store.WebDavLock.LockType;
 
 public class SupportedLocksProperty extends AbstractWebDavProperty {
 

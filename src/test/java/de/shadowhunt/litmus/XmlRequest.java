@@ -36,9 +36,9 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavException;
-import de.shadowhunt.webdav.WebDavMethod.Method;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
+import de.shadowhunt.webdav.method.WebDavMethod.Method;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

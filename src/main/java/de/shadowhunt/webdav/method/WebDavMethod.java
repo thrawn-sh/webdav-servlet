@@ -14,20 +14,35 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav;
+package de.shadowhunt.webdav.method;
+
+import java.io.IOException;
 
 import javax.annotation.concurrent.Immutable;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
-import de.shadowhunt.webdav.property.PropertyIdentifier;
+import de.shadowhunt.webdav.WebDavRequest;
+import de.shadowhunt.webdav.WebDavResponseWriter;
+import de.shadowhunt.webdav.store.WebDavStore;
 
 @Immutable
-public interface WebDavProperty {
+public interface WebDavMethod {
 
-    PropertyIdentifier getIdentifier();
+    enum Method {
+        COPY(false), DELETE(false), GET(true), HEAD(true), LOCK(false), MKCOL(false), MOVE(false), OPTIONS(true), PROPFIND(true), PROPPATCH(false), PUT(false), UNLOCK(false);
 
-    String getValue();
+        private final boolean readOnly;
 
-    void write(final XMLStreamWriter writer) throws XMLStreamException;
+        Method(final boolean readOnly) {
+            this.readOnly = readOnly;
+        }
+
+        public boolean isReadOnly() {
+            return readOnly;
+        }
+    }
+
+    Method getMethod();
+
+    WebDavResponseWriter service(WebDavStore store, WebDavRequest request) throws IOException;
+
 }

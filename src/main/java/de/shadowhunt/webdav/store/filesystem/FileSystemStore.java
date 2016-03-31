@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav.impl.store;
+package de.shadowhunt.webdav.store.filesystem;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,18 +37,19 @@ import java.util.UUID;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavException;
-import de.shadowhunt.webdav.WebDavLock;
-import de.shadowhunt.webdav.WebDavLock.LockScope;
-import de.shadowhunt.webdav.WebDavLock.LockType;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.method.WebDavMethod;
 import de.shadowhunt.webdav.property.PropertyIdentifier;
 import de.shadowhunt.webdav.property.StringWebDavProperty;
-import de.shadowhunt.webdav.WebDavLockBuilder;
-import de.shadowhunt.webdav.WebDavMethod;
-import de.shadowhunt.webdav.WebDavPath;
-import de.shadowhunt.webdav.WebDavProperty;
-import de.shadowhunt.webdav.WebDavStore;
+import de.shadowhunt.webdav.property.WebDavProperty;
+import de.shadowhunt.webdav.store.SupportedLock;
+import de.shadowhunt.webdav.store.WebDavEntity;
+import de.shadowhunt.webdav.store.WebDavLock;
+import de.shadowhunt.webdav.store.WebDavLock.LockScope;
+import de.shadowhunt.webdav.store.WebDavLock.LockType;
+import de.shadowhunt.webdav.store.WebDavLockBuilder;
+import de.shadowhunt.webdav.store.WebDavStore;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
@@ -99,7 +100,7 @@ public class FileSystemStore implements WebDavStore {
         }
 
         final Set<SupportedLock> locks = new TreeSet<>();
-        locks.add(EXCLUSIV_WRITE_LOCK);
+        locks.add(SupportedLock.EXCLUSIV_WRITE_LOCK);
         supportedLocks = Collections.unmodifiableSet(locks);
     }
 
@@ -166,7 +167,7 @@ public class FileSystemStore implements WebDavStore {
 
     @Override
     public WebDavLockBuilder createLockBuilder() {
-        return new WebDavLockBuilderImpl();
+        return new FileSystemLockBuilder();
     }
 
     private PropertyIdentifier createPropertyIdentifier(final String elementName) {
@@ -232,7 +233,7 @@ public class FileSystemStore implements WebDavStore {
             final UUID token = UUID.fromString(tokenProperty);
             final String typeProperty = properties.getProperty(LOCK_TYPE);
             final LockType type = LockType.valueOf(typeProperty);
-            return Optional.of(new LockImpl(token, root, depth, scope, type, -1, owner));
+            return Optional.of(new FileSystemLock(token, root, depth, scope, type, -1, owner));
         }
     }
 
@@ -276,9 +277,9 @@ public class FileSystemStore implements WebDavStore {
                 final long size = calculateSize(file, path);
                 final String etag = calculateEtag(path);
                 final String mimeType = MIME_TYPES.getContentType(file);
-                return new EntiyImpl(path, hash, lastModified, size, mimeType, lock, etag);
+                return new FileSystemEntiy(path, hash, lastModified, size, mimeType, lock, etag);
             }
-            return new EntiyImpl(path, lastModified, lock);
+            return new FileSystemEntiy(path, lastModified, lock);
         }
     }
 

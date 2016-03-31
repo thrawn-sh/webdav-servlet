@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
 import de.shadowhunt.TestResponse;
-import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
 import org.junit.FixMethodOrder;

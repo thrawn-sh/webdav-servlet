@@ -19,7 +19,6 @@ package de.shadowhunt.webdav.method;
 import java.io.ByteArrayInputStream;
 
 import de.shadowhunt.TestResponse;
-import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
 import org.junit.FixMethodOrder;

@@ -17,7 +17,6 @@
 package de.shadowhunt.webdav.method;
 
 import de.shadowhunt.TestResponse;
-import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 
 import org.junit.Assert;

@@ -23,7 +23,6 @@ import de.shadowhunt.ContentNormalizer;
 import de.shadowhunt.EtagNormalizer;
 import de.shadowhunt.LastModifiedNormalizer;
 import de.shadowhunt.TestResponse;
-import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 

@@ -20,10 +20,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import de.shadowhunt.TestResponse;
-import de.shadowhunt.webdav.WebDavLock;
-import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
+import de.shadowhunt.webdav.store.WebDavLock;
 
 import org.junit.Assert;
 import org.junit.Before;

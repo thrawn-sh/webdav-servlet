@@ -28,8 +28,8 @@ import de.shadowhunt.webdav.WebDavConfig;
 import de.shadowhunt.webdav.WebDavDispatcher;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavStore;
-import de.shadowhunt.webdav.impl.store.FileSystemStore;
+import de.shadowhunt.webdav.store.WebDavStore;
+import de.shadowhunt.webdav.store.filesystem.FileSystemStore;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;

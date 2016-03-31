@@ -21,10 +21,9 @@ import java.util.UUID;
 
 import de.shadowhunt.ContentNormalizer;
 import de.shadowhunt.TestResponse;
-import de.shadowhunt.webdav.WebDavEntity;
-import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
+import de.shadowhunt.webdav.store.WebDavEntity;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;

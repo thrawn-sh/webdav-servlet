@@ -25,13 +25,13 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavException;
-import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 import de.shadowhunt.webdav.property.PropertyIdentifier;
+import de.shadowhunt.webdav.store.WebDavEntity;
+import de.shadowhunt.webdav.store.WebDavLock;
 
 class LockDiscoveryResponse extends AbstractBasicResponse {
 

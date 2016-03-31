@@ -14,18 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav.impl.store;
+package de.shadowhunt.webdav.store.filesystem;
 
 import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavException;
-import de.shadowhunt.webdav.WebDavLock;
-import de.shadowhunt.webdav.WebDavLock.LockScope;
-import de.shadowhunt.webdav.WebDavLock.LockType;
-import de.shadowhunt.webdav.WebDavLockBuilder;
 import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.store.WebDavLock;
+import de.shadowhunt.webdav.store.WebDavLockBuilder;
+import de.shadowhunt.webdav.store.WebDavLock.LockScope;
+import de.shadowhunt.webdav.store.WebDavLock.LockType;
 
-public class WebDavLockBuilderImpl implements WebDavLockBuilder {
+public class FileSystemLockBuilder implements WebDavLockBuilder {
 
     private int depth = WebDavLock.INFINITY;
 
@@ -45,7 +45,7 @@ public class WebDavLockBuilderImpl implements WebDavLockBuilder {
         if (root == null) {
             throw new WebDavException("lock root must be defined");
         }
-        return new LockImpl(token, root, depth, scope, type, timeoutInSeconds, owner);
+        return new FileSystemLock(token, root, depth, scope, type, timeoutInSeconds, owner);
     }
 
     @Override

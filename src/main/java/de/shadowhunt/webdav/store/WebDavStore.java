@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav;
+package de.shadowhunt.webdav.store;
 
 import java.io.InputStream;
 import java.security.Principal;
@@ -25,8 +25,10 @@ import java.util.Set;
 
 import javax.annotation.concurrent.ThreadSafe;
 
-import de.shadowhunt.webdav.WebDavLock.LockScope;
-import de.shadowhunt.webdav.WebDavLock.LockType;
+import de.shadowhunt.webdav.WebDavException;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.method.WebDavMethod;
+import de.shadowhunt.webdav.property.WebDavProperty;
 
 @ThreadSafe
 public interface WebDavStore {
@@ -34,72 +36,6 @@ public interface WebDavStore {
     enum Access {
         ALLOW, DENY, REQUIRE_AUTHENTICATION;
     }
-
-    class SupportedLock implements Comparable<SupportedLock> {
-
-        private final LockScope scope;
-
-        private final LockType type;
-
-        SupportedLock(final LockScope scope, final LockType type) {
-            this.scope = scope;
-            this.type = type;
-        }
-
-        @Override
-        public int compareTo(final SupportedLock other) {
-            final int result = scope.compareTo(other.scope);
-            if (result != 0) {
-                return result;
-            }
-            return type.compareTo(other.type);
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final SupportedLock other = (SupportedLock) obj;
-            if (scope != other.scope) {
-                return false;
-            }
-            if (type != other.type) {
-                return false;
-            }
-            return true;
-        }
-
-        public LockScope getScope() {
-            return scope;
-        }
-
-        public LockType getType() {
-            return type;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((scope == null) ? 0 : scope.hashCode());
-            result = prime * result + ((type == null) ? 0 : type.hashCode());
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "SupportedLock [scope=" + scope + ", type=" + type + "]";
-        }
-    }
-
-    SupportedLock EXCLUSIV_WRITE_LOCK = new SupportedLock(LockScope.EXCLUSIVE, LockType.WRITE);
 
     void createCollection(WebDavPath path) throws WebDavException;
 

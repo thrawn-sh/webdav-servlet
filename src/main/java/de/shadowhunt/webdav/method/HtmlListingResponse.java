@@ -27,12 +27,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavException;
-import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
+import de.shadowhunt.webdav.store.WebDavEntity;
+import de.shadowhunt.webdav.store.WebDavLock;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;

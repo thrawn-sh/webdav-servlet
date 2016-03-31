@@ -20,15 +20,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavException;
-import de.shadowhunt.webdav.WebDavLock;
-import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse.Status;
-import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.precondition.Precondition;
+import de.shadowhunt.webdav.store.WebDavEntity;
+import de.shadowhunt.webdav.store.WebDavLock;
+import de.shadowhunt.webdav.store.WebDavStore;
 
 abstract class AbstractWebDavMethod implements WebDavMethod {
 

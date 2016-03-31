@@ -25,11 +25,11 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.property.PropertyIdentifier;
+import de.shadowhunt.webdav.store.WebDavEntity;
 
 import org.apache.commons.lang3.StringUtils;
 

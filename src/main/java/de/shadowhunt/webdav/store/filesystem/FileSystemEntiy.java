@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav.impl.store;
+package de.shadowhunt.webdav.store.filesystem;
 
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
-import de.shadowhunt.webdav.WebDavEntity;
-import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.store.WebDavEntity;
+import de.shadowhunt.webdav.store.WebDavLock;
 
-class EntiyImpl implements WebDavEntity {
+class FileSystemEntiy implements WebDavEntity {
 
     private final String etag;
 
@@ -42,7 +42,7 @@ class EntiyImpl implements WebDavEntity {
 
     private final Type type;
 
-    EntiyImpl(final WebDavPath path, final Date lastModified, final Optional<WebDavLock> lock) {
+    FileSystemEntiy(final WebDavPath path, final Date lastModified, final Optional<WebDavLock> lock) {
         this.etag = null;
         this.hash = null;
         this.lastModified = new Date(lastModified.getTime());
@@ -53,7 +53,7 @@ class EntiyImpl implements WebDavEntity {
         this.type = Type.COLLECTION;
     }
 
-    EntiyImpl(final WebDavPath path, final String hash, final Date lastModified, final long size, final String mimeType, final Optional<WebDavLock> lock, final String etag) {
+    FileSystemEntiy(final WebDavPath path, final String hash, final Date lastModified, final long size, final String mimeType, final Optional<WebDavLock> lock, final String etag) {
         this.etag = Objects.requireNonNull(etag, "etag must not be null");
         this.hash = Objects.requireNonNull(hash, "hash must not be null");
         this.lastModified = new Date(lastModified.getTime());
@@ -84,7 +84,7 @@ class EntiyImpl implements WebDavEntity {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final EntiyImpl other = (EntiyImpl) obj;
+        final FileSystemEntiy other = (FileSystemEntiy) obj;
         if (path == null) {
             if (other.path != null) {
                 return false;
@@ -154,6 +154,6 @@ class EntiyImpl implements WebDavEntity {
 
     @Override
     public String toString() {
-        return "EntiyImpl [path=" + path + ", type=" + type + ", etag=" + etag + ", hash=" + hash + ", lastModified=" + lastModified + ", lock=" + lock + ", mimeType=" + mimeType + ", size=" + size + "]";
+        return "FileSystemEntiy [path=" + path + ", type=" + type + ", etag=" + etag + ", hash=" + hash + ", lastModified=" + lastModified + ", lock=" + lock + ", mimeType=" + mimeType + ", size=" + size + "]";
     }
 }

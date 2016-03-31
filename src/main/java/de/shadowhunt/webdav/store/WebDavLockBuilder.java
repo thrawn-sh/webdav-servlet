@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav;
+package de.shadowhunt.webdav.store;
 
-import de.shadowhunt.webdav.WebDavLock.LockScope;
-import de.shadowhunt.webdav.WebDavLock.LockType;
+import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.store.WebDavLock.LockScope;
+import de.shadowhunt.webdav.store.WebDavLock.LockType;
 
 public interface WebDavLockBuilder {
 

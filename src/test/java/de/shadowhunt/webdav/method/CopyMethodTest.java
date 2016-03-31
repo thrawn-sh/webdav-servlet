@@ -16,8 +16,6 @@
  */
 package de.shadowhunt.webdav.method;
 
-import de.shadowhunt.webdav.WebDavMethod;
-
 public class CopyMethodTest extends AbstractCopyMoveMethodTest {
 
     @Override

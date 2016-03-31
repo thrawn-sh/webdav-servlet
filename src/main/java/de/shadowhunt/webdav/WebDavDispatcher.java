@@ -22,9 +22,11 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.UUID;
 
-import de.shadowhunt.webdav.WebDavMethod.Method;
-import de.shadowhunt.webdav.WebDavStore.Access;
+import de.shadowhunt.webdav.method.WebDavMethod;
+import de.shadowhunt.webdav.method.WebDavMethod.Method;
 import de.shadowhunt.webdav.precondition.Precondition;
+import de.shadowhunt.webdav.store.WebDavStore;
+import de.shadowhunt.webdav.store.WebDavStore.Access;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -23,8 +23,8 @@ import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.precondition.PreconditionParser.PreconditionContext;
+import de.shadowhunt.webdav.store.WebDavStore;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;

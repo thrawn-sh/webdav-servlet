@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import de.shadowhunt.ContentNormalizer;
 import de.shadowhunt.TestResponse;
-import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse.Status;
 

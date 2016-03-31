@@ -14,11 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav;
+package de.shadowhunt.webdav.store;
 
 import java.util.UUID;
 
 import javax.annotation.concurrent.Immutable;
+
+import de.shadowhunt.webdav.WebDavPath;
 
 @Immutable
 public interface WebDavLock {

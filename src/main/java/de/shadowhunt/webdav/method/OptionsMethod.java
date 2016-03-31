@@ -18,11 +18,11 @@ package de.shadowhunt.webdav.method;
 
 import java.io.IOException;
 
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponseWriter;
-import de.shadowhunt.webdav.WebDavStore;
+import de.shadowhunt.webdav.store.WebDavEntity;
+import de.shadowhunt.webdav.store.WebDavStore;
 
 public class OptionsMethod extends AbstractWebDavMethod {
 

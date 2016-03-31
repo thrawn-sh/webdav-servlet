@@ -27,15 +27,15 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavPath;
-import de.shadowhunt.webdav.WebDavProperty;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponseWriter;
-import de.shadowhunt.webdav.WebDavStore;
 import de.shadowhunt.webdav.property.AbstractWebDavProperty;
 import de.shadowhunt.webdav.property.PropertyIdentifier;
 import de.shadowhunt.webdav.property.StringWebDavProperty;
+import de.shadowhunt.webdav.property.WebDavProperty;
+import de.shadowhunt.webdav.store.WebDavEntity;
+import de.shadowhunt.webdav.store.WebDavStore;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;

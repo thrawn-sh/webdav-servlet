@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav.impl.store;
+package de.shadowhunt.webdav.store.filesystem;
 
 import java.util.UUID;
 
 import javax.annotation.concurrent.Immutable;
 
-import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavPath;
+import de.shadowhunt.webdav.store.WebDavLock;
 
 @Immutable
-final class LockImpl implements WebDavLock {
+final class FileSystemLock implements WebDavLock {
 
     private final int depth;
 
@@ -40,7 +40,7 @@ final class LockImpl implements WebDavLock {
 
     private final LockType type;
 
-    LockImpl(final UUID token, final WebDavPath root, final int depth, final LockScope scope, final LockType type, final int timeoutInSeconds, final String owner) {
+    FileSystemLock(final UUID token, final WebDavPath root, final int depth, final LockScope scope, final LockType type, final int timeoutInSeconds, final String owner) {
         this.depth = depth;
         this.owner = owner;
         this.root = root;
@@ -61,7 +61,7 @@ final class LockImpl implements WebDavLock {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final LockImpl other = (LockImpl) obj;
+        final FileSystemLock other = (FileSystemLock) obj;
         if (token == null) {
             if (other.token != null) {
                 return false;
@@ -117,6 +117,6 @@ final class LockImpl implements WebDavLock {
 
     @Override
     public String toString() {
-        return "LockImpl [root=" + root + ", depth=" + depth + ", owner=" + owner + ", scope=" + scope + ", timeoutInSeconds=" + timeoutInSeconds + ", token=" + token + ", type=" + type + "]";
+        return "FileSystemLock [root=" + root + ", depth=" + depth + ", owner=" + owner + ", scope=" + scope + ", timeoutInSeconds=" + timeoutInSeconds + ", token=" + token + ", type=" + type + "]";
     }
 }
