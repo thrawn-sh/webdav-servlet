@@ -21,8 +21,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -39,12 +37,13 @@ import de.shadowhunt.webdav.WebDavResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 
 class HtmlListingResponse extends AbstractBasicResponse {
 
-    private final String css;
+    private static final FastDateFormat ISO_DATE_FORMATTER = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss", Locale.US);
 
-    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+    private final String css;
 
     private final List<WebDavEntity> entities;
 
@@ -151,7 +150,7 @@ class HtmlListingResponse extends AbstractBasicResponse {
 
         writer.print("<td class=\"modified\">");
         final Date lastModified = entity.getLastModified();
-        final String formattedDate = dateFormat.format(lastModified);
+        final String formattedDate = ISO_DATE_FORMATTER.format(lastModified);
         writer.print(formattedDate);
         writer.print("</td>");
 
@@ -186,7 +185,7 @@ class HtmlListingResponse extends AbstractBasicResponse {
 
         writer.print("<td class=\"modified\">");
         final Date lastModified = entity.getLastModified();
-        final String formattedDate = dateFormat.format(lastModified);
+        final String formattedDate = ISO_DATE_FORMATTER.format(lastModified);
         writer.print(formattedDate);
         writer.print("</td>");
 
