@@ -61,13 +61,13 @@ public class FileSystemStore implements WebDavStore {
 
     private static final String LOCK_OWNER = "owner";
 
+    private static final String LOCK_ROOT = "root";
+
     private static final String LOCK_SCOPE = "scope";
 
     private static final String LOCK_TOKEN = "token";
 
     private static final String LOCK_TYPE = "type";
-
-    private static final String LOCK_ROOT = "root";
 
     private static final MimetypesFileTypeMap MIME_TYPES = new MimetypesFileTypeMap();
 

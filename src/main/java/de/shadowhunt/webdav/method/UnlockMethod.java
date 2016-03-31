@@ -82,7 +82,7 @@ public class UnlockMethod extends AbstractWebDavMethod {
         return AbstractBasicResponse.createNoContent(entity);
     }
 
-    private void unlockRecurively(WebDavStore store, WebDavPath path) {
+    private void unlockRecurively(final WebDavStore store, final WebDavPath path) {
         for (final WebDavPath child : store.list(path)) {
             unlockRecurively(store, child);
         }

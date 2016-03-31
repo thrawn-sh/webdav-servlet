@@ -75,11 +75,11 @@ public class PropFindMethod extends AbstractWebDavMethod {
 
     private static final XPathExpression ALL_EXPRESSION;
 
-    private static final FastDateFormat RFC_882_FORMATTER = FastDateFormat.getInstance("EEE, dd MMM yyyy HH:mm:ss Z");
-
     private static final XPathExpression NAME_EXPRESSION;
 
     private static final XPathExpression PROPERTIES_EXPRESSION;
+
+    private static final FastDateFormat RFC_882_FORMATTER = FastDateFormat.getInstance("EEE, dd MMM yyyy HH:mm:ss Z");
 
     static {
         final XPathFactory factory = XPathFactory.newInstance();

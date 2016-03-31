@@ -27,11 +27,11 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
 import de.shadowhunt.webdav.WebDavConfig;
-import de.shadowhunt.webdav.store.WebDavEntity;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.method.WebDavMethod.Method;
+import de.shadowhunt.webdav.store.WebDavEntity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;

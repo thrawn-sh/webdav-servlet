@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 public class WebDavServletTest {
@@ -51,7 +52,7 @@ public class WebDavServletTest {
         final ServletConfig servletConfig = Mockito.mock(ServletConfig.class);
         Mockito.when(servletConfig.getInitParameter(WebDavServlet.LISTING_CSS)).thenReturn("/WEB-INF/test");
         final ServletContext servletContext = Mockito.mock(ServletContext.class);
-        Mockito.when(servletContext.getResourceAsStream(Mockito.anyString())).thenReturn(new ByteArrayInputStream("".getBytes()));
+        Mockito.when(servletContext.getResourceAsStream(Matchers.anyString())).thenReturn(new ByteArrayInputStream("".getBytes()));
         Mockito.when(servletConfig.getServletContext()).thenReturn(servletContext);
 
         final HttpServletConfig config = servlet.createWebDavConfig(servletConfig);
@@ -66,7 +67,7 @@ public class WebDavServletTest {
         final ServletConfig servletConfig = Mockito.mock(ServletConfig.class);
         Mockito.when(servletConfig.getInitParameter(WebDavServlet.LISTING_CSS)).thenReturn("/WEB-INF/test");
         final ServletContext servletContext = Mockito.mock(ServletContext.class);
-        Mockito.when(servletContext.getResourceAsStream(Mockito.anyString())).thenReturn(null);
+        Mockito.when(servletContext.getResourceAsStream(Matchers.anyString())).thenReturn(null);
         Mockito.when(servletConfig.getServletContext()).thenReturn(servletContext);
 
         servlet.createWebDavConfig(servletConfig);
@@ -83,7 +84,7 @@ public class WebDavServletTest {
         Mockito.when(servletConfig.getInitParameter(WebDavServlet.LISTING_CSS)).thenReturn("/WEB-INF/test");
         Mockito.when(servletConfig.getInitParameter(WebDavServlet.WRITEABLE)).thenReturn("true");
         final ServletContext servletContext = Mockito.mock(ServletContext.class);
-        Mockito.when(servletContext.getResourceAsStream(Mockito.anyString())).thenReturn(new ByteArrayInputStream("test data".getBytes()));
+        Mockito.when(servletContext.getResourceAsStream(Matchers.anyString())).thenReturn(new ByteArrayInputStream("test data".getBytes()));
         Mockito.when(servletConfig.getServletContext()).thenReturn(servletContext);
 
         final HttpServletConfig config = servlet.createWebDavConfig(servletConfig);

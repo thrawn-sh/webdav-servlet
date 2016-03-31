@@ -21,9 +21,9 @@ import java.util.UUID;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.store.WebDavLock;
-import de.shadowhunt.webdav.store.WebDavLockBuilder;
 import de.shadowhunt.webdav.store.WebDavLock.LockScope;
 import de.shadowhunt.webdav.store.WebDavLock.LockType;
+import de.shadowhunt.webdav.store.WebDavLockBuilder;
 
 public class FileSystemLockBuilder implements WebDavLockBuilder {
 

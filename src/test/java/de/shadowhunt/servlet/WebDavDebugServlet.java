@@ -29,7 +29,7 @@ public class WebDavDebugServlet extends WebDavServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private File dumpLocation = FileUtils.getTempDirectory();
+    private final File dumpLocation = FileUtils.getTempDirectory();
 
     @Override
     protected WebDavRequest createWebDavRequestWrapper(final HttpServletRequest request) throws IOException {

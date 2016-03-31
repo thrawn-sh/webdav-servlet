@@ -170,6 +170,13 @@ public class LockMethod extends AbstractWebDavMethod {
         }
     }
 
+    private WebDavEntity lockRecursively(final WebDavStore store, final WebDavPath path, final WebDavLock lock) {
+        for (final WebDavPath child : store.list(path)) {
+            lockRecursively(store, child, lock);
+        }
+        return store.lock(path, lock);
+    }
+
     @Override
     public WebDavResponseWriter service(final WebDavStore store, final WebDavRequest request) throws IOException {
         Status status = Status.SC_OK;
@@ -183,12 +190,5 @@ public class LockMethod extends AbstractWebDavMethod {
         final WebDavLock lock = determineLock(store, request);
         final WebDavEntity lockedEntity = lockRecursively(store, path, lock);
         return new LockDiscoveryResponse(lockedEntity, status);
-    }
-
-    private WebDavEntity lockRecursively(final WebDavStore store, final WebDavPath path, final WebDavLock lock) {
-        for (final WebDavPath child : store.list(path)) {
-            lockRecursively(store, child, lock);
-        }
-        return store.lock(path, lock);
     }
 }

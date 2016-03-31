@@ -28,7 +28,7 @@ import de.shadowhunt.webdav.store.WebDavLock.LockType;
 
 public class SupportedLocksProperty extends AbstractWebDavProperty {
 
-    private Set<SupportedLock> locks;
+    private final Set<SupportedLock> locks;
 
     public SupportedLocksProperty(final Set<SupportedLock> locks) {
         super(PropertyIdentifier.RESOURCE_TYPE_IDENTIFIER);
