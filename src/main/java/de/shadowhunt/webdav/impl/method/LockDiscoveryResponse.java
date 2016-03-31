@@ -82,7 +82,10 @@ class LockDiscoveryResponse extends AbstractBasicResponse {
             } else {
                 writer.writeCharacters(Integer.toString(depth));
             }
+            writer.writeEndElement();
 
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "owner");
+            writer.writeCharacters(lock.getOwner());
             writer.writeEndElement();
 
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "timeout");
@@ -95,9 +98,12 @@ class LockDiscoveryResponse extends AbstractBasicResponse {
             }
             writer.writeEndElement();
 
-            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "owner");
-            writer.writeCharacters(lock.getOwner());
-            writer.writeEndElement();
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktoken");
+            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "href");
+            writer.writeCharacters(WebDavLock.PREFIX);
+            writer.writeCharacters(token.toString());
+            writer.writeEndElement(); // href
+            writer.writeEndElement(); // locktoken
 
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "lockroot");
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "href");
@@ -106,12 +112,6 @@ class LockDiscoveryResponse extends AbstractBasicResponse {
             writer.writeEndElement(); // href
             writer.writeEndElement(); // locktoken
 
-            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktoken");
-            writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "href");
-            writer.writeCharacters(WebDavLock.PREFIX);
-            writer.writeCharacters(token.toString());
-            writer.writeEndElement(); // href
-            writer.writeEndElement(); // locktoken
             writer.writeEndElement(); // activelock
             writer.writeEndElement(); // lockdiscovery
             writer.writeEndElement(); // prop

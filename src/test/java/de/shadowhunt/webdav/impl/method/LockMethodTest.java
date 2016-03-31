@@ -76,10 +76,10 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:lockscope><D:exclusive/></D:lockscope>", //
                 "<D:locktype><D:write/></D:locktype>", //
                 "<D:depth>infinity</D:depth>", //
-                "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner></D:owner>", //
-                "<D:lockroot><D:href>/non_exisiting.txt</D:href></D:lockroot>", //
+                "<D:timeout>Infinite</D:timeout>", //
                 "<D:locktoken><D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href></D:locktoken>", //
+                "<D:lockroot><D:href>/non_exisiting.txt</D:href></D:lockroot>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //
                 "</D:prop>", //
@@ -105,10 +105,10 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:lockscope><D:exclusive/></D:lockscope>", //
                 "<D:locktype><D:write/></D:locktype>", //
                 "<D:depth>infinity</D:depth>", //
-                "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner></D:owner>", //
-                "<D:lockroot><D:href>/item.txt</D:href></D:lockroot>", //
+                "<D:timeout>Infinite</D:timeout>", //
                 "<D:locktoken><D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href></D:locktoken>", //
+                "<D:lockroot><D:href>/item.txt</D:href></D:lockroot>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //
                 "</D:prop>", //
@@ -144,10 +144,10 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:lockscope><D:exclusive/></D:lockscope>", //
                 "<D:locktype><D:write/></D:locktype>", //
                 "<D:depth>infinity</D:depth>", //
-                "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner>test</D:owner>", //
-                "<D:lockroot><D:href>" + item.getPath() + "</D:href></D:lockroot>", //
+                "<D:timeout>Infinite</D:timeout>", //
                 "<D:locktoken><D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href></D:locktoken>", //
+                "<D:lockroot><D:href>" + item.getPath() + "</D:href></D:lockroot>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //
                 "</D:prop>", //
@@ -179,10 +179,10 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:lockscope><D:exclusive/></D:lockscope>", //
                 "<D:locktype><D:write/></D:locktype>", //
                 "<D:depth>infinity</D:depth>", //
-                "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner></D:owner>", //
-                "<D:lockroot><D:href>" + item.getPath() + "</D:href></D:lockroot>", //
+                "<D:timeout>Infinite</D:timeout>", //
                 "<D:locktoken><D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href></D:locktoken>", //
+                "<D:lockroot><D:href>" + item.getPath() + "</D:href></D:lockroot>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //
                 "</D:prop>", //
@@ -210,10 +210,10 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:lockscope><D:exclusive/></D:lockscope>", //
                 "<D:locktype><D:write/></D:locktype>", //
                 "<D:depth>infinity</D:depth>", //
-                "<D:timeout>Infinite</D:timeout>", //
                 "<D:owner></D:owner>", //
-                "<D:lockroot><D:href>/locked_item.txt</D:href></D:lockroot>", //
+                "<D:timeout>Infinite</D:timeout>", //
                 "<D:locktoken><D:href>urn:uuid:00000000-0000-0000-0000-000000000000</D:href></D:locktoken>", //
+                "<D:lockroot><D:href>/locked_item.txt</D:href></D:lockroot>", //
                 "</D:activelock>", //
                 "</D:lockdiscovery>", //
                 "</D:prop>", //
