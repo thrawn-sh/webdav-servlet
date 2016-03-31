@@ -20,7 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
 import de.shadowhunt.TestResponse;
-import de.shadowhunt.webdav.WebDavResponse.Status;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NOT_FOUND);
+        assertNoContent(response, Status.NOT_FOUND);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_BAD_REQUEST);
+        assertNoContent(response, Status.BAD_REQUEST);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_CREATED);
+        assertNoContent(response, Status.CREATED);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_CREATED);
+        assertNoContent(response, Status.CREATED);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_CREATED);
+        assertNoContent(response, Status.CREATED);
     }
 
     @Test
@@ -128,6 +128,6 @@ public class PropPatchMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_CREATED);
+        assertNoContent(response, Status.CREATED);
     }
 }

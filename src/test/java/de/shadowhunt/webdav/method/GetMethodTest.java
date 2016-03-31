@@ -20,8 +20,8 @@ import java.util.Optional;
 
 import de.shadowhunt.ContentNormalizer;
 import de.shadowhunt.TestResponse;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavPath;
-import de.shadowhunt.webdav.WebDavResponse.Status;
 
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -54,7 +54,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NOT_FOUND);
+        assertNoContent(response, Status.NOT_FOUND);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertBasicRequirements(response, Status.SC_OK);
+        assertBasicRequirements(response, Status.OK);
         Assert.assertEquals("contentType must match", "text/plain", response.getContentType());
         Assert.assertNull("characterEncoding must be null", response.getCharacterEncoding());
         Assert.assertEquals("content must match", content, response.getContent());
@@ -82,7 +82,7 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(WebDavPath.ROOT);
 
         final TestResponse response = execute(method);
-        assertBasicRequirements(response, Status.SC_OK);
+        assertBasicRequirements(response, Status.OK);
         Assert.assertEquals("contentType must match", "text/html", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String expected = concat("<!DOCTYPE html>", //
@@ -135,6 +135,6 @@ public class GetMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_FORBIDDEN);
+        assertNoContent(response, Status.FORBIDDEN);
     }
 }

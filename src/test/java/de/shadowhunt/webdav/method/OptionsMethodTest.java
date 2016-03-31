@@ -17,8 +17,8 @@
 package de.shadowhunt.webdav.method;
 
 import de.shadowhunt.TestResponse;
-import de.shadowhunt.webdav.WebDavResponse;
-import de.shadowhunt.webdav.WebDavResponse.Status;
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -39,8 +39,8 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NO_CONTENT);
-        Assert.assertEquals("allow must match", "OPTIONS", response.getHeader(WebDavResponse.ALLOW_HEADER));
+        assertNoContent(response, Status.NO_CONTENT);
+        Assert.assertEquals("allow must match", "OPTIONS", response.getHeader(Header.ALLOW));
     }
 
     @Test
@@ -52,8 +52,8 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NO_CONTENT);
-        Assert.assertEquals("allow must match", "MKCOL, OPTIONS, PUT", response.getHeader(WebDavResponse.ALLOW_HEADER));
+        assertNoContent(response, Status.NO_CONTENT);
+        Assert.assertEquals("allow must match", "MKCOL, OPTIONS, PUT", response.getHeader(Header.ALLOW));
     }
 
     @Test
@@ -65,8 +65,8 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NO_CONTENT);
-        Assert.assertEquals("allow must match", "GET, HEAD, OPTIONS, PROPFIND", response.getHeader(WebDavResponse.ALLOW_HEADER));
+        assertNoContent(response, Status.NO_CONTENT);
+        Assert.assertEquals("allow must match", "GET, HEAD, OPTIONS, PROPFIND", response.getHeader(Header.ALLOW));
     }
 
     @Test
@@ -78,8 +78,8 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NO_CONTENT);
-        Assert.assertEquals("allow must match", "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, PUT, UNLOCK", response.getHeader(WebDavResponse.ALLOW_HEADER));
+        assertNoContent(response, Status.NO_CONTENT);
+        Assert.assertEquals("allow must match", "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, PUT, UNLOCK", response.getHeader(Header.ALLOW));
     }
 
     @Test
@@ -91,8 +91,8 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NO_CONTENT);
-        Assert.assertEquals("allow must match", "GET, HEAD, OPTIONS, PROPFIND", response.getHeader(WebDavResponse.ALLOW_HEADER));
+        assertNoContent(response, Status.NO_CONTENT);
+        Assert.assertEquals("allow must match", "GET, HEAD, OPTIONS, PROPFIND", response.getHeader(Header.ALLOW));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class OptionsMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NO_CONTENT);
-        Assert.assertEquals("allow must match", "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, UNLOCK", response.getHeader(WebDavResponse.ALLOW_HEADER));
+        assertNoContent(response, Status.NO_CONTENT);
+        Assert.assertEquals("allow must match", "COPY, DELETE, GET, HEAD, LOCK, MOVE, OPTIONS, PROPFIND, PROPPATCH, UNLOCK", response.getHeader(Header.ALLOW));
     }
 }

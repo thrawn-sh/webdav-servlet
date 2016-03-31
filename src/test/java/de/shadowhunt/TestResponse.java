@@ -24,6 +24,8 @@ import java.util.Map;
 
 import javax.annotation.CheckForNull;
 
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
 
@@ -46,7 +48,7 @@ public class TestResponse implements WebDavResponse {
 
     private String contentType = null;
 
-    private final Map<String, String> headers = new HashMap<>();
+    private final Map<Header, String> headers = new HashMap<>();
 
     private final WebDavRequest request;
 
@@ -57,9 +59,9 @@ public class TestResponse implements WebDavResponse {
     }
 
     @Override
-    public void addHeader(final String name, final String value) {
-        final String previous = headers.put(name, value);
-        Assert.assertNull("header '" + name + "' must not be defined multiple times", previous);
+    public void addHeader(final Header header, final String value) {
+        final String previous = headers.put(header, value);
+        Assert.assertNull("header '" + header + "' must not be defined multiple times", previous);
     }
 
     public String getCharacterEncoding() {
@@ -84,8 +86,8 @@ public class TestResponse implements WebDavResponse {
         return contentType;
     }
 
-    public String getHeader(final String name) {
-        return headers.get(name);
+    public String getHeader(final Header header) {
+        return headers.get(header);
     }
 
     @Override

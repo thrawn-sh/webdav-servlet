@@ -16,6 +16,7 @@
  */
 package de.shadowhunt.webdav.store;
 
+import de.shadowhunt.webdav.WebDavConstant.Depth;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.store.WebDavLock.LockScope;
 import de.shadowhunt.webdav.store.WebDavLock.LockType;
@@ -24,7 +25,7 @@ public interface WebDavLockBuilder {
 
     WebDavLock build();
 
-    void setDepth(int depth);
+    void setDepth(Depth depth);
 
     void setOwner(String owner);
 

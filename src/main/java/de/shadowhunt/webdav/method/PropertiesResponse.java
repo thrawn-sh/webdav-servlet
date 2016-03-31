@@ -27,6 +27,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavResponse;
@@ -111,7 +112,7 @@ class PropertiesResponse extends AbstractBasicResponse {
     protected void write0(final WebDavResponse response) throws IOException {
         response.setCharacterEncoding(DEFAULT_ENCODING);
         response.setContentType("application/xml");
-        response.setStatus(WebDavResponse.Status.SC_MULTISTATUS);
+        response.setStatus(Status.MULTI_STATUS);
 
         try {
             final XMLOutputFactory factory = XMLOutputFactory.newFactory();

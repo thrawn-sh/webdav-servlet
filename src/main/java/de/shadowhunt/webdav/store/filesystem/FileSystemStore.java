@@ -37,6 +37,7 @@ import java.util.UUID;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import de.shadowhunt.webdav.WebDavConstant.Depth;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.method.WebDavMethod;
@@ -223,7 +224,7 @@ public class FileSystemStore implements WebDavStore {
             }
 
             final String depthProperty = properties.getProperty(LOCK_DEPTH);
-            final int depth = Integer.parseInt(depthProperty);
+            final Depth depth = Depth.parse(depthProperty);
             final String owner = properties.getProperty(LOCK_OWNER);
             final String rootProperty = properties.getProperty(LOCK_ROOT);
             final WebDavPath root = WebDavPath.create(rootProperty);
@@ -355,8 +356,8 @@ public class FileSystemStore implements WebDavStore {
             final File lockFile = getLockFile(path);
             try {
                 final Properties store = new Properties();
-                final String depth = Integer.toString(lock.getDepth());
-                store.put(LOCK_DEPTH, depth);
+                final Depth depth = lock.getDepth();
+                store.put(LOCK_DEPTH, depth.name);
                 final String owner = lock.getOwner();
                 store.put(LOCK_OWNER, owner);
                 final WebDavPath root = lock.getRoot();

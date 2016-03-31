@@ -24,10 +24,10 @@ import java.util.UUID;
 
 import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavConfig;
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavResponse;
-import de.shadowhunt.webdav.WebDavResponse.Status;
 import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.property.PropertyIdentifier;
 import de.shadowhunt.webdav.property.StringWebDavProperty;
@@ -137,9 +137,9 @@ public abstract class AbstractWebDavMethodTest {
 
     protected final void assertBasicRequirements(final TestResponse response, final Status expectedStatus) {
         Assert.assertEquals("status must match", expectedStatus, response.getStatus());
-        Assert.assertNotNull("allow header must not be null", response.getHeader(WebDavResponse.ALLOW_HEADER));
-        Assert.assertEquals("dav header must match", "1,2", response.getHeader(WebDavResponse.DAV_HEADER));
-        Assert.assertEquals("ms-author header must match", "DAV", response.getHeader(WebDavResponse.MS_AUTHOR_HEADER));
+        Assert.assertNotNull("allow header must not be null", response.getHeader(Header.ALLOW));
+        Assert.assertEquals("dav header must match", "1,2", response.getHeader(Header.DAV));
+        Assert.assertEquals("ms-author header must match", "DAV", response.getHeader(Header.MS_AUTHOR));
     }
 
     protected final void assertNoContent(final TestResponse response, final Status expectedStatus) {

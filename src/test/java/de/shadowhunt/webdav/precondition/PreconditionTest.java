@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavConfig;
+import de.shadowhunt.webdav.WebDavConstant.Header;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.store.WebDavEntity;
@@ -113,7 +114,7 @@ public class PreconditionTest {
 
     @Test
     public void test_00_empty() throws Exception {
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn("");
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn("");
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
@@ -122,9 +123,9 @@ public class PreconditionTest {
     @Test
     public void test_00_explicit_foreign() throws Exception {
         final String precondition = "<" + FOREIGN_RESOURCE + "> (<DAV:no-lock>)";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Assert.assertFalse(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertFalse(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
@@ -133,9 +134,9 @@ public class PreconditionTest {
     @Test
     public void test_00_explicit_non_existing() throws Exception {
         final String precondition = "<" + NON_EXISTING_RESOURCE + "> (<DAV:no-lock>)";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Assert.assertFalse(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertFalse(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
@@ -143,7 +144,7 @@ public class PreconditionTest {
 
     @Test
     public void test_00_illegalInput() throws Exception {
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn("this input is invalid");
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn("this input is invalid");
         Assert.assertFalse(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
@@ -152,10 +153,10 @@ public class PreconditionTest {
     @Test
     public void test_00_implicit_non_existing() throws Exception {
         final String precondition = "(<DAV:no-lock>)";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
         Assert.assertFalse(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertFalse(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
@@ -164,9 +165,9 @@ public class PreconditionTest {
     @Test
     public void test_01_explicit_lock_false() throws Exception {
         final String precondition = "<" + LOCKED_RESOURCE + "> (<DAV:no-lock>)";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Assert.assertFalse(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertFalse(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
@@ -175,9 +176,9 @@ public class PreconditionTest {
     @Test
     public void test_01_explicit_nolock_true() throws Exception {
         final String precondition = "<" + ITEM_RESOURCE + "> (Not <DAV:no-lock>)";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
@@ -186,10 +187,10 @@ public class PreconditionTest {
     @Test
     public void test_01_implicit_lock_false() throws Exception {
         final String precondition = "(<DAV:no-lock>)";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
         Assert.assertFalse(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertFalse(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
@@ -198,10 +199,10 @@ public class PreconditionTest {
     @Test
     public void test_01_implicit_nolock_true() throws Exception {
         final String precondition = "(Not <DAV:no-lock>)";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(ITEM);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
@@ -213,9 +214,9 @@ public class PreconditionTest {
         final String etag = entity.getEtag().get();
 
         final String precondition = "<" + ITEM_RESOURCE + "> ([" + etag + "])";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
@@ -227,9 +228,9 @@ public class PreconditionTest {
         final WebDavLock lock = entity.getLock().get();
 
         final String precondition = "<" + LOCKED_RESOURCE + "> (<" + WebDavLock.PREFIX + lock.getToken() + ">)";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
@@ -241,10 +242,10 @@ public class PreconditionTest {
         final String etag = entity.getEtag().get();
 
         final String precondition = "([" + etag + "])";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(ITEM);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", Collections.emptyMap(), Precondition.getTokens(request));
@@ -256,10 +257,10 @@ public class PreconditionTest {
         final WebDavLock lock = entity.getLock().get();
 
         final String precondition = "(<" + WebDavLock.PREFIX + lock.getToken() + ">)";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
@@ -272,10 +273,10 @@ public class PreconditionTest {
         final WebDavLock lock = entity.getLock().get();
 
         final String precondition = "<" + LOCKED_RESOURCE + "> ([" + etag + "] <" + WebDavLock.PREFIX + lock.getToken() + ">)";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
@@ -288,10 +289,10 @@ public class PreconditionTest {
         final WebDavLock lock = entity.getLock().get();
 
         final String precondition = "<" + LOCKED_RESOURCE + "> (<" + WebDavLock.PREFIX + lock.getToken() + "> [" + etag + "])";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
@@ -304,10 +305,10 @@ public class PreconditionTest {
         final WebDavLock lock = entity.getLock().get();
 
         final String precondition = "([" + etag + "] <" + WebDavLock.PREFIX + lock.getToken() + ">)";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
@@ -320,10 +321,10 @@ public class PreconditionTest {
         final WebDavLock lock = entity.getLock().get();
 
         final String precondition = "(<" + WebDavLock.PREFIX + lock.getToken() + "> [" + etag + "])";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
@@ -336,10 +337,10 @@ public class PreconditionTest {
         final WebDavLock lock = entity.getLock().get();
 
         final String precondition = "([" + etag + "]) <" + LOCKED_RESOURCE + "> (<" + WebDavLock.PREFIX + lock.getToken() + ">)";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
@@ -352,10 +353,10 @@ public class PreconditionTest {
         final WebDavLock lock = entity.getLock().get();
 
         final String precondition = "<" + LOCKED_RESOURCE + "> (<" + WebDavLock.PREFIX + lock.getToken() + ">) ([" + etag + "])";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));
@@ -368,10 +369,10 @@ public class PreconditionTest {
         final WebDavLock lock = entity.getLock().get();
 
         final String precondition = "(<" + WebDavLock.PREFIX + lock.getToken() + ">) ([" + etag + "])";
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(precondition);
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(precondition);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
         Assert.assertTrue(Precondition.verify(store, request));
-        Mockito.when(request.getHeader(WebDavRequest.PRECONDITION_HEADER, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
+        Mockito.when(request.getHeader(Header.PRECONDITION, "")).thenReturn(StringUtils.deleteWhitespace(precondition));
         Assert.assertTrue(Precondition.verify(store, request));
 
         Assert.assertEquals("tokens must match", TOKENS, Precondition.getTokens(request));

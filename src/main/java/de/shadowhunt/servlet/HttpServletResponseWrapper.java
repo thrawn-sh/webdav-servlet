@@ -21,6 +21,8 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
@@ -37,8 +39,8 @@ class HttpServletResponseWrapper implements WebDavResponse {
     }
 
     @Override
-    public void addHeader(final String name, final String value) {
-        response.addHeader(name, value);
+    public void addHeader(final Header header, final String value) {
+        response.addHeader(header.value, value);
     }
 
     @Override

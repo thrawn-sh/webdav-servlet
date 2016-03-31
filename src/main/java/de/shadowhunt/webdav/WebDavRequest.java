@@ -22,27 +22,16 @@ import java.security.Principal;
 import java.util.Optional;
 import java.util.UUID;
 
+import de.shadowhunt.webdav.WebDavConstant.Header;
 import de.shadowhunt.webdav.method.WebDavMethod.Method;
 
 public interface WebDavRequest {
-
-    String DEPTH_HEADER = "Depth";
-
-    String DESTINATION_HEADER = "Destination";
-
-    String LOCKTOKEN_HEADER = "Lock-Token";
-
-    String OVERRIDE_HEADER = "Overwrite";
-
-    String PRECONDITION_HEADER = "If";
-
-    String TIMEOUT_HEADER = "Timeout";
 
     String getBase();
 
     WebDavConfig getConfig();
 
-    String getHeader(String name, String defaultValue);
+    String getHeader(Header header, String defaultValue);
 
     UUID getId();
 

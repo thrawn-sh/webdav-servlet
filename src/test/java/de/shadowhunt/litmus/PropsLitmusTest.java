@@ -23,7 +23,7 @@ import de.shadowhunt.ContentNormalizer;
 import de.shadowhunt.EtagNormalizer;
 import de.shadowhunt.LastModifiedNormalizer;
 import de.shadowhunt.TestResponse;
-import de.shadowhunt.webdav.WebDavResponse.Status;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -49,19 +49,19 @@ public class PropsLitmusTest extends AbstractLitmusTest {
     @Test
     public void test_02_propfind_invalid() throws Exception {
         final TestResponse response = execute(new File(ROOT, "02-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_BAD_REQUEST, response.getStatus());
+        Assert.assertEquals("status must match", Status.BAD_REQUEST, response.getStatus());
     }
 
     @Test
     public void test_03_propfind_invalid2() throws Exception {
         final TestResponse response = execute(new File(ROOT, "03-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_BAD_REQUEST, response.getStatus());
+        Assert.assertEquals("status must match", Status.BAD_REQUEST, response.getStatus());
     }
 
     @Test
     public void test_04_propfind_d0() throws Exception {
         final TestResponse response = execute(new File(ROOT, "04-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("status must match", Status.MULTI_STATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"http://example.com/neon/litmus/\">", //
@@ -94,22 +94,22 @@ public class PropsLitmusTest extends AbstractLitmusTest {
     @Test
     public void test_05_propinit() throws Exception {
         final TestResponse delete_response = execute(new File(ROOT, "05-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, delete_response.getStatus());
+        Assert.assertEquals("status must match", Status.NOT_FOUND, delete_response.getStatus());
 
         final TestResponse put_response = execute(new File(ROOT, "05-02.xml"));
-        Assert.assertEquals("status must match", Status.SC_CREATED, put_response.getStatus());
+        Assert.assertEquals("status must match", Status.CREATED, put_response.getStatus());
     }
 
     @Test
     public void test_06_propset() throws Exception {
         final TestResponse response = execute(new File(ROOT, "06-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertEquals("status must match", Status.CREATED, response.getStatus());
     }
 
     @Test
     public void test_07_propget() throws Exception {
         final TestResponse response = execute(new File(ROOT, "07-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("status must match", Status.MULTI_STATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"http://example.com/neon/litmus/\">", //
@@ -139,7 +139,7 @@ public class PropsLitmusTest extends AbstractLitmusTest {
     @Test
     public void test_08_propextended() throws Exception {
         final TestResponse response = execute(new File(ROOT, "08-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("status must match", Status.MULTI_STATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"http://example.com/neon/litmus/\">", //
@@ -174,28 +174,28 @@ public class PropsLitmusTest extends AbstractLitmusTest {
     @Test
     public void test_09_propmove() throws Exception {
         final TestResponse delete_response = execute(new File(ROOT, "09-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, delete_response.getStatus());
+        Assert.assertEquals("status must match", Status.NOT_FOUND, delete_response.getStatus());
 
         final TestResponse move_response = execute(new File(ROOT, "09-02.xml"));
-        Assert.assertEquals("status must match", Status.SC_CREATED, move_response.getStatus());
+        Assert.assertEquals("status must match", Status.CREATED, move_response.getStatus());
     }
 
     @Test
     public void test_10_propget() throws Exception {
         final TestResponse response = execute(new File(ROOT, "10-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("status must match", Status.MULTI_STATUS, response.getStatus());
     }
 
     @Test
     public void test_11_propdeletes() throws Exception {
         final TestResponse response = execute(new File(ROOT, "11-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertEquals("status must match", Status.CREATED, response.getStatus());
     }
 
     @Test
     public void test_12_propget() throws Exception {
         final TestResponse response = execute(new File(ROOT, "12-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("status must match", Status.MULTI_STATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"http://example.com/neon/litmus/\">", //
@@ -230,13 +230,13 @@ public class PropsLitmusTest extends AbstractLitmusTest {
     @Test
     public void test_13_propreplace() throws Exception {
         final TestResponse response = execute(new File(ROOT, "13-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertEquals("status must match", Status.CREATED, response.getStatus());
     }
 
     @Test
     public void test_14_propget() throws Exception {
         final TestResponse response = execute(new File(ROOT, "14-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("status must match", Status.MULTI_STATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"http://example.com/neon/litmus/\">", //
@@ -271,13 +271,13 @@ public class PropsLitmusTest extends AbstractLitmusTest {
     @Test
     public void test_15_propnullns() throws Exception {
         final TestResponse response = execute(new File(ROOT, "15-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertEquals("status must match", Status.CREATED, response.getStatus());
     }
 
     @Test
     public void test_16_propget() throws Exception {
         final TestResponse response = execute(new File(ROOT, "16-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("status must match", Status.MULTI_STATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"http://example.com/neon/litmus/\">", //
@@ -298,13 +298,13 @@ public class PropsLitmusTest extends AbstractLitmusTest {
     @Test
     public void test_17_prophighunicode() throws Exception {
         final TestResponse response = execute(new File(ROOT, "17-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertEquals("status must match", Status.CREATED, response.getStatus());
     }
 
     @Test
     public void test_18_propget() throws Exception {
         final TestResponse response = execute(new File(ROOT, "18-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("status must match", Status.MULTI_STATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"http://example.com/neon/litmus/\">", //
@@ -325,13 +325,13 @@ public class PropsLitmusTest extends AbstractLitmusTest {
     @Test
     public void test_19_propremoveset() throws Exception {
         final TestResponse response = execute(new File(ROOT, "19-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertEquals("status must match", Status.CREATED, response.getStatus());
     }
 
     @Test
     public void test_20_propget() throws Exception {
         final TestResponse response = execute(new File(ROOT, "20-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("status must match", Status.MULTI_STATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"http://example.com/neon/litmus/\">", //
@@ -352,13 +352,13 @@ public class PropsLitmusTest extends AbstractLitmusTest {
     @Test
     public void test_21_propsetremove() throws Exception {
         final TestResponse response = execute(new File(ROOT, "21-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertEquals("status must match", Status.CREATED, response.getStatus());
     }
 
     @Test
     public void test_22_propget() throws Exception {
         final TestResponse response = execute(new File(ROOT, "22-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("status must match", Status.MULTI_STATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"http://example.com/neon/litmus/\">", //
@@ -379,13 +379,13 @@ public class PropsLitmusTest extends AbstractLitmusTest {
     @Test
     public void test_23_propvalnspace() throws Exception {
         final TestResponse response = execute(new File(ROOT, "23-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertEquals("status must match", Status.CREATED, response.getStatus());
     }
 
     @Test
     public void test_24_propwformed() throws Exception {
         final TestResponse response = execute(new File(ROOT, "24-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("status must match", Status.MULTI_STATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns1=\"http://example.com/neon/litmus/\">", //
@@ -407,22 +407,22 @@ public class PropsLitmusTest extends AbstractLitmusTest {
     @Test
     public void test_25_propinit() throws Exception {
         final TestResponse delete_response = execute(new File(ROOT, "25-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_NOT_FOUND, delete_response.getStatus());
+        Assert.assertEquals("status must match", Status.NOT_FOUND, delete_response.getStatus());
 
         final TestResponse put_response = execute(new File(ROOT, "25-02.xml"));
-        Assert.assertEquals("status must match", Status.SC_CREATED, put_response.getStatus());
+        Assert.assertEquals("status must match", Status.CREATED, put_response.getStatus());
     }
 
     @Test
     public void test_26_propmanyns() throws Exception {
         final TestResponse response = execute(new File(ROOT, "26-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_CREATED, response.getStatus());
+        Assert.assertEquals("status must match", Status.CREATED, response.getStatus());
     }
 
     @Test
     public void test_27_propget() throws Exception {
         final TestResponse response = execute(new File(ROOT, "27-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_MULTISTATUS, response.getStatus());
+        Assert.assertEquals("status must match", Status.MULTI_STATUS, response.getStatus());
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
                 "<D:multistatus xmlns:D=\"DAV:\"", //
@@ -462,7 +462,7 @@ public class PropsLitmusTest extends AbstractLitmusTest {
     @Test
     public void test_28_propcleanup() throws Exception {
         final TestResponse response = execute(new File(ROOT, "28-01.xml"));
-        Assert.assertEquals("status must match", Status.SC_NO_CONTENT, response.getStatus());
+        Assert.assertEquals("status must match", Status.NO_CONTENT, response.getStatus());
     }
 
 }

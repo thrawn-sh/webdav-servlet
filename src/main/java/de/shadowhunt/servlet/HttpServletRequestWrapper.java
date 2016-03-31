@@ -28,6 +28,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import de.shadowhunt.webdav.WebDavConfig;
+import de.shadowhunt.webdav.WebDavConstant.Header;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.method.WebDavMethod.Method;
@@ -63,12 +64,12 @@ class HttpServletRequestWrapper implements WebDavRequest {
     }
 
     @Override
-    public String getHeader(final String name, final String defaultValue) {
-        final String header = request.getHeader(name);
-        if (StringUtils.isBlank(header)) {
+    public String getHeader(final Header header, final String defaultValue) {
+        final String value = request.getHeader(header.value);
+        if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
-        return header;
+        return value;
     }
 
     @Override

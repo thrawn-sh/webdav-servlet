@@ -35,6 +35,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import de.shadowhunt.webdav.WebDavConfig;
+import de.shadowhunt.webdav.WebDavConstant.Depth;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponseWriter;
@@ -209,8 +210,8 @@ public class PropFindMethod extends AbstractWebDavMethod {
         final WebDavEntity entity = store.getEntity(target);
 
         final WebDavConfig config = request.getConfig();
-        final int depth = determineDepth(request);
-        if ((depth == Integer.MAX_VALUE) && !config.isAllowInfiniteDepthRequests()) {
+        final Depth depth = determineDepth(request);
+        if ((depth == Depth.INFINITY) && !config.isAllowInfiniteDepthRequests()) {
             return AbstractBasicResponse.createForbidden(entity);
         }
 
@@ -221,7 +222,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
 
         if (listPropertyNames(document)) {
             final Map<WebDavPath, Collection<PropertyIdentifier>> result = new TreeMap<>();
-            collectPropertyNames(store, target, depth, result);
+            collectPropertyNames(store, target, depth.value, result);
             return new PropertyNameResponse(entity, request.getBase(), result);
         }
 
@@ -237,7 +238,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
         }
 
         final Map<WebDavPath, Collection<WebDavProperty>> result = new TreeMap<>();
-        collectProperties(store, target, depth, result);
+        collectProperties(store, target, depth.value, result);
         return new PropertiesResponse(entity, request.getBase(), requested, result);
     }
 }

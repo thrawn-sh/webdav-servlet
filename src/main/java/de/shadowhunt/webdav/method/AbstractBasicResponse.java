@@ -27,6 +27,8 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
 import de.shadowhunt.webdav.WebDavConfig;
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.WebDavResponseWriter;
@@ -100,7 +102,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(WebDavResponse.Status.SC_BAD_REQUEST);
+                response.setStatus(Status.BAD_REQUEST);
             }
         };
     }
@@ -110,7 +112,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(WebDavResponse.Status.SC_CONFLICT);
+                response.setStatus(Status.CONFLICT);
             }
         };
     }
@@ -120,7 +122,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(WebDavResponse.Status.SC_CREATED);
+                response.setStatus(Status.CREATED);
             }
         };
     }
@@ -130,7 +132,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(WebDavResponse.Status.SC_FORBIDDEN);
+                response.setStatus(Status.FORBIDDEN);
             }
         };
     }
@@ -140,7 +142,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(WebDavResponse.Status.SC_LOCKED);
+                response.setStatus(Status.LOCKED);
             }
         };
     }
@@ -150,7 +152,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(WebDavResponse.Status.SC_METHOD_NOT_ALLOWED);
+                response.setStatus(Status.METHOD_NOT_ALLOWED);
             }
         };
     }
@@ -160,7 +162,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(WebDavResponse.Status.SC_METHOD_NOT_ALLOWED);
+                response.setStatus(Status.METHOD_NOT_ALLOWED);
             }
         };
     }
@@ -170,7 +172,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(WebDavResponse.Status.SC_NO_CONTENT);
+                response.setStatus(Status.NO_CONTENT);
             }
         };
     }
@@ -180,7 +182,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(WebDavResponse.Status.SC_NOT_FOUND);
+                response.setStatus(Status.NOT_FOUND);
             }
         };
     }
@@ -190,7 +192,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(WebDavResponse.Status.SC_OK);
+                response.setStatus(Status.OK);
             }
         };
     }
@@ -200,7 +202,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(WebDavResponse.Status.SC_PRECONDITION_FAILED);
+                response.setStatus(Status.PRECONDITION_FAILED);
             }
         };
     }
@@ -210,7 +212,7 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
 
             @Override
             protected void write0(final WebDavResponse response) throws IOException {
-                response.setStatus(WebDavResponse.Status.SC_UNSUPPORTED_MEDIA_TYPE);
+                response.setStatus(Status.UNSUPPORTED_MEDIA_TYPE);
             }
         };
     }
@@ -236,14 +238,14 @@ abstract class AbstractBasicResponse implements WebDavResponseWriter {
         final WebDavRequest request = response.getRequest();
         final WebDavConfig config = request.getConfig();
 
-        response.addHeader(WebDavResponse.ALLOW_HEADER, getAllowedMethods(entity, config));
-        response.addHeader(WebDavResponse.DAV_HEADER, "1,2");
-        response.addHeader(WebDavResponse.MS_AUTHOR_HEADER, "DAV"); // MS required header
+        response.addHeader(Header.ALLOW, getAllowedMethods(entity, config));
+        response.addHeader(Header.DAV, "1,2");
+        response.addHeader(Header.MS_AUTHOR, "DAV"); // MS required header
         if (entity != null) {
             final Optional<String> etag = entity.getEtag();
-            etag.ifPresent(x -> response.addHeader(WebDavResponse.ETAG_HEADER, x));
+            etag.ifPresent(x -> response.addHeader(Header.ETAG, x));
 
-            response.addHeader(WebDavResponse.LAST_MODIFIED_HEADER, HTTP_DATE_FORMATTER.format(entity.getLastModified()));
+            response.addHeader(Header.LAST_MODIFIED, HTTP_DATE_FORMATTER.format(entity.getLastModified()));
         }
         write0(response);
     }

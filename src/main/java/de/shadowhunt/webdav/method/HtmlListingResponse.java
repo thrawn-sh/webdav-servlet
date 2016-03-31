@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
@@ -67,10 +69,10 @@ class HtmlListingResponse extends AbstractBasicResponse {
 
     @Override
     protected void write0(final WebDavResponse response) throws IOException {
-        response.addHeader(WebDavResponse.CACHE_CONTROL_HEADER, "no-store");
+        response.addHeader(Header.CACHE_CONTROL, "no-store");
         response.setCharacterEncoding(DEFAULT_ENCODING);
         response.setContentType("text/html");
-        response.setStatus(WebDavResponse.Status.SC_OK);
+        response.setStatus(Status.OK);
 
         final WebDavRequest request = response.getRequest();
         final WebDavPath base = WebDavPath.create(request.getBase());

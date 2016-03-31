@@ -20,13 +20,14 @@ import java.util.UUID;
 
 import javax.annotation.concurrent.Immutable;
 
+import de.shadowhunt.webdav.WebDavConstant.Depth;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.store.WebDavLock;
 
 @Immutable
 final class FileSystemLock implements WebDavLock {
 
-    private final int depth;
+    private final Depth depth;
 
     private final String owner;
 
@@ -40,7 +41,7 @@ final class FileSystemLock implements WebDavLock {
 
     private final LockType type;
 
-    FileSystemLock(final UUID token, final WebDavPath root, final int depth, final LockScope scope, final LockType type, final int timeoutInSeconds, final String owner) {
+    FileSystemLock(final UUID token, final WebDavPath root, final Depth depth, final LockScope scope, final LockType type, final int timeoutInSeconds, final String owner) {
         this.depth = depth;
         this.owner = owner;
         this.root = root;
@@ -73,7 +74,7 @@ final class FileSystemLock implements WebDavLock {
     }
 
     @Override
-    public int getDepth() {
+    public Depth getDepth() {
         return depth;
     }
 

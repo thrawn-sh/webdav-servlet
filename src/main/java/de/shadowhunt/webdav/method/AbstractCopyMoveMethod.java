@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
+import de.shadowhunt.webdav.WebDavConstant.Depth;
+import de.shadowhunt.webdav.WebDavConstant.Header;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponseWriter;
@@ -58,13 +60,13 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
     }
 
     protected boolean determineOverwrite(final WebDavRequest request) {
-        final String overwrite = request.getHeader(WebDavRequest.OVERRIDE_HEADER, "T");
+        final String overwrite = request.getHeader(Header.OVERRIDE, "T");
         return "T".equalsIgnoreCase(overwrite);
     }
 
     protected WebDavPath determineTarget(final WebDavRequest request) {
         final String pathInfo = request.getBase();
-        final String destination = request.getHeader(WebDavRequest.DESTINATION_HEADER, "");
+        final String destination = request.getHeader(Header.DESTINATION, "");
         final URI destinationUri = URI.create(destination);
         final String destinationPath = destinationUri.getPath();
         final int indexOf = destinationPath.indexOf(pathInfo);
@@ -83,12 +85,12 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
         final WebDavEntity sourceEntity = store.getEntity(source);
 
         final boolean overwrite = determineOverwrite(request);
-        final int depth = determineDepth(request);
+        final Depth depth = determineDepth(request);
         final WebDavPath target = determineTarget(request);
         final boolean targetExistsBefore = store.exists(target);
         if (targetExistsBefore) {
             if (overwrite) {
-                DeleteMethod.delete(store, target, Integer.MAX_VALUE, tokens);
+                DeleteMethod.delete(store, target, Depth.INFINITY.value, tokens);
             } else {
                 return AbstractBasicResponse.createPreconditionFailed(sourceEntity);
             }
@@ -101,14 +103,14 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
         }
 
         if (deleteSource) {
-            checkDown(store, source, Integer.MAX_VALUE, tokens);
+            checkDown(store, source, Depth.INFINITY.value, tokens);
         }
 
         checkUp(store, source.getParent(), tokens);
-        copy(store, source, target, depth);
+        copy(store, source, target, depth.value);
 
         if (deleteSource) {
-            DeleteMethod.delete(store, source, Integer.MAX_VALUE, tokens);
+            DeleteMethod.delete(store, source, Depth.INFINITY.value, tokens);
         }
 
         if (targetExistsBefore) {

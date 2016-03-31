@@ -16,7 +16,7 @@
  */
 package de.shadowhunt.webdav;
 
-import de.shadowhunt.webdav.WebDavResponse.Status;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 
 public class WebDavException extends RuntimeException {
 
@@ -27,7 +27,7 @@ public class WebDavException extends RuntimeException {
     private final Status status;
 
     public WebDavException(final String message) {
-        this(message, Status.SC_INTERNAL_SERVER_ERROR);
+        this(message, Status.INTERNAL_SERVER_ERROR);
     }
 
     public WebDavException(final String message, final Status status) {
@@ -36,7 +36,7 @@ public class WebDavException extends RuntimeException {
     }
 
     public WebDavException(final String message, final Throwable cause) {
-        this(message, cause, Status.SC_INTERNAL_SERVER_ERROR);
+        this(message, cause, Status.INTERNAL_SERVER_ERROR);
     }
 
     public WebDavException(final String message, final Throwable cause, final Status status) {

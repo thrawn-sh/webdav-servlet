@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import de.shadowhunt.webdav.WebDavConstant.Header;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.precondition.PreconditionParser.PreconditionContext;
@@ -76,7 +77,7 @@ public final class Precondition {
     }
 
     public static Map<WebDavPath, UUID> getTokens(final WebDavRequest request) {
-        final String precondition = request.getHeader(WebDavRequest.PRECONDITION_HEADER, "");
+        final String precondition = request.getHeader(Header.PRECONDITION, "");
         if (StringUtils.isEmpty(precondition)) {
             return Collections.emptyMap();
         }
@@ -86,7 +87,7 @@ public final class Precondition {
     }
 
     public static boolean verify(final WebDavStore store, final WebDavRequest request) {
-        final String precondition = request.getHeader(WebDavRequest.PRECONDITION_HEADER, "");
+        final String precondition = request.getHeader(Header.PRECONDITION, "");
         if (StringUtils.isEmpty(precondition)) {
             return true;
         }

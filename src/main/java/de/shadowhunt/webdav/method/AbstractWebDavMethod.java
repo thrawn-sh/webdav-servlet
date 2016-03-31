@@ -20,18 +20,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import de.shadowhunt.webdav.WebDavConstant.Depth;
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavResponse.Status;
 import de.shadowhunt.webdav.precondition.Precondition;
 import de.shadowhunt.webdav.store.WebDavEntity;
 import de.shadowhunt.webdav.store.WebDavLock;
 import de.shadowhunt.webdav.store.WebDavStore;
 
 abstract class AbstractWebDavMethod implements WebDavMethod {
-
-    public static final String INFINITY = "infinity";
 
     protected static void checkDown(final WebDavStore store, final WebDavPath path, final int depth, final Map<WebDavPath, UUID> tokens) {
         if (depth < 0) {
@@ -56,7 +56,7 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
         if (entityLockToken.equals(tokens.get(entity.getPath()))) {
             return;
         }
-        throw new WebDavException("no suitable lock token provided", Status.SC_LOCKED);
+        throw new WebDavException("no suitable lock token provided", Status.LOCKED);
     }
 
     protected static void checkUp(final WebDavStore store, final WebDavPath path, final Map<WebDavPath, UUID> tokens) {
@@ -70,25 +70,25 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
         checkUp(store, path.getParent(), tokens);
     }
 
-    protected Map<WebDavPath, UUID> determineLockTokens(final WebDavRequest request) {
-        return Precondition.getTokens(request);
-    }
-
-    protected int determineDepth(final WebDavRequest request) {
-        final String depth = request.getHeader(WebDavRequest.DEPTH_HEADER, INFINITY);
-        if (INFINITY.equalsIgnoreCase(depth)) {
-            return Integer.MAX_VALUE;
+    protected Depth determineDepth(final WebDavRequest request) {
+        final String depth = request.getHeader(Header.DEPTH, Depth.INFINITY.name);
+        if (Depth.INFINITY.name.equalsIgnoreCase(depth)) {
+            return Depth.INFINITY;
         }
 
         final int value = Integer.parseInt(depth);
-        if (value <= 0) {
-            return 0;
+        if (value <= Depth.SELF.value) {
+            return Depth.SELF;
         }
 
-        if (value > 1) {
-            return Integer.MAX_VALUE;
+        if (value == Depth.MEMBERS.value) {
+            return Depth.MEMBERS;
         }
-        return 1;
+        return Depth.INFINITY;
+    }
+
+    protected Map<WebDavPath, UUID> determineLockTokens(final WebDavRequest request) {
+        return Precondition.getTokens(request);
     }
 
     @Override

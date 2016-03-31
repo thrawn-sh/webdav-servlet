@@ -17,9 +17,10 @@
 package de.shadowhunt.webdav.method;
 
 import de.shadowhunt.TestResponse;
+import de.shadowhunt.webdav.WebDavConstant.Depth;
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavPath;
-import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavResponse.Status;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -48,31 +49,31 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NOT_FOUND);
+        assertNoContent(response, Status.NOT_FOUND);
     }
 
     @Test
     public void test01_existingSourceItem_missingTargetItem() throws Exception {
         final WebDavMethod method = createMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DESTINATION_HEADER), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/non_existing.txt");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.INFINITY.name);
+        Mockito.when(request.getHeader(Matchers.eq(Header.DESTINATION), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/non_existing.txt");
         Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_CREATED);
+        assertNoContent(response, Status.CREATED);
     }
 
     @Test
     public void test01_existingSourceItem_missingTargetParent() throws Exception {
         final WebDavMethod method = createMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DESTINATION_HEADER), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/non_existing/item.txt");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.INFINITY.name);
+        Mockito.when(request.getHeader(Matchers.eq(Header.DESTINATION), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/non_existing/item.txt");
         Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_CONFLICT);
+        assertNoContent(response, Status.CONFLICT);
     }
 
     @Test
@@ -82,13 +83,13 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         final WebDavPath target = WebDavPath.create("/target_item-02.txt");
         createItem(target, "test", false);
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DESTINATION_HEADER), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item-02.txt");
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.OVERRIDE_HEADER), Matchers.anyString())).thenReturn("F");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.INFINITY.name);
+        Mockito.when(request.getHeader(Matchers.eq(Header.DESTINATION), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item-02.txt");
+        Mockito.when(request.getHeader(Matchers.eq(Header.OVERRIDE), Matchers.anyString())).thenReturn("F");
         Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_PRECONDITION_FAILED);
+        assertNoContent(response, Status.PRECONDITION_FAILED);
     }
 
     @Test
@@ -98,13 +99,13 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         final WebDavPath target = WebDavPath.create("/target_item-03.txt");
         createItem(target, "test", false);
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DESTINATION_HEADER), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item-03.txt");
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.OVERRIDE_HEADER), Matchers.anyString())).thenReturn("T");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.INFINITY.name);
+        Mockito.when(request.getHeader(Matchers.eq(Header.DESTINATION), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/target_item-03.txt");
+        Mockito.when(request.getHeader(Matchers.eq(Header.OVERRIDE), Matchers.anyString())).thenReturn("T");
         Mockito.when(request.getPath()).thenReturn(SOURCE_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NO_CONTENT);
+        assertNoContent(response, Status.NO_CONTENT);
     }
 
     @Test
@@ -118,12 +119,12 @@ public abstract class AbstractCopyMoveMethodTest extends AbstractWebDavMethodTes
         final WebDavPath target = WebDavPath.create("/target_item-03.txt");
         createItem(target, "test", false);
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("1");
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DESTINATION_HEADER), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/shallow_target");
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.OVERRIDE_HEADER), Matchers.anyString())).thenReturn("T");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.MEMBERS.name);
+        Mockito.when(request.getHeader(Matchers.eq(Header.DESTINATION), Matchers.anyString())).thenReturn("http://127.0.0.1/webdav/shallow_target");
+        Mockito.when(request.getHeader(Matchers.eq(Header.OVERRIDE), Matchers.anyString())).thenReturn("T");
         Mockito.when(request.getPath()).thenReturn(srcRoot);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_CREATED);
+        assertNoContent(response, Status.CREATED);
     }
 }

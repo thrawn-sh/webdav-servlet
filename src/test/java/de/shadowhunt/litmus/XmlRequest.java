@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import de.shadowhunt.webdav.WebDavConfig;
+import de.shadowhunt.webdav.WebDavConstant.Header;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
@@ -105,10 +106,10 @@ class XmlRequest implements WebDavRequest {
     }
 
     @Override
-    public String getHeader(final String name, final String defaultValue) {
-        for (final XmlHeader header : headers) {
-            if (name.equals(header.getName())) {
-                return header.getValue();
+    public String getHeader(final Header header, final String defaultValue) {
+        for (final XmlHeader xmlHeader : headers) {
+            if (header.value.equals(xmlHeader.getName())) {
+                return xmlHeader.getValue();
             }
         }
         return defaultValue;

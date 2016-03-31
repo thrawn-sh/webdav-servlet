@@ -23,9 +23,10 @@ import de.shadowhunt.ContentNormalizer;
 import de.shadowhunt.EtagNormalizer;
 import de.shadowhunt.LastModifiedNormalizer;
 import de.shadowhunt.TestResponse;
+import de.shadowhunt.webdav.WebDavConstant.Depth;
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavPath;
-import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavResponse.Status;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -54,41 +55,41 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NOT_FOUND);
+        assertNoContent(response, Status.NOT_FOUND);
     }
 
     @Test
     public void test01_infinity_not_supported() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.INFINITY.name);
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_FORBIDDEN);
+        assertNoContent(response, Status.FORBIDDEN);
     }
 
     @Test
     public void test02_broken_request_body() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.SELF.name);
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><bad:a xmlns:bad=\"foo:\"/>".getBytes()));
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_BAD_REQUEST);
+        assertNoContent(response, Status.BAD_REQUEST);
     }
 
     @Test
     public void test02_missing_request_body() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.SELF.name);
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_BAD_REQUEST);
+        assertNoContent(response, Status.BAD_REQUEST);
     }
 
     @Test
@@ -97,12 +98,12 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(config.isAllowInfiniteDepthRequests()).thenReturn(true);
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.SELF.name);
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"/>".getBytes()));
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_BAD_REQUEST);
+        assertNoContent(response, Status.BAD_REQUEST);
     }
 
     @Test
@@ -111,12 +112,12 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(config.isAllowInfiniteDepthRequests()).thenReturn(true);
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.SELF.name);
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><prop xmlns:t=\"missing\"><t:foo/></prop></propfind>".getBytes()));
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertBasicRequirements(response, Status.SC_MULTISTATUS);
+        assertBasicRequirements(response, Status.MULTI_STATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
@@ -139,12 +140,12 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
     public void test05_selected_properties() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.SELF.name);
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><prop xmlns:t=\"foo\"><t:foo/></prop></propfind>".getBytes()));
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertBasicRequirements(response, Status.SC_MULTISTATUS);
+        assertBasicRequirements(response, Status.MULTI_STATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
@@ -167,12 +168,12 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
     public void test06_all_properties() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.SELF.name);
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><allprop/></propfind>".getBytes()));
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertBasicRequirements(response, Status.SC_MULTISTATUS);
+        assertBasicRequirements(response, Status.MULTI_STATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
@@ -202,12 +203,12 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
     public void test07_property_names() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.SELF.name);
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><propname/></propfind>".getBytes()));
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertBasicRequirements(response, Status.SC_MULTISTATUS);
+        assertBasicRequirements(response, Status.MULTI_STATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //
@@ -239,12 +240,12 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
     public void test08_all_collection() throws Exception {
         final WebDavMethod method = new PropFindMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("1");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.MEMBERS.name);
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream("<?xml version=\"1.0\"?><propfind xmlns=\"DAV:\"><allprop/></propfind>".getBytes()));
         Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
-        assertBasicRequirements(response, Status.SC_MULTISTATUS);
+        assertBasicRequirements(response, Status.MULTI_STATUS);
         Assert.assertEquals("contentType must match", "application/xml", response.getContentType());
         Assert.assertEquals("characterEncoding must match", AbstractBasicResponse.DEFAULT_ENCODING, response.getCharacterEncoding());
         final String expected = concat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", //

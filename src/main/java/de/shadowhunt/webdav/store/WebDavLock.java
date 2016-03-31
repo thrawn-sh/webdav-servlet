@@ -20,6 +20,7 @@ import java.util.UUID;
 
 import javax.annotation.concurrent.Immutable;
 
+import de.shadowhunt.webdav.WebDavConstant.Depth;
 import de.shadowhunt.webdav.WebDavPath;
 
 @Immutable
@@ -37,7 +38,7 @@ public interface WebDavLock {
 
     String PREFIX = "urn:uuid:";
 
-    int getDepth();
+    Depth getDepth();
 
     String getOwner();
 

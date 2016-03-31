@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
+import de.shadowhunt.webdav.WebDavConstant.Header;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponseWriter;
@@ -32,7 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 public class UnlockMethod extends AbstractWebDavMethod {
 
     protected Optional<UUID> determineLockToken(final WebDavRequest request) {
-        String token = request.getHeader(WebDavRequest.LOCKTOKEN_HEADER, "");
+        String token = request.getHeader(Header.LOCK_TOKEN, "");
         if (StringUtils.isBlank(token)) {
             return Optional.empty();
         }

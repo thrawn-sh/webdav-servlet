@@ -19,7 +19,7 @@ package de.shadowhunt.webdav.method;
 import java.io.ByteArrayInputStream;
 
 import de.shadowhunt.TestResponse;
-import de.shadowhunt.webdav.WebDavResponse.Status;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_CREATED);
+        assertNoContent(response, Status.CREATED);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_CREATED);
+        assertNoContent(response, Status.CREATED);
     }
 
     @Test
@@ -59,6 +59,6 @@ public class PutMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_METHOD_NOT_ALLOWED);
+        assertNoContent(response, Status.METHOD_NOT_ALLOWED);
     }
 }

@@ -19,10 +19,11 @@ package de.shadowhunt.webdav.method;
 import java.util.UUID;
 
 import de.shadowhunt.TestResponse;
+import de.shadowhunt.webdav.WebDavConstant.Depth;
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
-import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavResponse.Status;
 
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -39,22 +40,22 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new DeleteMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.INFINITY.name);
         Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NOT_FOUND);
+        assertNoContent(response, Status.NOT_FOUND);
     }
 
     @Test
     public void test01_existingItem() throws Exception {
         final WebDavMethod method = new DeleteMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.INFINITY.name);
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NO_CONTENT);
+        assertNoContent(response, Status.NO_CONTENT);
     }
 
     @Test
@@ -65,11 +66,11 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
 
         final WebDavMethod method = new DeleteMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.INFINITY.name);
         Mockito.when(request.getPath()).thenReturn(root);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NO_CONTENT);
+        assertNoContent(response, Status.NO_CONTENT);
     }
 
     @Test(expected = WebDavException.class)
@@ -80,7 +81,7 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(false);
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn("0");
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.SELF.name);
         Mockito.when(request.getPath()).thenReturn(root);
 
         execute(method);
@@ -93,10 +94,10 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(false);
 
-        Mockito.when(request.getHeader(Matchers.eq(WebDavRequest.DEPTH_HEADER), Matchers.anyString())).thenReturn(AbstractWebDavMethod.INFINITY);
+        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.INFINITY.name);
         Mockito.when(request.getPath()).thenReturn(WebDavPath.ROOT);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_FORBIDDEN);
+        assertNoContent(response, Status.FORBIDDEN);
     }
 }

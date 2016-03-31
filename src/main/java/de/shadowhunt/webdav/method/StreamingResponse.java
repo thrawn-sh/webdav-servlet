@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.store.WebDavEntity;
 
@@ -36,7 +37,7 @@ class StreamingResponse extends AbstractBasicResponse {
 
     @Override
     protected void write0(final WebDavResponse response) throws IOException {
-        response.setStatus(WebDavResponse.Status.SC_OK);
+        response.setStatus(Status.OK);
         response.setContentType(entity.getMimeType());
 
         final OutputStream output = response.getOutputStream();

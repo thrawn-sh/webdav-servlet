@@ -29,9 +29,10 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
-import de.shadowhunt.webdav.WebDavResponse.Status;
 import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.property.PropertyIdentifier;
 import de.shadowhunt.webdav.store.WebDavEntity;
@@ -139,7 +140,7 @@ public class LockMethod extends AbstractWebDavMethod {
     }
 
     private Optional<Integer> getTimeoutInSeconds(final WebDavRequest request) {
-        final String timeout = StringUtils.trimToEmpty(request.getHeader(WebDavRequest.TIMEOUT_HEADER, INFINITE));
+        final String timeout = StringUtils.trimToEmpty(request.getHeader(Header.TIMEOUT, INFINITE));
 
         if (StringUtils.startsWithIgnoreCase(timeout, INFINITE)) {
             return Optional.of(-1);
@@ -179,12 +180,12 @@ public class LockMethod extends AbstractWebDavMethod {
 
     @Override
     public WebDavResponseWriter service(final WebDavStore store, final WebDavRequest request) throws IOException {
-        Status status = Status.SC_OK;
+        Status status = Status.OK;
 
         final WebDavPath path = request.getPath();
         if (!store.exists(path)) {
             store.createItem(path, new ByteArrayInputStream(new byte[0]));
-            status = Status.SC_CREATED;
+            status = Status.CREATED;
         }
 
         final WebDavLock lock = determineLock(store, request);

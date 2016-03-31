@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.UUID;
 
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.method.WebDavMethod;
 import de.shadowhunt.webdav.method.WebDavMethod.Method;
 import de.shadowhunt.webdav.precondition.Precondition;
@@ -52,11 +53,11 @@ public final class WebDavDispatcher {
     void checkAuthorization(final WebDavMethod method, final WebDavStore store, final WebDavRequest request) {
         final Access access = store.grantAccess(method, request.getPath(), request.getPrincipal());
         if (access == Access.DENY) {
-            throw new WebDavException("user not authorized", WebDavResponse.Status.SC_FORBIDDEN);
+            throw new WebDavException("user not authorized", Status.FORBIDDEN);
         }
 
         if (access == Access.REQUIRE_AUTHENTICATION) {
-            throw new WebDavException("user must authorized", WebDavResponse.Status.SC_UNAUTHORIZED);
+            throw new WebDavException("user must authorized", Status.UNAUTHORIZED);
         }
     }
 
@@ -84,26 +85,26 @@ public final class WebDavDispatcher {
             response.setStatus(e.getStatus());
         } catch (final RuntimeException e) {
             LOGGER.warn("request failed", e);
-            response.setStatus(WebDavResponse.Status.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     void verifyConsistency(final WebDavRequest request, final WebDavResponse response) {
         final UUID requestId = response.getRequest().getId();
         if (!request.getId().equals(requestId)) {
-            throw new WebDavException("response does not belong to the request", WebDavResponse.Status.SC_INTERNAL_SERVER_ERROR);
+            throw new WebDavException("response does not belong to the request", Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     void verifyMethod(final Method method, final WebDavConfig config) {
         if (config.isReadOnly() && !method.isReadOnly()) {
-            throw new WebDavException("store is read-only", WebDavResponse.Status.SC_METHOD_NOT_ALLOWED);
+            throw new WebDavException("store is read-only", Status.METHOD_NOT_ALLOWED);
         }
     }
 
     void verifyPrecondition(final WebDavStore store, final WebDavRequest request) {
         if (!Precondition.verify(store, request)) {
-            throw new WebDavException("precondition not satisfaid", WebDavResponse.Status.SC_PRECONDITION_FAILED);
+            throw new WebDavException("precondition not satisfaid", Status.PRECONDITION_FAILED);
         }
     }
 }

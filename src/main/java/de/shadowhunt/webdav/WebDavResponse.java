@@ -19,46 +19,12 @@ package de.shadowhunt.webdav;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
+
 public interface WebDavResponse {
 
-    enum Status {
-
-        SC_BAD_REQUEST(400), //
-        SC_CONFLICT(409), //
-        SC_CREATED(201), //
-        SC_FORBIDDEN(403), //
-        SC_INTERNAL_SERVER_ERROR(500), //
-        SC_LOCKED(423), //
-        SC_METHOD_NOT_ALLOWED(405), //
-        SC_MULTISTATUS(207), //
-        SC_NO_CONTENT(204), //
-        SC_NOT_FOUND(404), //
-        SC_NOT_IMPLEMENTED(501), //
-        SC_OK(200), //
-        SC_PRECONDITION_FAILED(412), //
-        SC_UNAUTHORIZED(401), //
-        SC_UNSUPPORTED_MEDIA_TYPE(415);
-
-        public final int value;
-
-        Status(final int value) {
-            this.value = value;
-        }
-    }
-
-    String ALLOW_HEADER = "Allow";
-
-    String CACHE_CONTROL_HEADER = "Cache-Control";
-
-    String DAV_HEADER = "DAV";
-
-    String ETAG_HEADER = "ETag";
-
-    String LAST_MODIFIED_HEADER = "Last-Modified";
-
-    String MS_AUTHOR_HEADER = "MS-Author-Via";
-
-    void addHeader(final String name, final String value);
+    void addHeader(final Header header, final String value);
 
     OutputStream getOutputStream() throws IOException;
 

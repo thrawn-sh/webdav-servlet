@@ -17,7 +17,7 @@
 package de.shadowhunt.webdav.method;
 
 import de.shadowhunt.TestResponse;
-import de.shadowhunt.webdav.WebDavResponse.Status;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class HeadMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_NOT_FOUND);
+        assertNoContent(response, Status.NOT_FOUND);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class HeadMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_OK);
+        assertNoContent(response, Status.OK);
     }
 
     @Test
@@ -55,6 +55,6 @@ public class HeadMethodTest extends AbstractWebDavMethodTest {
         Mockito.when(request.getPath()).thenReturn(EXISTING_COLLECTION);
 
         final TestResponse response = execute(method);
-        assertNoContent(response, Status.SC_OK);
+        assertNoContent(response, Status.OK);
     }
 }

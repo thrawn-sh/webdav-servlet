@@ -18,6 +18,7 @@ package de.shadowhunt.webdav.store.filesystem;
 
 import java.util.UUID;
 
+import de.shadowhunt.webdav.WebDavConstant.Depth;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.store.WebDavLock;
@@ -27,7 +28,7 @@ import de.shadowhunt.webdav.store.WebDavLockBuilder;
 
 public class FileSystemLockBuilder implements WebDavLockBuilder {
 
-    private int depth = WebDavLock.INFINITY;
+    private Depth depth = Depth.INFINITY;
 
     private String owner = "";
 
@@ -49,7 +50,7 @@ public class FileSystemLockBuilder implements WebDavLockBuilder {
     }
 
     @Override
-    public void setDepth(final int depth) {
+    public void setDepth(final Depth depth) {
         this.depth = depth;
     }
 

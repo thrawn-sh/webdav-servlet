@@ -25,11 +25,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import de.shadowhunt.webdav.WebDavConstant.Depth;
+import de.shadowhunt.webdav.WebDavConstant.Header;
+import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
-import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
-import de.shadowhunt.webdav.WebDavResponse.Status;
 import de.shadowhunt.webdav.property.PropertyIdentifier;
 import de.shadowhunt.webdav.store.WebDavEntity;
 import de.shadowhunt.webdav.store.WebDavLock;
@@ -51,7 +52,7 @@ class LockDiscoveryResponse extends AbstractBasicResponse {
         response.setCharacterEncoding(DEFAULT_ENCODING);
         response.setContentType("application/xml");
         final UUID token = lock.getToken();
-        response.addHeader(WebDavRequest.LOCKTOKEN_HEADER, "<" + WebDavLock.PREFIX + token + ">");
+        response.addHeader(Header.LOCK_TOKEN, "<" + WebDavLock.PREFIX + token + ">");
         response.setStatus(status);
 
         try {
@@ -75,12 +76,8 @@ class LockDiscoveryResponse extends AbstractBasicResponse {
             writer.writeEndElement();
 
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "depth");
-            final int depth = lock.getDepth();
-            if (depth == Integer.MAX_VALUE) {
-                writer.writeCharacters("infinity");
-            } else {
-                writer.writeCharacters(Integer.toString(depth));
-            }
+            final Depth depth = lock.getDepth();
+            writer.writeCharacters(depth.name);
             writer.writeEndElement();
 
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "owner");
