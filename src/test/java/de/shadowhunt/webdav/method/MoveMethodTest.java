@@ -14,20 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav;
+package de.shadowhunt.webdav.method;
 
-import javax.annotation.concurrent.Immutable;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import de.shadowhunt.webdav.WebDavMethod;
 
-import de.shadowhunt.webdav.property.PropertyIdentifier;
+public class MoveMethodTest extends AbstractCopyMoveMethodTest {
 
-@Immutable
-public interface WebDavProperty {
+    @Override
+    protected WebDavMethod createMethod() {
+        return new MoveMethod();
+    }
 
-    PropertyIdentifier getIdentifier();
-
-    String getValue();
-
-    void write(final XMLStreamWriter writer) throws XMLStreamException;
 }

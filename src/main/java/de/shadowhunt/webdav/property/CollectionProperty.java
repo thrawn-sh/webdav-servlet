@@ -14,20 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with Shadowhunt WebDav Servlet.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.shadowhunt.webdav;
+package de.shadowhunt.webdav.property;
 
-import javax.annotation.concurrent.Immutable;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import de.shadowhunt.webdav.property.PropertyIdentifier;
+public final class CollectionProperty extends AbstractWebDavProperty {
 
-@Immutable
-public interface WebDavProperty {
+    public CollectionProperty() {
+        super(PropertyIdentifier.RESOURCE_TYPE_IDENTIFIER);
+    }
 
-    PropertyIdentifier getIdentifier();
+    @Override
+    public String getValue() {
+        throw new UnsupportedOperationException();
+    }
 
-    String getValue();
-
-    void write(final XMLStreamWriter writer) throws XMLStreamException;
+    @Override
+    public void write(final XMLStreamWriter writer) throws XMLStreamException {
+        writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, PropertyIdentifier.RESOURCE_TYPE_IDENTIFIER.getName());
+        writer.writeEmptyElement(PropertyIdentifier.DAV_NAMESPACE, "collection");
+        writer.writeEndElement();
+    }
 }

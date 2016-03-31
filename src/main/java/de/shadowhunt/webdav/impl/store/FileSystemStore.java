@@ -37,18 +37,18 @@ import java.util.UUID;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import de.shadowhunt.webdav.PropertyIdentifier;
 import de.shadowhunt.webdav.WebDavEntity;
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavLock;
 import de.shadowhunt.webdav.WebDavLock.LockScope;
 import de.shadowhunt.webdav.WebDavLock.LockType;
+import de.shadowhunt.webdav.property.PropertyIdentifier;
+import de.shadowhunt.webdav.property.StringWebDavProperty;
 import de.shadowhunt.webdav.WebDavLockBuilder;
 import de.shadowhunt.webdav.WebDavMethod;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavProperty;
 import de.shadowhunt.webdav.WebDavStore;
-import de.shadowhunt.webdav.impl.StringWebDavProperty;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
