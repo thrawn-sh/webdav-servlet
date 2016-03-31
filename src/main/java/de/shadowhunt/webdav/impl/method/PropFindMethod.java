@@ -130,7 +130,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
 
     private static final XPathExpression ALL_EXPRESSION;
 
-    private static final FastDateFormat ISO_DATE_FORMATTER = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
+    private static final FastDateFormat RFC_882_FORMATTER = FastDateFormat.getInstance("EEE, d MMM yyyy HH:mm:ss Z");
 
     private static final XPathExpression NAME_EXPRESSION;
 
@@ -155,7 +155,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
         final Collection<WebDavProperty> result = new ArrayList<>();
         result.add(new StringWebDavProperty(PropertyIdentifier.DISPLAY_NAME_IDENTIFIER, entity.getName()));
         result.add(new StringWebDavProperty(PropertyIdentifier.CONTENT_LENGTH_IDENTIFIER, Long.toString(entity.getSize())));
-        result.add(new StringWebDavProperty(PropertyIdentifier.LAST_MODIFIED_IDENTIFIER, ISO_DATE_FORMATTER.format(entity.getLastModified())));
+        result.add(new StringWebDavProperty(PropertyIdentifier.LAST_MODIFIED_IDENTIFIER, RFC_882_FORMATTER.format(entity.getLastModified())));
         if (entity.getType() == WebDavEntity.Type.COLLECTION) {
             result.add(new CollectionProperty());
         }
