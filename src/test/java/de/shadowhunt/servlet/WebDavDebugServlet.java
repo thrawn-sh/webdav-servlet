@@ -33,6 +33,6 @@ public class WebDavDebugServlet extends WebDavServlet {
 
     @Override
     protected WebDavRequest createWebDavRequestWrapper(final HttpServletRequest request) throws IOException {
-        return RequestDebugHelper.generateAndDump(request, config, dumpLocation);
+        return RequestDebugHelper.generateAndDump(request, getWebDavConfig(), dumpLocation);
     }
 }

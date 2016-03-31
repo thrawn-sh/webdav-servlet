@@ -51,9 +51,7 @@ public class WebDavServlet extends HttpServlet {
 
     public static final String WRITEABLE = "writeable";
 
-    protected transient WebDavConfig config;
-
-    protected transient WebDavStore store;
+    private transient WebDavConfig config;
 
     protected HttpServletConfig createWebDavConfig(final ServletConfig servletConfig) throws ServletException {
         final HttpServletConfig webdavConfig = new HttpServletConfig();
@@ -95,15 +93,19 @@ public class WebDavServlet extends HttpServlet {
     }
 
     protected WebDavRequest createWebDavRequestWrapper(final HttpServletRequest request) throws IOException {
-        return new HttpServletRequestWrapper(request, config);
-    }
-
-    protected WebDavStore createWebDavStore(final ServletConfig servletConfig) {
-        return new FileSystemStore(new File(FileUtils.getTempDirectory(), "webdav-servlet-repo")); // FIXME
+        return new HttpServletRequestWrapper(request, getWebDavConfig());
     }
 
     protected WebDavResponse createWenDavResponseWrapper(final HttpServletResponse response, final WebDavRequest webDavRequest) throws IOException {
         return new HttpServletResponseWrapper(response, webDavRequest);
+    }
+
+    protected WebDavConfig getWebDavConfig() {
+        return config;
+    }
+
+    protected WebDavStore getWebDavStore() {
+        return new FileSystemStore(new File(FileUtils.getTempDirectory(), "webdav-servlet-repo")); // FIXME
     }
 
     @Override
@@ -111,7 +113,6 @@ public class WebDavServlet extends HttpServlet {
         super.init(servletConfig);
 
         config = createWebDavConfig(servletConfig);
-        store = createWebDavStore(servletConfig);
     }
 
     @Override
@@ -120,6 +121,6 @@ public class WebDavServlet extends HttpServlet {
         final WebDavResponse webDavResponse = createWenDavResponseWrapper(response, webDavRequest);
 
         final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();
-        dispatcher.service(store, webDavRequest, webDavResponse);
+        dispatcher.service(getWebDavStore(), webDavRequest, webDavResponse);
     }
 }
