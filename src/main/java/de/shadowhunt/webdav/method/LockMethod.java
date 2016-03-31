@@ -32,14 +32,14 @@ import javax.xml.xpath.XPathFactory;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse.Status;
+import de.shadowhunt.webdav.WebDavResponseWriter;
 import de.shadowhunt.webdav.property.PropertyIdentifier;
 import de.shadowhunt.webdav.store.WebDavEntity;
 import de.shadowhunt.webdav.store.WebDavLock;
-import de.shadowhunt.webdav.store.WebDavLockBuilder;
-import de.shadowhunt.webdav.store.WebDavStore;
 import de.shadowhunt.webdav.store.WebDavLock.LockScope;
 import de.shadowhunt.webdav.store.WebDavLock.LockType;
-import de.shadowhunt.webdav.WebDavResponseWriter;
+import de.shadowhunt.webdav.store.WebDavLockBuilder;
+import de.shadowhunt.webdav.store.WebDavStore;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
@@ -181,7 +181,14 @@ public class LockMethod extends AbstractWebDavMethod {
         }
 
         final WebDavLock lock = determineLock(store, request);
-        final WebDavEntity lockedEntity = store.lock(path, lock);
+        final WebDavEntity lockedEntity = lockRecursively(store, path, lock);
         return new LockDiscoveryResponse(lockedEntity, status);
+    }
+
+    private WebDavEntity lockRecursively(final WebDavStore store, final WebDavPath path, final WebDavLock lock) {
+        for (final WebDavPath child : store.list(path)) {
+            lockRecursively(store, child, lock);
+        }
+        return store.lock(path, lock);
     }
 }
