@@ -79,7 +79,7 @@ public class FileSystemStore implements WebDavStore {
 
     private final Object monitor = new Object();
 
-    private final File resourceRoot;
+    private final File contentRoot;
 
     private final Set<SupportedLock> supportedLocks;
 
@@ -88,16 +88,16 @@ public class FileSystemStore implements WebDavStore {
     }
 
     public FileSystemStore(final File root, final boolean clear) {
-        this.resourceRoot = new File(root, "content");
+        this.contentRoot = new File(root, "content");
         this.metaRoot = new File(root, "meta");
 
         if (clear) {
-            FileUtils.deleteQuietly(resourceRoot);
+            FileUtils.deleteQuietly(contentRoot);
             FileUtils.deleteQuietly(metaRoot);
         }
 
-        if (!resourceRoot.exists() && !resourceRoot.mkdirs()) {
-            throw new WebDavException("resourceRoot path: " + resourceRoot + " does not exist and can not be created");
+        if (!contentRoot.exists() && !contentRoot.mkdirs()) {
+            throw new WebDavException("contentRoot path: " + contentRoot + " does not exist and can not be created");
         }
         if (!metaRoot.exists() && !metaRoot.mkdirs()) {
             throw new WebDavException("metaRoot path: " + metaRoot + " does not exist and can not be created");
@@ -264,7 +264,7 @@ public class FileSystemStore implements WebDavStore {
     }
 
     private File getContentFile(final WebDavPath path, final boolean mustExist) throws WebDavException {
-        final File file = new File(resourceRoot, path.getValue());
+        final File file = new File(contentRoot, path.getValue());
         if (mustExist && !file.exists()) {
             throw new WebDavException("can not locate resource: " + path);
         }
