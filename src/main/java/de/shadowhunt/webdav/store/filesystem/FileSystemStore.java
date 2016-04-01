@@ -49,6 +49,7 @@ import de.shadowhunt.webdav.store.WebDavEntity;
 import de.shadowhunt.webdav.store.WebDavLock;
 import de.shadowhunt.webdav.store.WebDavLock.LockScope;
 import de.shadowhunt.webdav.store.WebDavLock.LockType;
+import de.shadowhunt.webdav.store.WebDavLock.Timeout;
 import de.shadowhunt.webdav.store.WebDavLockBuilder;
 import de.shadowhunt.webdav.store.WebDavStore;
 
@@ -65,6 +66,8 @@ public class FileSystemStore implements WebDavStore {
     private static final String LOCK_ROOT = "root";
 
     private static final String LOCK_SCOPE = "scope";
+
+    private static final String LOCK_TIMEOUT = "timeout";
 
     private static final String LOCK_TOKEN = "token";
 
@@ -230,11 +233,13 @@ public class FileSystemStore implements WebDavStore {
             final WebDavPath root = WebDavPath.create(rootProperty);
             final String scopeProperty = properties.getProperty(LOCK_SCOPE);
             final LockScope scope = LockScope.valueOf(scopeProperty);
+            final String timeoutProperty = properties.getProperty(LOCK_TIMEOUT);
+            final Timeout timeout = Timeout.parse(timeoutProperty);
             final String tokenProperty = properties.getProperty(LOCK_TOKEN);
             final UUID token = UUID.fromString(tokenProperty);
             final String typeProperty = properties.getProperty(LOCK_TYPE);
             final LockType type = LockType.valueOf(typeProperty);
-            return Optional.of(new FileSystemLock(token, root, depth, scope, type, -1, owner));
+            return Optional.of(new FileSystemLock(token, root, depth, scope, type, timeout, owner));
         }
     }
 
@@ -366,6 +371,9 @@ public class FileSystemStore implements WebDavStore {
                 final LockScope scope = lock.getScope();
                 final String scopeProperty = scope.name();
                 store.put(LOCK_SCOPE, scopeProperty);
+                final Timeout timeout = lock.getTimeout();
+                final String timeoutProperty = timeout.toString();
+                store.put(LOCK_TIMEOUT, timeoutProperty);
                 final UUID token = lock.getToken();
                 final String tokenProperty = token.toString();
                 store.put(LOCK_TOKEN, tokenProperty);

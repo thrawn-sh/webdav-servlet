@@ -25,6 +25,7 @@ import de.shadowhunt.webdav.WebDavConstant.Header;
 import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.store.WebDavEntity;
+import de.shadowhunt.webdav.store.WebDavLock.Timeout;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -62,7 +63,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     public void test00_missing() throws Exception {
         final WebDavMethod method = new LockMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(Header.TIMEOUT), Matchers.anyString())).thenReturn(LockMethod.INFINITE);
+        Mockito.when(request.getHeader(Matchers.eq(Header.TIMEOUT), Matchers.anyString())).thenReturn(Timeout.INFINITE_STRING);
         Mockito.when(request.getPath()).thenReturn(NON_EXISTING);
 
         final TestResponse response = execute(method);
@@ -91,7 +92,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
     public void test01_existingNotLocked() throws Exception {
         final WebDavMethod method = new LockMethod();
 
-        Mockito.when(request.getHeader(Matchers.eq(Header.TIMEOUT), Matchers.anyString())).thenReturn(LockMethod.INFINITE);
+        Mockito.when(request.getHeader(Matchers.eq(Header.TIMEOUT), Matchers.anyString())).thenReturn(Timeout.INFINITE_STRING);
         Mockito.when(request.getPath()).thenReturn(EXISTING_ITEM);
 
         final TestResponse response = execute(method);
@@ -129,7 +130,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
                 "<D:owner>test</D:owner>", //
                 "</D:lockinfo>");
 
-        Mockito.when(request.getHeader(Matchers.eq(Header.TIMEOUT), Matchers.anyString())).thenReturn("Seconds-3600");
+        Mockito.when(request.getHeader(Matchers.eq(Header.TIMEOUT), Matchers.anyString())).thenReturn(Timeout.PREFIX + "3600");
         Mockito.when(request.getInputStream()).thenReturn(new ByteArrayInputStream(input.getBytes()));
         Mockito.when(request.getPath()).thenReturn(path);
 
@@ -196,7 +197,7 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
 
         Mockito.when(config.isShowCollectionListings()).thenReturn(true);
 
-        Mockito.when(request.getHeader(Matchers.eq(Header.TIMEOUT), Matchers.anyString())).thenReturn(LockMethod.INFINITE);
+        Mockito.when(request.getHeader(Matchers.eq(Header.TIMEOUT), Matchers.anyString())).thenReturn(Timeout.INFINITE_STRING);
         Mockito.when(request.getPath()).thenReturn(LOCKED_ITEM);
 
         final TestResponse response = execute(method);

@@ -24,6 +24,7 @@ import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.store.WebDavLock;
 import de.shadowhunt.webdav.store.WebDavLock.LockScope;
 import de.shadowhunt.webdav.store.WebDavLock.LockType;
+import de.shadowhunt.webdav.store.WebDavLock.Timeout;
 import de.shadowhunt.webdav.store.WebDavLockBuilder;
 
 public class FileSystemLockBuilder implements WebDavLockBuilder {
@@ -36,7 +37,7 @@ public class FileSystemLockBuilder implements WebDavLockBuilder {
 
     private LockScope scope = LockScope.EXCLUSIVE;
 
-    private int timeoutInSeconds = WebDavLock.INFINITY;
+    private Timeout timeout = Timeout.INFINITE;
 
     private LockType type = LockType.WRITE;
 
@@ -46,7 +47,7 @@ public class FileSystemLockBuilder implements WebDavLockBuilder {
         if (root == null) {
             throw new WebDavException("lock root must be defined");
         }
-        return new FileSystemLock(token, root, depth, scope, type, timeoutInSeconds, owner);
+        return new FileSystemLock(token, root, depth, scope, type, timeout, owner);
     }
 
     @Override
@@ -70,8 +71,8 @@ public class FileSystemLockBuilder implements WebDavLockBuilder {
     }
 
     @Override
-    public void setTimeoutInSeconds(final int timeoutInSeconds) {
-        this.timeoutInSeconds = -1; // only infinite locks are supported
+    public void setTimeout(final Timeout timeout) {
+        this.timeout = Timeout.INFINITE; // only infinite locks are supported
     }
 
     @Override

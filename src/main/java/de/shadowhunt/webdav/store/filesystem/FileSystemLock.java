@@ -35,18 +35,18 @@ final class FileSystemLock implements WebDavLock {
 
     private final LockScope scope;
 
-    private final int timeoutInSeconds;
+    private final Timeout timeout;
 
     private final UUID token;
 
     private final LockType type;
 
-    FileSystemLock(final UUID token, final WebDavPath root, final Depth depth, final LockScope scope, final LockType type, final int timeoutInSeconds, final String owner) {
+    FileSystemLock(final UUID token, final WebDavPath root, final Depth depth, final LockScope scope, final LockType type, final Timeout timeout, final String owner) {
         this.depth = depth;
         this.owner = owner;
         this.root = root;
         this.scope = scope;
-        this.timeoutInSeconds = timeoutInSeconds;
+        this.timeout = timeout;
         this.token = token;
         this.type = type;
     }
@@ -94,8 +94,8 @@ final class FileSystemLock implements WebDavLock {
     }
 
     @Override
-    public int getTimeoutInSeconds() {
-        return timeoutInSeconds;
+    public Timeout getTimeout() {
+        return timeout;
     }
 
     @Override
@@ -118,6 +118,6 @@ final class FileSystemLock implements WebDavLock {
 
     @Override
     public String toString() {
-        return "FileSystemLock [root=" + root + ", depth=" + depth + ", owner=" + owner + ", scope=" + scope + ", timeoutInSeconds=" + timeoutInSeconds + ", token=" + token + ", type=" + type + "]";
+        return "FileSystemLock [root=" + root + ", depth=" + depth + ", owner=" + owner + ", scope=" + scope + ", timeout=" + timeout + ", token=" + token + ", type=" + type + "]";
     }
 }

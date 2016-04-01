@@ -39,6 +39,7 @@ import de.shadowhunt.webdav.store.WebDavEntity;
 import de.shadowhunt.webdav.store.WebDavLock;
 import de.shadowhunt.webdav.store.WebDavLock.LockScope;
 import de.shadowhunt.webdav.store.WebDavLock.LockType;
+import de.shadowhunt.webdav.store.WebDavLock.Timeout;
 import de.shadowhunt.webdav.store.WebDavLockBuilder;
 import de.shadowhunt.webdav.store.WebDavStore;
 
@@ -48,8 +49,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class LockMethod extends AbstractWebDavMethod {
-
-    public static final String INFINITE = "infinite";
 
     private static final XPathExpression LOCK_OWNER;
 
@@ -76,8 +75,8 @@ public class LockMethod extends AbstractWebDavMethod {
         final WebDavPath path = request.getPath();
         lockBuilder.setRoot(path);
 
-        final Optional<Integer> timeoutInSeconds = getTimeoutInSeconds(request);
-        timeoutInSeconds.ifPresent(x -> lockBuilder.setTimeoutInSeconds(x));
+        final Timeout timeout = getTimeout(request);
+        lockBuilder.setTimeout(timeout);
 
         final Document document = PropertiesMessageHelper.parse(request.getInputStream());
         if (document != null) {
@@ -139,21 +138,9 @@ public class LockMethod extends AbstractWebDavMethod {
         }
     }
 
-    private Optional<Integer> getTimeoutInSeconds(final WebDavRequest request) {
-        final String timeout = StringUtils.trimToEmpty(request.getHeader(Header.TIMEOUT, INFINITE));
-
-        if (StringUtils.startsWithIgnoreCase(timeout, INFINITE)) {
-            return Optional.of(-1);
-        }
-
-        final String digits = StringUtils.removeStartIgnoreCase(timeout, "Seconds-");
-
-        try {
-            final int seconds = Integer.parseInt(digits);
-            return Optional.of(seconds);
-        } catch (final NumberFormatException e) {
-            return Optional.of(-1);
-        }
+    private Timeout getTimeout(final WebDavRequest request) {
+        final String timeout = StringUtils.trimToEmpty(request.getHeader(Header.TIMEOUT, Timeout.INFINITE_STRING));
+        return Timeout.parse(timeout);
     }
 
     private Optional<LockType> getType(final Document document) {

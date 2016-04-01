@@ -20,6 +20,7 @@ import de.shadowhunt.webdav.WebDavConstant.Depth;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.store.WebDavLock.LockScope;
 import de.shadowhunt.webdav.store.WebDavLock.LockType;
+import de.shadowhunt.webdav.store.WebDavLock.Timeout;
 
 public interface WebDavLockBuilder {
 
@@ -33,7 +34,7 @@ public interface WebDavLockBuilder {
 
     void setScope(LockScope scope);
 
-    void setTimeoutInSeconds(int timeoutInSeconds);
+    void setTimeout(Timeout timeout);
 
     void setType(LockType type);
 }

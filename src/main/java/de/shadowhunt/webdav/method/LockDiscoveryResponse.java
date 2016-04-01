@@ -34,6 +34,7 @@ import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.property.PropertyIdentifier;
 import de.shadowhunt.webdav.store.WebDavEntity;
 import de.shadowhunt.webdav.store.WebDavLock;
+import de.shadowhunt.webdav.store.WebDavLock.Timeout;
 
 class LockDiscoveryResponse extends AbstractBasicResponse {
 
@@ -85,13 +86,8 @@ class LockDiscoveryResponse extends AbstractBasicResponse {
             writer.writeEndElement();
 
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "timeout");
-            final int timeout = lock.getTimeoutInSeconds();
-            if (timeout >= 0) {
-                writer.writeCharacters("Seconds-");
-                writer.writeCharacters(Integer.toString(timeout));
-            } else {
-                writer.writeCharacters("Infinite");
-            }
+            final Timeout timeout = lock.getTimeout();
+            writer.writeCharacters(timeout.toString());
             writer.writeEndElement();
 
             writer.writeStartElement(PropertyIdentifier.DAV_NAMESPACE, "locktoken");
