@@ -19,7 +19,6 @@ package de.shadowhunt.webdav.store.filesystem;
 import java.util.UUID;
 
 import de.shadowhunt.webdav.WebDavConstant.Depth;
-import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.store.WebDavLock;
 import de.shadowhunt.webdav.store.WebDavLock.LockScope;
@@ -33,21 +32,12 @@ public class FileSystemLockBuilder implements WebDavLockBuilder {
 
     private String owner = "";
 
-    private WebDavPath root = null;
-
-    private LockScope scope = LockScope.EXCLUSIVE;
-
-    private Timeout timeout = Timeout.INFINITE;
-
-    private LockType type = LockType.WRITE;
+    private WebDavPath root = WebDavPath.ROOT;
 
     @Override
     public WebDavLock build() {
         final UUID token = UUID.randomUUID();
-        if (root == null) {
-            throw new WebDavException("lock root must be defined");
-        }
-        return new FileSystemLock(token, root, depth, scope, type, timeout, owner);
+        return new FileSystemLock(token, root, depth, LockScope.EXCLUSIVE, LockType.WRITE, Timeout.INFINITE, owner);
     }
 
     @Override
@@ -67,16 +57,16 @@ public class FileSystemLockBuilder implements WebDavLockBuilder {
 
     @Override
     public void setScope(final LockScope scope) {
-        this.scope = LockScope.EXCLUSIVE; // only exclusive locks are supported
+        // only exclusive locks are supported
     }
 
     @Override
     public void setTimeout(final Timeout timeout) {
-        this.timeout = Timeout.INFINITE; // only infinite locks are supported
+        // only infinite locks are supported
     }
 
     @Override
     public void setType(final LockType type) {
-        this.type = LockType.WRITE; // only write locks are supported
+        // only write locks are supported
     }
 }
