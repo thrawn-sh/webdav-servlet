@@ -17,11 +17,12 @@
 package de.shadowhunt.litmus;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.JAXB;
 
 import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavConfig;
@@ -66,18 +67,17 @@ public abstract class AbstractLitmusTest {
     protected WebDavConfig config;
 
     private WebDavRequest create(final File request) throws Exception {
-        final JAXBContext context = JAXBContext.newInstance(XmlRequest.class);
+        try (final InputStream input = new FileInputStream(request)) {
+            final XmlRequest xmlRequest = JAXB.unmarshal(input, XmlRequest.class);
+            Assert.assertNotNull("request must not be null", xmlRequest);
 
-        final Unmarshaller unmarshaller = context.createUnmarshaller();
-        final XmlRequest xmlRequest = (XmlRequest) unmarshaller.unmarshal(request);
-        Assert.assertNotNull("request must not be null", xmlRequest);
+            final List<XmlHeader> headers = xmlRequest.getHeaders();
+            Assert.assertNotNull("headers must not be null", headers);
+            Assert.assertFalse("headers must not be empty", headers.isEmpty());
 
-        final List<XmlHeader> headers = xmlRequest.getHeaders();
-        Assert.assertNotNull("headers must not be null", headers);
-        Assert.assertFalse("headers must not be empty", headers.isEmpty());
-
-        xmlRequest.setConfig(config);
-        return xmlRequest;
+            xmlRequest.setConfig(config);
+            return xmlRequest;
+        }
     }
 
     protected TestResponse execute(final File request) throws Exception {
