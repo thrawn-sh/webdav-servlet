@@ -359,31 +359,30 @@ public class FileSystemStore implements WebDavStore {
     public WebDavEntity lock(final WebDavPath path, final WebDavLock lock) throws WebDavException {
         synchronized (monitor) {
             final File lockFile = getLockFile(path);
-            try {
-                final Properties store = new Properties();
-                final Depth depth = lock.getDepth();
-                store.put(LOCK_DEPTH, depth.name);
-                final String owner = lock.getOwner();
-                store.put(LOCK_OWNER, owner);
-                final WebDavPath root = lock.getRoot();
-                final String rootProperty = root.getValue();
-                store.put(LOCK_ROOT, rootProperty);
-                final LockScope scope = lock.getScope();
-                final String scopeProperty = scope.name();
-                store.put(LOCK_SCOPE, scopeProperty);
-                final Timeout timeout = lock.getTimeout();
-                final String timeoutProperty = timeout.toString();
-                store.put(LOCK_TIMEOUT, timeoutProperty);
-                final UUID token = lock.getToken();
-                final String tokenProperty = token.toString();
-                store.put(LOCK_TOKEN, tokenProperty);
-                final LockType type = lock.getType();
-                final String typeProperty = type.name();
-                store.put(LOCK_TYPE, typeProperty);
 
-                try (final OutputStream os = new FileOutputStream(lockFile)) {
-                    store.storeToXML(os, "", "UTF-8");
-                }
+            final Properties store = new Properties();
+            final Depth depth = lock.getDepth();
+            store.put(LOCK_DEPTH, depth.name);
+            final String owner = lock.getOwner();
+            store.put(LOCK_OWNER, owner);
+            final WebDavPath root = lock.getRoot();
+            final String rootProperty = root.getValue();
+            store.put(LOCK_ROOT, rootProperty);
+            final LockScope scope = lock.getScope();
+            final String scopeProperty = scope.name();
+            store.put(LOCK_SCOPE, scopeProperty);
+            final Timeout timeout = lock.getTimeout();
+            final String timeoutProperty = timeout.toString();
+            store.put(LOCK_TIMEOUT, timeoutProperty);
+            final UUID token = lock.getToken();
+            final String tokenProperty = token.toString();
+            store.put(LOCK_TOKEN, tokenProperty);
+            final LockType type = lock.getType();
+            final String typeProperty = type.name();
+            store.put(LOCK_TYPE, typeProperty);
+
+            try (final OutputStream os = new FileOutputStream(lockFile)) {
+                store.storeToXML(os, "", "UTF-8");
             } catch (final Exception e) {
                 throw new WebDavException("can not write lock for " + path, e);
             }
