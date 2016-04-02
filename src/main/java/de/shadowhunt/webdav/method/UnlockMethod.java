@@ -79,13 +79,15 @@ public class UnlockMethod extends AbstractWebDavMethod {
         }
 
         final WebDavLock webdavLock = lock.get();
-        unlockRecursively(store, webdavLock.getRoot());
+        unlockRecursively(store, webdavLock.getDepth().value, webdavLock.getRoot());
         return AbstractBasicResponse.createNoContent(entity);
     }
 
-    private void unlockRecursively(final WebDavStore store, final WebDavPath path) {
-        for (final WebDavPath child : store.list(path)) {
-            unlockRecursively(store, child);
+    private void unlockRecursively(final WebDavStore store, final int depth, final WebDavPath path) {
+        if (depth > 0) {
+            for (final WebDavPath child : store.list(path)) {
+                unlockRecursively(store, depth - 1, child);
+            }
         }
         store.unlock(path);
     }
