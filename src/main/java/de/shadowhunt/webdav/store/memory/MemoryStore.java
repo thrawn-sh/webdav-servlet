@@ -49,7 +49,7 @@ import org.apache.commons.io.IOUtils;
 
 public class MemoryStore implements WebDavStore {
 
-    private static class Node implements Comparable<Node> {
+    private static class Node {
 
         private final Map<String, Node> children = new TreeMap<>();
 
@@ -57,59 +57,21 @@ public class MemoryStore implements WebDavStore {
 
         private final MemoryEntity entity;
 
-        private final String name;
-
         private Set<WebDavProperty> properties = Collections.emptySet();
 
-        Node(final String name, final MemoryEntity entity) {
-            this(name, entity, new byte[0]);
+        Node(final MemoryEntity entity) {
+            this(entity, new byte[0]);
         }
 
-        Node(final String name, final MemoryEntity entity, final byte[] data) {
+        Node(final MemoryEntity entity, final byte[] data) {
             this.entity = entity;
             this.data = data;
-            this.name = name;
-        }
-
-        @Override
-        public int compareTo(final Node o) {
-            return name.compareTo(o.name);
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final Node other = (Node) obj;
-            if (name == null) {
-                if (other.name != null) {
-                    return false;
-                }
-            } else if (!name.equals(other.name)) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((name == null) ? 0 : name.hashCode());
-            return result;
         }
     }
 
     private static final MimetypesFileTypeMap MIME_TYPES = new MimetypesFileTypeMap();
 
-    private final Node root = new Node("", new MemoryEntity(WebDavPath.ROOT));
+    private final Node root = new Node(new MemoryEntity(WebDavPath.ROOT));
 
     private final Set<SupportedLock> supportedLocks;
 
@@ -145,7 +107,7 @@ public class MemoryStore implements WebDavStore {
             throw new WebDavException("can not create collection " + path);
         }
 
-        parent.children.put(name, new Node(name, new MemoryEntity(path)));
+        parent.children.put(name, new Node(new MemoryEntity(path)));
     }
 
     @Override
@@ -175,7 +137,7 @@ public class MemoryStore implements WebDavStore {
         final String etag = calculateEtag();
         final String type = MIME_TYPES.getContentType(path.getName());
         final MemoryEntity entity = new MemoryEntity(path, hash, data.length, type, etag);
-        final Node node = new Node(name, entity, data);
+        final Node node = new Node(entity, data);
         parent.children.put(name, node);
     }
 
