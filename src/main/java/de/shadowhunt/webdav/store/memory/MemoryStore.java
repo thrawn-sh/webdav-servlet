@@ -39,6 +39,7 @@ import de.shadowhunt.webdav.method.WebDavMethod;
 import de.shadowhunt.webdav.property.WebDavProperty;
 import de.shadowhunt.webdav.store.SupportedLock;
 import de.shadowhunt.webdav.store.WebDavEntity;
+import de.shadowhunt.webdav.store.WebDavEntity.Type;
 import de.shadowhunt.webdav.store.WebDavLock;
 import de.shadowhunt.webdav.store.WebDavLockBuilder;
 import de.shadowhunt.webdav.store.WebDavStore;
@@ -132,6 +133,10 @@ public class MemoryStore implements WebDavStore {
 
     @Override
     public void createCollection(final WebDavPath path) throws WebDavException {
+        if (WebDavPath.ROOT.equals(path)) {
+            throw new WebDavException("can not override root");
+        }
+
         final String[] segments = path.getSegments();
 
         final Node parent = navigate(root, segments, 1, segments.length - 1);
@@ -145,6 +150,10 @@ public class MemoryStore implements WebDavStore {
 
     @Override
     public void createItem(final WebDavPath path, final InputStream content) throws WebDavException {
+        if (WebDavPath.ROOT.equals(path)) {
+            throw new WebDavException("can not override root");
+        }
+
         final String[] segments = path.getSegments();
 
         final Node parent = navigate(root, segments, 1, segments.length - 1);
@@ -155,6 +164,11 @@ public class MemoryStore implements WebDavStore {
             data = IOUtils.toByteArray(content);
         } catch (final IOException e) {
             throw new WebDavException("can not read content", e);
+        }
+
+        Node oldNode = parent.children.get(name);
+        if ((oldNode != null) && (Type.COLLECTION == oldNode.entity.getType())) {
+            throw new WebDavException("can not create item with same name as exisiting collection");
         }
 
         final String hash = calculateMd5(data, path);
@@ -172,6 +186,10 @@ public class MemoryStore implements WebDavStore {
 
     @Override
     public void delete(final WebDavPath path) throws WebDavException {
+        if (WebDavPath.ROOT.equals(path)) {
+            throw new WebDavException("can not delete root");
+        }
+
         final String[] segments = path.getSegments();
         final Node parent = navigate(root, segments, 1, segments.length - 1);
         final Node node = navigate(root, segments, 1, segments.length);
@@ -193,6 +211,9 @@ public class MemoryStore implements WebDavStore {
     public InputStream getContent(final WebDavPath path) throws WebDavException {
         final String[] segments = path.getSegments();
         final Node node = navigate(root, segments, 1, segments.length);
+        if (Type.COLLECTION == node.entity.getType()) {
+            throw new WebDavException("can not retrieve content");
+        }
         return new ByteArrayInputStream(node.data);
     }
 

@@ -139,6 +139,10 @@ public class FileSystemStore implements WebDavStore {
 
     @Override
     public void createCollection(final WebDavPath path) throws WebDavException {
+        if (WebDavPath.ROOT.equals(path)) {
+            throw new WebDavException("can not override root");
+        }
+
         synchronized (monitor) {
             createFolder(path, getContentFile(path, false));
             createFolder(path, new File(metaRoot, path.getValue()));
@@ -157,9 +161,13 @@ public class FileSystemStore implements WebDavStore {
 
     @Override
     public void createItem(final WebDavPath path, final InputStream content) throws WebDavException {
+        if (WebDavPath.ROOT.equals(path)) {
+            throw new WebDavException("can not override root");
+        }
+
         synchronized (monitor) {
             final File file = getContentFile(path, false);
-            try (final OutputStream os = FileUtils.openOutputStream(file)) {
+            try (final OutputStream os = new FileOutputStream(file)) {
                 IOUtils.copy(content, os);
             } catch (final IOException e) {
                 throw new WebDavException("can not write to resource " + path, e);
@@ -181,26 +189,20 @@ public class FileSystemStore implements WebDavStore {
 
     @Override
     public void delete(final WebDavPath path) throws WebDavException {
-        delete(path, getContentFile(path, true));
-        delete(path, getLockFile(path));
-        delete(path, getPropertiesFile(path));
+        if (WebDavPath.ROOT.equals(path)) {
+            throw new WebDavException("can not delete root");
+        }
+
+        synchronized (monitor) {
+            delete(path, getContentFile(path, true));
+            delete(path, getLockFile(path));
+            delete(path, getPropertiesFile(path));
+        }
     }
 
     private void delete(final WebDavPath path, final File file) {
-        if (!file.exists()) {
-            return;
-        }
-
-        if (file.isFile()) {
-            if (!file.delete()) {
-                throw new WebDavException("can not delete " + path);
-            }
-        } else {
-            try {
-                FileUtils.deleteDirectory(file);
-            } catch (final IOException e) {
-                throw new WebDavException("can not delete " + path, e);
-            }
+        if (file.exists() && !file.delete()) {
+            throw new WebDavException("can not delete " + path);
         }
     }
 
