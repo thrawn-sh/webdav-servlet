@@ -75,11 +75,11 @@ public class FileSystemStore implements WebDavStore {
 
     private static final MimetypesFileTypeMap MIME_TYPES = new MimetypesFileTypeMap();
 
+    private final File contentRoot;
+
     private final File metaRoot;
 
     private final Object monitor = new Object();
-
-    private final File contentRoot;
 
     private final Set<SupportedLock> supportedLocks;
 
