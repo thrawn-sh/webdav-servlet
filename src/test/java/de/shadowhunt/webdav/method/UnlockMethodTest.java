@@ -27,7 +27,6 @@ import de.shadowhunt.webdav.store.WebDavLock;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -40,15 +39,13 @@ public class UnlockMethodTest extends AbstractWebDavMethodTest {
 
     protected static final WebDavPath LOCKED_ITEM = WebDavPath.create("/locked_item.txt");
 
-    @BeforeClass
-    public static void fillStore() {
-        createItem(LOCKED_ITEM, "test", true);
-    }
-
     protected WebDavLock lock;
 
     @Before
-    public void ensureStore() {
+    @Override
+    public void initStore() {
+        super.initStore();
+        createItem(LOCKED_ITEM, "test", true);
         lock = ensureLocked(LOCKED_ITEM);
     }
 

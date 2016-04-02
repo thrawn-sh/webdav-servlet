@@ -29,7 +29,7 @@ import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavPath;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -42,8 +42,11 @@ public class PropFindMethodTest extends AbstractWebDavMethodTest {
 
     private static final ContentNormalizer NORMALIZER = new CombinedNormalizer(new LastModifiedNormalizer(), new EtagNormalizer());
 
-    @BeforeClass
-    public static void fillStore() {
+    @Before
+    @Override
+    public void initStore() {
+        super.initStore();
+
         createItem(EXISTING_COLLECTION.append(WebDavPath.create("/item.txt")), "test", true);
         createCollection(EXISTING_COLLECTION.append(WebDavPath.create("/level1/level2")), false);
     }

@@ -29,7 +29,7 @@ import de.shadowhunt.webdav.store.WebDavEntity;
 import de.shadowhunt.webdav.store.WebDavLock.Timeout;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -55,8 +55,10 @@ public class LockMethodTest extends AbstractWebDavMethodTest {
 
     protected static final WebDavPath LOCKED_ITEM = WebDavPath.create("/locked_item.txt");
 
-    @BeforeClass
-    public static void fillStore() {
+    @Before
+    @Override
+    public void initStore() {
+        super.initStore();
         createItem(LOCKED_ITEM, "test", true);
     }
 

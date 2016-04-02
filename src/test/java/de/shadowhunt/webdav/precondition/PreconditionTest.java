@@ -17,7 +17,6 @@
 package de.shadowhunt.webdav.precondition;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,14 +32,11 @@ import de.shadowhunt.webdav.store.WebDavEntity;
 import de.shadowhunt.webdav.store.WebDavLock;
 import de.shadowhunt.webdav.store.WebDavLockBuilder;
 import de.shadowhunt.webdav.store.WebDavStore;
-import de.shadowhunt.webdav.store.filesystem.FileSystemStore;
+import de.shadowhunt.webdav.store.memory.MemoryStore;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -67,32 +63,9 @@ public class PreconditionTest {
 
     private static final String NON_EXISTING_RESOURCE = "http://127.0.0.1:8080/webdav/non_existing.txt";
 
-    private static File root;
-
     private static WebDavStore store;
 
     private static final Map<WebDavPath, UUID> TOKENS = new HashMap<>();
-
-    @AfterClass
-    public static void destroyStore() {
-        FileUtils.deleteQuietly(root);
-    }
-
-    @BeforeClass
-    public static void initStore() {
-        root = new File(new File(FileUtils.getTempDirectory(), "webdav-servlet-test"), UUID.randomUUID().toString());
-        store = new FileSystemStore(root, true);
-
-        store.createItem(ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));
-        store.createItem(LOCKED_ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));
-        final WebDavLockBuilder lockBuilder = store.createLockBuilder();
-        lockBuilder.setRoot(LOCKED_ITEM);
-        final WebDavLock lock = lockBuilder.build();
-        store.lock(LOCKED_ITEM, lock);
-
-        TOKENS.clear();
-        TOKENS.put(LOCKED_ITEM, lock.getToken());
-    }
 
     @Mock
     protected WebDavConfig config;
@@ -110,6 +83,21 @@ public class PreconditionTest {
         Mockito.when(request.toPath(Matchers.eq(ITEM_RESOURCE))).thenReturn(Optional.of(ITEM));
         Mockito.when(request.toPath(Matchers.eq(LOCKED_RESOURCE))).thenReturn(Optional.of(LOCKED_ITEM));
         Mockito.when(request.toPath(Matchers.eq(NON_EXISTING_RESOURCE))).thenReturn(Optional.of(NON_EXISTING));
+    }
+
+    @Before
+    public void initStore() {
+        store = new MemoryStore();
+
+        store.createItem(ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));
+        store.createItem(LOCKED_ITEM, new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8)));
+        final WebDavLockBuilder lockBuilder = store.createLockBuilder();
+        lockBuilder.setRoot(LOCKED_ITEM);
+        final WebDavLock lock = lockBuilder.build();
+        store.lock(LOCKED_ITEM, lock);
+
+        TOKENS.clear();
+        TOKENS.put(LOCKED_ITEM, lock.getToken());
     }
 
     @Test

@@ -17,10 +17,8 @@
 package de.shadowhunt.webdav.method;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.UUID;
 
 import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavConfig;
@@ -35,13 +33,10 @@ import de.shadowhunt.webdav.store.WebDavEntity;
 import de.shadowhunt.webdav.store.WebDavLock;
 import de.shadowhunt.webdav.store.WebDavLockBuilder;
 import de.shadowhunt.webdav.store.WebDavStore;
-import de.shadowhunt.webdav.store.filesystem.FileSystemStore;
+import de.shadowhunt.webdav.store.memory.MemoryStore;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -54,86 +49,13 @@ public abstract class AbstractWebDavMethodTest {
 
     protected static final WebDavPath NON_EXISTING = WebDavPath.create("/non_existing.txt");
 
-    private static File root;
-
-    private static WebDavStore store;
-
-    protected static WebDavEntity createCollection(final WebDavPath path, final boolean locked) {
-        createCollection0(path, locked);
-        setProperties(path);
-        return store.getEntity(path);
-    }
-
-    private static void createCollection0(final WebDavPath path, final boolean locked) {
-        if (WebDavPath.ROOT.equals(path)) {
-            return;
-        }
-
-        createCollection0(path.getParent(), false);
-        if (!store.exists(path)) {
-            store.createCollection(path);
-        }
-
-        if (locked) {
-            ensureLocked(path);
-        }
-    }
-
-    protected static WebDavEntity createItem(final WebDavPath path, final String content, final boolean locked) {
-        createCollection0(path.getParent(), false);
-        store.createItem(path, new ByteArrayInputStream(content.getBytes()));
-        if (locked) {
-            final WebDavLockBuilder lockBuilder = store.createLockBuilder();
-            lockBuilder.setRoot(path);
-            final WebDavLock lock = lockBuilder.build();
-            store.lock(path, lock);
-        }
-        setProperties(path);
-        return store.getEntity(path);
-    }
-
-    @AfterClass
-    public static void destroyStore() {
-        FileUtils.deleteQuietly(root);
-    }
-
-    protected static WebDavLock ensureLocked(final WebDavPath path) {
-        final WebDavEntity entity = store.getEntity(path);
-        final Optional<WebDavLock> existingLock = entity.getLock();
-        if (existingLock.isPresent()) {
-            return existingLock.get();
-        }
-
-        final WebDavLockBuilder lockBuilder = store.createLockBuilder();
-        lockBuilder.setRoot(path);
-        final WebDavLock lock = lockBuilder.build();
-        store.lock(path, lock);
-        return lock;
-    }
-
-    @BeforeClass
-    public static void initStore() {
-        root = new File(new File(FileUtils.getTempDirectory(), "webdav-servlet-test"), UUID.randomUUID().toString());
-        store = new FileSystemStore(root, true);
-
-        createCollection(EXISTING_COLLECTION, false);
-        createItem(EXISTING_ITEM, "example", false);
-    }
-
-    private static void setProperties(final WebDavPath path) {
-        store.setProperties(path,
-                Arrays.asList( //
-                        new StringWebDavProperty(new PropertyIdentifier("foo", "foo"), "foo_foo_content"), //
-                        new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo_bar_content"), //
-                        new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar_foo_content") //
-                ));
-    }
-
     @Mock
     protected WebDavConfig config;
 
     @Mock
     protected WebDavRequest request;
+
+    private WebDavStore store = new MemoryStore();
 
     protected final void assertBasicRequirements(final TestResponse response, final Status expectedStatus) {
         Assert.assertEquals("status must match", expectedStatus, response.getStatus());
@@ -157,6 +79,54 @@ public abstract class AbstractWebDavMethodTest {
         return sb.toString();
     }
 
+    protected WebDavEntity createCollection(final WebDavPath path, final boolean locked) {
+        createCollection0(path, locked);
+        setProperties(path);
+        return store.getEntity(path);
+    }
+
+    private void createCollection0(final WebDavPath path, final boolean locked) {
+        if (WebDavPath.ROOT.equals(path)) {
+            return;
+        }
+
+        createCollection0(path.getParent(), false);
+        if (!store.exists(path)) {
+            store.createCollection(path);
+        }
+
+        if (locked) {
+            ensureLocked(path);
+        }
+    }
+
+    protected WebDavEntity createItem(final WebDavPath path, final String content, final boolean locked) {
+        createCollection0(path.getParent(), false);
+        store.createItem(path, new ByteArrayInputStream(content.getBytes()));
+        if (locked) {
+            final WebDavLockBuilder lockBuilder = store.createLockBuilder();
+            lockBuilder.setRoot(path);
+            final WebDavLock lock = lockBuilder.build();
+            store.lock(path, lock);
+        }
+        setProperties(path);
+        return store.getEntity(path);
+    }
+
+    protected WebDavLock ensureLocked(final WebDavPath path) {
+        final WebDavEntity entity = store.getEntity(path);
+        final Optional<WebDavLock> existingLock = entity.getLock();
+        if (existingLock.isPresent()) {
+            return existingLock.get();
+        }
+
+        final WebDavLockBuilder lockBuilder = store.createLockBuilder();
+        lockBuilder.setRoot(path);
+        final WebDavLock lock = lockBuilder.build();
+        store.lock(path, lock);
+        return lock;
+    }
+
     protected TestResponse execute(final WebDavMethod method) throws Exception {
         final TestResponse response = new TestResponse(request);
 
@@ -172,5 +142,20 @@ public abstract class AbstractWebDavMethodTest {
 
         Mockito.when(request.getBase()).thenReturn("/webdav");
         Mockito.when(request.getConfig()).thenReturn(config);
+    }
+
+    @Before
+    public void initStore() {
+        createCollection(EXISTING_COLLECTION, false);
+        createItem(EXISTING_ITEM, "example", false);
+    }
+
+    private void setProperties(final WebDavPath path) {
+        store.setProperties(path,
+                Arrays.asList( //
+                        new StringWebDavProperty(new PropertyIdentifier("foo", "foo"), "foo_foo_content"), //
+                        new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo_bar_content"), //
+                        new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar_foo_content") //
+                ));
     }
 }
