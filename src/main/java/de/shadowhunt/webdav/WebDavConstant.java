@@ -16,6 +16,9 @@
  */
 package de.shadowhunt.webdav;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 public final class WebDavConstant {
 
     public enum Depth {
@@ -24,18 +27,25 @@ public final class WebDavConstant {
         MEMBERS("1", 1), //
         SELF("0", 0);
 
-        public static Depth parse(final String depth) {
+        private static final Comparator<Depth> VALUE_COMPARATOR = new Comparator<Depth>() {
+
+            @Override
+            public int compare(final Depth d1, final Depth d2) {
+                return Integer.compare(d1.value, d2.value);
+            }
+        };
+
+        public static Depth parse(final String depth, final Depth... allowed) {
             if (Depth.INFINITY.name.equalsIgnoreCase(depth)) {
                 return Depth.INFINITY;
             }
 
             final int value = Integer.parseInt(depth);
-            if (value <= Depth.SELF.value) {
-                return Depth.SELF;
-            }
-
-            if (value == Depth.MEMBERS.value) {
-                return Depth.MEMBERS;
+            Arrays.sort(allowed, VALUE_COMPARATOR);
+            for (final Depth d : allowed) {
+                if (value <= d.value) {
+                    return d;
+                }
             }
             return Depth.INFINITY;
         }

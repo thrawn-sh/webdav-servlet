@@ -18,12 +18,25 @@ package de.shadowhunt.webdav;
 
 import javax.servlet.http.HttpServletResponse;
 
+import de.shadowhunt.webdav.WebDavConstant.Depth;
 import de.shadowhunt.webdav.WebDavConstant.Status;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 public class WebDavConstantTest {
+
+    @Test
+    public void parseDepthTest() throws Exception {
+        Assert.assertEquals("depth must match", Depth.INFINITY, Depth.parse(Depth.INFINITY.name));
+
+        Assert.assertEquals("depth must match", Depth.SELF, Depth.parse(Depth.SELF.name, Depth.SELF));
+        Assert.assertEquals("depth must match", Depth.MEMBERS, Depth.parse(Depth.MEMBERS.name, Depth.SELF, Depth.MEMBERS));
+
+        Assert.assertEquals("depth must match", Depth.INFINITY, Depth.parse(Depth.SELF.name));
+        Assert.assertEquals("depth must match", Depth.MEMBERS, Depth.parse(Depth.SELF.name, Depth.MEMBERS));
+        Assert.assertEquals("depth must match", Depth.INFINITY, Depth.parse(Depth.MEMBERS.name));
+    }
 
     @Test
     public void testStatusCodes() throws Exception {

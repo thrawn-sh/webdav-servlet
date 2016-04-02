@@ -35,8 +35,11 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
 
     private final boolean deleteSource;
 
-    protected AbstractCopyMoveMethod(final boolean deleteSource) {
+    private final Depth[] supported;
+
+    protected AbstractCopyMoveMethod(final boolean deleteSource, final Depth... supported) {
         this.deleteSource = deleteSource;
+        this.supported = supported;
     }
 
     protected void copy(final WebDavStore store, final WebDavPath source, final WebDavPath target, final int depth) {
@@ -85,7 +88,7 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
         final WebDavEntity sourceEntity = store.getEntity(source);
 
         final boolean overwrite = determineOverwrite(request);
-        final Depth depth = determineDepth(request);
+        final Depth depth = determineDepth(request, supported);
         final WebDavPath target = determineTarget(request);
         final boolean targetExistsBefore = store.exists(target);
         if (targetExistsBefore) {

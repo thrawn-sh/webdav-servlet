@@ -71,8 +71,7 @@ public class DeleteMethod extends AbstractWebDavMethod {
 
         final Map<WebDavPath, UUID> tokens = determineLockTokens(request);
 
-        final Depth depth = determineDepth(request);
-        delete(store, path, depth.value, tokens);
+        delete(store, path, Depth.INFINITY.value, tokens);
         return AbstractBasicResponse.createNoContent(null);
     }
 }

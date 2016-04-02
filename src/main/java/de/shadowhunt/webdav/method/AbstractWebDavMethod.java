@@ -70,21 +70,9 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
         checkUp(store, path.getParent(), tokens);
     }
 
-    protected Depth determineDepth(final WebDavRequest request) {
+    protected Depth determineDepth(final WebDavRequest request, final Depth... allowed) {
         final String depth = request.getHeader(Header.DEPTH, Depth.INFINITY.name);
-        if (Depth.INFINITY.name.equalsIgnoreCase(depth)) {
-            return Depth.INFINITY;
-        }
-
-        final int value = Integer.parseInt(depth);
-        if (value <= Depth.SELF.value) {
-            return Depth.SELF;
-        }
-
-        if (value == Depth.MEMBERS.value) {
-            return Depth.MEMBERS;
-        }
-        return Depth.INFINITY;
+        return Depth.parse(depth, allowed);
     }
 
     protected Map<WebDavPath, UUID> determineLockTokens(final WebDavRequest request) {

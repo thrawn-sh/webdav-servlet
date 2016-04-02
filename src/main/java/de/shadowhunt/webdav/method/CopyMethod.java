@@ -16,10 +16,12 @@
  */
 package de.shadowhunt.webdav.method;
 
+import de.shadowhunt.webdav.WebDavConstant.Depth;
+
 public class CopyMethod extends AbstractCopyMoveMethod {
 
     public CopyMethod() {
-        super(false);
+        super(false, Depth.SELF, Depth.INFINITY);
     }
 
     @Override

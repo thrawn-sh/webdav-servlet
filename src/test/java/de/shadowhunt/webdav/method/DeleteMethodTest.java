@@ -22,10 +22,8 @@ import de.shadowhunt.TestResponse;
 import de.shadowhunt.webdav.WebDavConstant.Depth;
 import de.shadowhunt.webdav.WebDavConstant.Header;
 import de.shadowhunt.webdav.WebDavConstant.Status;
-import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 
-import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -71,21 +69,6 @@ public class DeleteMethodTest extends AbstractWebDavMethodTest {
 
         final TestResponse response = execute(method);
         assertNoContent(response, Status.NO_CONTENT);
-    }
-
-    @Test(expected = WebDavException.class)
-    public void test03_existingCollection_not_enough_depth() throws Exception {
-        final WebDavPath root = WebDavPath.create(UUID.randomUUID().toString());
-        createItem(root.append("item.txt"), "test", false);
-        final WebDavMethod method = new DeleteMethod();
-
-        Mockito.when(config.isShowCollectionListings()).thenReturn(false);
-
-        Mockito.when(request.getHeader(Matchers.eq(Header.DEPTH), Matchers.anyString())).thenReturn(Depth.SELF.name);
-        Mockito.when(request.getPath()).thenReturn(root);
-
-        execute(method);
-        Assert.fail("method must not complete");
     }
 
     @Test

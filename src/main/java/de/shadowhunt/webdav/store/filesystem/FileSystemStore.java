@@ -227,7 +227,7 @@ public class FileSystemStore implements WebDavStore {
             }
 
             final String depthProperty = properties.getProperty(LOCK_DEPTH);
-            final Depth depth = Depth.parse(depthProperty);
+            final Depth depth = Depth.parse(depthProperty, Depth.SELF, Depth.MEMBERS, Depth.INFINITY);
             final String owner = properties.getProperty(LOCK_OWNER);
             final String rootProperty = properties.getProperty(LOCK_ROOT);
             final WebDavPath root = WebDavPath.create(rootProperty);

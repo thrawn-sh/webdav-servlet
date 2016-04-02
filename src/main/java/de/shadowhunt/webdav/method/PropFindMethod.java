@@ -210,7 +210,7 @@ public class PropFindMethod extends AbstractWebDavMethod {
         final WebDavEntity entity = store.getEntity(target);
 
         final WebDavConfig config = request.getConfig();
-        final Depth depth = determineDepth(request);
+        final Depth depth = determineDepth(request, Depth.SELF, Depth.MEMBERS, Depth.INFINITY);
         if ((depth == Depth.INFINITY) && !config.isAllowInfiniteDepthRequests()) {
             return AbstractBasicResponse.createForbidden(entity);
         }
