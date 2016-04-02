@@ -22,7 +22,7 @@ import org.junit.Test;
 public class WebDavPathTest {
 
     @Test
-    public void compareWebDavPaths() {
+    public void compareTest() throws Exception {
         final WebDavPath path = WebDavPath.create("/a");
         final WebDavPath same = WebDavPath.create("/a");
         Assert.assertEquals("WebDavPath compareTo same: 0", 0, path.compareTo(same));
@@ -34,14 +34,7 @@ public class WebDavPathTest {
     }
 
     @Test
-    public void createRootWebDavPath() {
-        Assert.assertEquals("/ is ROOT", WebDavPath.ROOT, WebDavPath.create(WebDavPath.SEPARATOR));
-        Assert.assertEquals("empty is ROOT", WebDavPath.ROOT, WebDavPath.create(""));
-        Assert.assertEquals("null is ROOT", WebDavPath.ROOT, WebDavPath.create(null));
-    }
-
-    @Test
-    public void createWebDavPath() {
+    public void createTest() throws Exception {
         final WebDavPath expected = WebDavPath.create("/a/b/c/d.txt");
         Assert.assertEquals(expected, WebDavPath.create("/a/b/c/d.txt"));
         Assert.assertEquals(expected, WebDavPath.create("a/b/c/d.txt"));
@@ -51,14 +44,21 @@ public class WebDavPathTest {
         Assert.assertEquals(expected, WebDavPath.create("/a/b/./c/d.txt"));
     }
 
+    @Test
+    public void createTest_root() throws Exception {
+        Assert.assertEquals("/ is ROOT", WebDavPath.ROOT, WebDavPath.create(WebDavPath.SEPARATOR));
+        Assert.assertEquals("empty is ROOT", WebDavPath.ROOT, WebDavPath.create(""));
+        Assert.assertEquals("null is ROOT", WebDavPath.ROOT, WebDavPath.create(null));
+    }
+
     @Test(expected = IllegalArgumentException.class)
-    public void createWebDavPath_withParentDirectory() throws Exception {
+    public void createTest_withParentDirectory() throws Exception {
         WebDavPath.create("/a/b/../c/d.txt");
         Assert.fail("path with parent directory must not complete");
     }
 
     @Test
-    public void equalsWebDavPath() {
+    public void equalsTest() throws Exception {
         final WebDavPath path = WebDavPath.create("/a");
         Assert.assertEquals("WebDavPath equals WebDavPath", path, path);
 
@@ -74,21 +74,27 @@ public class WebDavPathTest {
     }
 
     @Test
-    public void getParent() {
+    public void getParentTest() throws Exception {
         final WebDavPath child = WebDavPath.create("/a/b/c/d.txt");
         Assert.assertEquals(WebDavPath.create("/a/b/c"), child.getParent());
         Assert.assertEquals(WebDavPath.ROOT, WebDavPath.ROOT.getParent());
     }
 
     @Test
-    public void getValue() {
+    public void getSegmentsTest() throws Exception {
+        Assert.assertArrayEquals("segements must match", new String[] { "" }, WebDavPath.ROOT.getSegments());
+        Assert.assertArrayEquals("segements must match", new String[] { "", "a", "b", "c", "d.txt" }, WebDavPath.create("/a/b/c/d.txt").getSegments());
+    }
+
+    @Test
+    public void getValueTest() throws Exception {
         final String expected = "/a/b/c/d.txt";
         final WebDavPath path = WebDavPath.create(expected);
         Assert.assertEquals("WebDavPath value must match", expected, path.getValue());
     }
 
     @Test
-    public void hashCodeWebDavPath() {
+    public void hashCodeTest() throws Exception {
         final WebDavPath path = WebDavPath.create("/a");
         Assert.assertEquals("WebDavPath has same hashCode as WebDavPath", path.hashCode(), path.hashCode());
 

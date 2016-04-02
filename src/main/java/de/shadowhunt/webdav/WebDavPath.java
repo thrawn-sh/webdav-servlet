@@ -130,7 +130,7 @@ public final class WebDavPath implements Comparable<WebDavPath> {
 
     /**
      * Returns a {@link String} representation of the base name.
-     * 
+     *
      * @return {@link String} representation of the base name
      */
     public String getName() {
@@ -152,6 +152,15 @@ public final class WebDavPath implements Comparable<WebDavPath> {
         }
         final int indexOf = value.lastIndexOf(SEPARATOR_CHAR);
         return new WebDavPath(value.substring(0, indexOf));
+    }
+
+    /**
+     * Returns the segment parts of the {@link WebDavPath}.
+     * 
+     * @return the segment parts of the {@link WebDavPath}
+     */
+    public String[] getSegments() {
+        return PATH_PATTERN.split(value);
     }
 
     /**
