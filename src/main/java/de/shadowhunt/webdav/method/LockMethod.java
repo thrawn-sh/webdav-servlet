@@ -29,6 +29,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import de.shadowhunt.webdav.WebDavConstant.Depth;
 import de.shadowhunt.webdav.WebDavConstant.Header;
 import de.shadowhunt.webdav.WebDavConstant.Status;
 import de.shadowhunt.webdav.WebDavPath;
@@ -101,6 +102,9 @@ public class LockMethod extends AbstractWebDavMethod {
             return lock.get();
         }
 
+        final Depth depth = determineDepth(request, Depth.SELF, Depth.INFINITY);
+        lockBuilder.setDepth(depth);
+
         return lockBuilder.build();
     }
 
@@ -158,9 +162,11 @@ public class LockMethod extends AbstractWebDavMethod {
         }
     }
 
-    private WebDavEntity lockRecursively(final WebDavStore store, final WebDavPath path, final WebDavLock lock) {
-        for (final WebDavPath child : store.list(path)) {
-            lockRecursively(store, child, lock);
+    private WebDavEntity lockRecursively(final WebDavStore store, final int depth, final WebDavPath path, final WebDavLock lock) {
+        if (depth > 0) {
+            for (final WebDavPath child : store.list(path)) {
+                lockRecursively(store, depth - 1, child, lock);
+            }
         }
         return store.lock(path, lock);
     }
@@ -176,7 +182,7 @@ public class LockMethod extends AbstractWebDavMethod {
         }
 
         final WebDavLock lock = determineLock(store, request);
-        final WebDavEntity lockedEntity = lockRecursively(store, path, lock);
+        final WebDavEntity lockedEntity = lockRecursively(store, lock.getDepth().value, path, lock);
         return new LockDiscoveryResponse(lockedEntity, status);
     }
 }
