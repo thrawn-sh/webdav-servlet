@@ -96,7 +96,7 @@ public class WebDavServlet extends HttpServlet {
         return new HttpServletRequestWrapper(request, getWebDavConfig());
     }
 
-    protected WebDavResponse createWenDavResponseWrapper(final HttpServletResponse response, final WebDavRequest webDavRequest) throws IOException {
+    protected WebDavResponse createWebDavResponseWrapper(final HttpServletResponse response, final WebDavRequest webDavRequest) throws IOException {
         return new HttpServletResponseWrapper(response, webDavRequest);
     }
 
@@ -118,7 +118,7 @@ public class WebDavServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         final WebDavRequest webDavRequest = createWebDavRequestWrapper(request);
-        final WebDavResponse webDavResponse = createWenDavResponseWrapper(response, webDavRequest);
+        final WebDavResponse webDavResponse = createWebDavResponseWrapper(response, webDavRequest);
 
         final WebDavDispatcher dispatcher = WebDavDispatcher.getInstance();
         dispatcher.service(getWebDavStore(), webDavRequest, webDavResponse);
