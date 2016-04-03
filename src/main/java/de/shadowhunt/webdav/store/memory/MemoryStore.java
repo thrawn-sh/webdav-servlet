@@ -141,6 +141,7 @@ public class MemoryStore implements WebDavStore {
         final Node node = new Node(entity, data);
         if (oldNode != null) {
             oldNode.entity.getLock().ifPresent(x -> node.entity.setLock(x));
+            node.properties = oldNode.properties;
         }
         parent.children.put(name, node);
     }

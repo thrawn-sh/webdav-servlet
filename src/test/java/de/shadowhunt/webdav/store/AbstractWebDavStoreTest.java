@@ -154,6 +154,32 @@ public abstract class AbstractWebDavStoreTest {
         Assert.assertEquals("content must match", second, IOUtils.toString(content));
     }
 
+    @Test
+    public void createItemTest_locked() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        store.createItem(ITEM, new ByteArrayInputStream("first".getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
+
+        final WebDavLockBuilder builder = store.createLockBuilder();
+        builder.setRoot(ITEM);
+        final WebDavLock lock = builder.build();
+
+        store.lock(ITEM, lock);
+
+        final String second = "second";
+        store.createItem(ITEM, new ByteArrayInputStream(second.getBytes()));
+
+        final InputStream content = store.getContent(ITEM);
+        Assert.assertNotNull("content must not be null", content);
+        Assert.assertEquals("content must match", second, IOUtils.toString(content));
+
+        final WebDavEntity entity = store.lock(ITEM, lock);
+        Assert.assertEquals("lock must match", Optional.of(lock), entity.getLock());
+    }
+
     @Test(expected = WebDavException.class)
     public void createItemTest_missing_parent() throws Exception {
         final WebDavStore store = getStore();
@@ -472,9 +498,9 @@ public abstract class AbstractWebDavStoreTest {
         store.createCollection(COLLECTION);
         Assert.assertTrue("must exist", store.exists(COLLECTION));
 
-        WebDavLockBuilder builder = store.createLockBuilder();
+        final WebDavLockBuilder builder = store.createLockBuilder();
         builder.setRoot(COLLECTION);
-        WebDavLock lock = builder.build();
+        final WebDavLock lock = builder.build();
 
         final WebDavEntity entity = store.lock(COLLECTION, lock);
         Assert.assertEquals("lock must match", Optional.of(lock), entity.getLock());
@@ -490,9 +516,9 @@ public abstract class AbstractWebDavStoreTest {
         store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
         Assert.assertTrue("must exist", store.exists(ITEM));
 
-        WebDavLockBuilder builder = store.createLockBuilder();
+        final WebDavLockBuilder builder = store.createLockBuilder();
         builder.setRoot(ITEM);
-        WebDavLock lock = builder.build();
+        final WebDavLock lock = builder.build();
 
         final WebDavEntity entity = store.lock(ITEM, lock);
         Assert.assertEquals("lock must match", Optional.of(lock), entity.getLock());
@@ -504,9 +530,9 @@ public abstract class AbstractWebDavStoreTest {
 
         Assert.assertFalse("must not exist", store.exists(ITEM));
 
-        WebDavLockBuilder builder = store.createLockBuilder();
+        final WebDavLockBuilder builder = store.createLockBuilder();
         builder.setRoot(ITEM);
-        WebDavLock lock = builder.build();
+        final WebDavLock lock = builder.build();
 
         store.lock(ITEM, lock);
         Assert.fail("must not complete");
@@ -521,9 +547,9 @@ public abstract class AbstractWebDavStoreTest {
         store.createCollection(COLLECTION);
         Assert.assertTrue("must exist", store.exists(COLLECTION));
 
-        StringWebDavProperty foo = new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo:bar");
-        StringWebDavProperty bar = new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar:foo");
-        List<WebDavProperty> properties = Arrays.asList(foo, bar);
+        final StringWebDavProperty foo = new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo:bar");
+        final StringWebDavProperty bar = new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar:foo");
+        final List<WebDavProperty> properties = Arrays.asList(foo, bar);
 
         store.setProperties(COLLECTION, properties);
         final Collection<WebDavProperty> actual = store.getProperties(COLLECTION);
@@ -542,9 +568,9 @@ public abstract class AbstractWebDavStoreTest {
         store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
         Assert.assertTrue("must exist", store.exists(ITEM));
 
-        StringWebDavProperty foo = new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo:bar");
-        StringWebDavProperty bar = new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar:foo");
-        List<WebDavProperty> properties = Arrays.asList(foo, bar);
+        final StringWebDavProperty foo = new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo:bar");
+        final StringWebDavProperty bar = new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar:foo");
+        final List<WebDavProperty> properties = Arrays.asList(foo, bar);
 
         store.setProperties(ITEM, properties);
         final Collection<WebDavProperty> actual = store.getProperties(ITEM);
@@ -573,14 +599,14 @@ public abstract class AbstractWebDavStoreTest {
         store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
         Assert.assertTrue("must exist", store.exists(ITEM));
 
-        StringWebDavProperty foo = new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo:bar");
-        StringWebDavProperty bar = new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar:foo");
-        List<WebDavProperty> properties = Arrays.asList(foo, bar);
+        final StringWebDavProperty foo = new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo:bar");
+        final StringWebDavProperty bar = new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar:foo");
+        final List<WebDavProperty> properties = Arrays.asList(foo, bar);
 
         store.setProperties(ITEM, properties);
 
-        StringWebDavProperty abc = new StringWebDavProperty(new PropertyIdentifier("abc", "def"), "abc:def");
-        List<WebDavProperty> propertiesOverride = Arrays.asList(abc);
+        final StringWebDavProperty abc = new StringWebDavProperty(new PropertyIdentifier("abc", "def"), "abc:def");
+        final List<WebDavProperty> propertiesOverride = Arrays.asList(abc);
 
         store.setProperties(ITEM, propertiesOverride);
         final Collection<WebDavProperty> actual = store.getProperties(ITEM);
@@ -597,9 +623,9 @@ public abstract class AbstractWebDavStoreTest {
         store.createCollection(COLLECTION);
         Assert.assertTrue("must exist", store.exists(COLLECTION));
 
-        WebDavLockBuilder builder = store.createLockBuilder();
+        final WebDavLockBuilder builder = store.createLockBuilder();
         builder.setRoot(COLLECTION);
-        WebDavLock lock = builder.build();
+        final WebDavLock lock = builder.build();
 
         store.lock(COLLECTION, lock);
         store.unlock(COLLECTION);
@@ -631,9 +657,9 @@ public abstract class AbstractWebDavStoreTest {
         store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
         Assert.assertTrue("must exist", store.exists(ITEM));
 
-        WebDavLockBuilder builder = store.createLockBuilder();
+        final WebDavLockBuilder builder = store.createLockBuilder();
         builder.setRoot(ITEM);
-        WebDavLock lock = builder.build();
+        final WebDavLock lock = builder.build();
 
         store.lock(ITEM, lock);
         store.unlock(ITEM);
