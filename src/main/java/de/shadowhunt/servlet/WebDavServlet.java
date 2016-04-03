@@ -16,7 +16,6 @@
  */
 package de.shadowhunt.servlet;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -33,9 +32,8 @@ import de.shadowhunt.webdav.WebDavDispatcher;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.WebDavResponse;
 import de.shadowhunt.webdav.store.WebDavStore;
-import de.shadowhunt.webdav.store.filesystem.FileSystemStore;
+import de.shadowhunt.webdav.store.memory.MemoryStore;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -52,6 +50,8 @@ public class WebDavServlet extends HttpServlet {
     public static final String WRITEABLE = "writeable";
 
     private transient WebDavConfig config;
+
+    private static final WebDavStore store = new MemoryStore();
 
     protected HttpServletConfig createWebDavConfig(final ServletConfig servletConfig) throws ServletException {
         final HttpServletConfig webdavConfig = new HttpServletConfig();
@@ -105,7 +105,7 @@ public class WebDavServlet extends HttpServlet {
     }
 
     protected WebDavStore getWebDavStore() {
-        return new FileSystemStore(new File(FileUtils.getTempDirectory(), "webdav-servlet-repo")); // FIXME
+        return store;
     }
 
     @Override
