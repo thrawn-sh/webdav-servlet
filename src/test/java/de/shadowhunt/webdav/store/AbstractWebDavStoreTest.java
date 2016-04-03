@@ -34,7 +34,6 @@ import de.shadowhunt.webdav.store.WebDavEntity.Type;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public abstract class AbstractWebDavStoreTest {
@@ -61,7 +60,6 @@ public abstract class AbstractWebDavStoreTest {
         Assert.assertEquals("type must match", Type.COLLECTION, entity.getType());
     }
 
-    @Ignore // FIXME FileSystemStore
     @Test(expected = WebDavException.class)
     public void createCollectionTest_collection() throws Exception {
         final WebDavStore store = getStore();

@@ -133,15 +133,11 @@ public class FileSystemStore implements WebDavStore {
 
         synchronized (monitor) {
             createFolder(path, getContentFile(path, false));
-            createFolder(path, new File(metaRoot, path.getValue()));
+            createFolder(path, getMetaFile(path, false));
         }
     }
 
     private void createFolder(final WebDavPath path, final File file) {
-        if (file.isDirectory()) {
-            return;
-        }
-
         if (!file.mkdir()) {
             throw new WebDavException("can not create folder " + path);
         }
@@ -182,9 +178,16 @@ public class FileSystemStore implements WebDavStore {
         }
 
         synchronized (monitor) {
-            delete(path, getContentFile(path, true));
-            delete(path, getLockFile(path));
-            delete(path, getPropertiesFile(path));
+            final File contentFile = getContentFile(path, true);
+            delete(path, contentFile);
+            if (contentFile.isDirectory()) {
+                final File metaFile = getMetaFile(path, true);
+                delete(path, metaFile);
+            }
+            final File lockFile = getLockFile(path);
+            delete(path, lockFile);
+            final File propertiesFile = getPropertiesFile(path);
+            delete(path, propertiesFile);
         }
     }
 
@@ -247,6 +250,14 @@ public class FileSystemStore implements WebDavStore {
 
     private File getContentFile(final WebDavPath path, final boolean mustExist) throws WebDavException {
         final File file = new File(contentRoot, path.getValue());
+        if (mustExist && !file.exists()) {
+            throw new WebDavException("can not locate resource: " + path);
+        }
+        return file;
+    }
+
+    private File getMetaFile(final WebDavPath path, final boolean mustExist) throws WebDavException {
+        final File file = new File(metaRoot, path.getValue());
         if (mustExist && !file.exists()) {
             throw new WebDavException("can not locate resource: " + path);
         }

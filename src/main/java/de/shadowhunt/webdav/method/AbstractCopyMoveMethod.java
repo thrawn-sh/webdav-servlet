@@ -50,7 +50,9 @@ public abstract class AbstractCopyMoveMethod extends AbstractWebDavMethod {
 
         final WebDavEntity sourceEntity = store.getEntity(source);
         if (sourceEntity.getType() == WebDavEntity.Type.COLLECTION) {
-            store.createCollection(target);
+            if (!store.exists(target)) {
+                store.createCollection(target);
+            }
         } else {
             store.createItem(target, store.getContent(source));
         }

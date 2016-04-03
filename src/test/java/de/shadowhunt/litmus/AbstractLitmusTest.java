@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
-import java.util.UUID;
 
 import javax.xml.bind.JAXB;
 
@@ -30,10 +29,8 @@ import de.shadowhunt.webdav.WebDavDispatcher;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.WebDavRequest;
 import de.shadowhunt.webdav.store.WebDavStore;
-import de.shadowhunt.webdav.store.filesystem.FileSystemStore;
+import de.shadowhunt.webdav.store.memory.MemoryStore;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -45,19 +42,11 @@ public abstract class AbstractLitmusTest {
 
     private static final WebDavDispatcher DISPATCHER = WebDavDispatcher.getInstance();
 
-    private static File root;
-
     private static WebDavStore store;
-
-    @AfterClass
-    public static void destroyStore() {
-        FileUtils.deleteQuietly(root);
-    }
 
     @BeforeClass
     public static void initStore() {
-        root = new File(new File(FileUtils.getTempDirectory(), "webdav-servlet-test"), UUID.randomUUID().toString());
-        store = new FileSystemStore(root, true);
+        store = new MemoryStore();
 
         final WebDavPath litmusRoot = WebDavPath.create("/litmus");
         store.createCollection(litmusRoot);

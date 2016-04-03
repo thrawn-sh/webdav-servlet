@@ -67,7 +67,8 @@ abstract class AbstractWebDavMethod implements WebDavMethod {
             return;
         }
 
-        checkUp(store, path.getParent(), tokens);
+        final WebDavPath parent = path.getParent();
+        checkUp(store, parent, tokens);
     }
 
     protected Depth determineDepth(final WebDavRequest request, final Depth... allowed) {

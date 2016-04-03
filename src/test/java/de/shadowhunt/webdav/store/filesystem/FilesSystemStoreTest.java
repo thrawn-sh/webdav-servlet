@@ -37,7 +37,7 @@ public class FilesSystemStoreTest extends AbstractWebDavStoreTest {
 
     @Before
     public void before() {
-        root = new File(new File(FileUtils.getTempDirectory(), "webdav-servlet-test"), UUID.randomUUID().toString());
+        root = new File(FileUtils.getTempDirectory(), "webdav-servlet-test_" + UUID.randomUUID());
     }
 
     @Override
