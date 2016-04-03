@@ -55,7 +55,7 @@ public abstract class AbstractWebDavMethodTest {
     @Mock
     protected WebDavRequest request;
 
-    private WebDavStore store = new MemoryStore();
+    private final WebDavStore store = new MemoryStore();
 
     protected final void assertBasicRequirements(final TestResponse response, final Status expectedStatus) {
         Assert.assertEquals("status must match", expectedStatus, response.getStatus());
