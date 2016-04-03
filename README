@@ -19,3 +19,6 @@ litmus tests (http://www.webdav.org/neon/litmus/litmus-0.13.tar.gz)
 - basic, copy_move and props tests are automated through unit tests
 - lock tests must be run via litmus binary
 - accepted results are located in assets/litmus.txt
+
+$> mvn jetty:run
+$> litmus -k http://127.0.0.1:8080/webdav/
