@@ -107,7 +107,8 @@ public class MemoryStore implements WebDavStore {
             throw new WebDavException("can not create collection " + path);
         }
 
-        parent.children.put(name, new Node(new MemoryEntity(path)));
+        final Node node = new Node(new MemoryEntity(path));
+        parent.children.put(name, node);
     }
 
     @Override
@@ -128,7 +129,7 @@ public class MemoryStore implements WebDavStore {
             throw new WebDavException("can not read content", e);
         }
 
-        Node oldNode = parent.children.get(name);
+        final Node oldNode = parent.children.get(name);
         if ((oldNode != null) && (Type.COLLECTION == oldNode.entity.getType())) {
             throw new WebDavException("can not create item with same name as exisiting collection");
         }
@@ -138,6 +139,9 @@ public class MemoryStore implements WebDavStore {
         final String type = MIME_TYPES.getContentType(path.getName());
         final MemoryEntity entity = new MemoryEntity(path, hash, data.length, type, etag);
         final Node node = new Node(entity, data);
+        if (oldNode != null) {
+            oldNode.entity.getLock().ifPresent(x -> node.entity.setLock(x));
+        }
         parent.children.put(name, node);
     }
 
