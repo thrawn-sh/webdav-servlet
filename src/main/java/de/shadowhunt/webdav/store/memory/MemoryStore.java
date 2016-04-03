@@ -256,6 +256,7 @@ public class MemoryStore implements WebDavStore {
     public void unlock(final WebDavPath path) throws WebDavException {
         final String[] segments = path.getSegments();
         final Node node = navigate(root, segments, 1, segments.length);
+        node.entity.getLock().orElseThrow(() -> new WebDavException("path is not locked"));
         node.entity.deleteLock();
     }
 }

@@ -18,11 +18,18 @@ package de.shadowhunt.webdav.store;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import de.shadowhunt.webdav.WebDavException;
 import de.shadowhunt.webdav.WebDavPath;
 import de.shadowhunt.webdav.method.GetMethod;
+import de.shadowhunt.webdav.property.PropertyIdentifier;
+import de.shadowhunt.webdav.property.StringWebDavProperty;
+import de.shadowhunt.webdav.property.WebDavProperty;
 import de.shadowhunt.webdav.store.WebDavEntity.Type;
 
 import org.apache.commons.io.IOUtils;
@@ -32,18 +39,25 @@ import org.junit.Test;
 
 public abstract class AbstractWebDavStoreTest {
 
+    private static final WebDavPath COLLECTION = WebDavPath.create("collection");
+
+    private static final WebDavPath COLLECTION_CHILD = WebDavPath.create("collection/collection");
+
+    private static final WebDavPath ITEM = WebDavPath.create("item.txt");
+
+    private static final WebDavPath ITEM_CHILD = WebDavPath.create("collection/item.txt");
+
     @Test
     public void createCollectionTest() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("collection");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
 
-        store.createCollection(path);
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
 
-        final WebDavEntity entity = store.getEntity(path);
-        Assert.assertNotNull("must not be null", entity);
+        final WebDavEntity entity = store.getEntity(COLLECTION);
+        Assert.assertNotNull("entity must not be null", entity);
         Assert.assertEquals("type must match", Type.COLLECTION, entity.getType());
     }
 
@@ -52,13 +66,12 @@ public abstract class AbstractWebDavStoreTest {
     public void createCollectionTest_collection() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("collection");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
 
-        store.createCollection(path);
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
 
-        store.createCollection(path);
+        store.createCollection(COLLECTION);
         Assert.fail("must not complete");
     }
 
@@ -66,13 +79,12 @@ public abstract class AbstractWebDavStoreTest {
     public void createCollectionTest_item() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("item.txt");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(ITEM));
 
-        store.createItem(path, new ByteArrayInputStream("data".getBytes()));
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createItem(ITEM, new ByteArrayInputStream("data".getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
 
-        store.createCollection(path);
+        store.createCollection(ITEM);
         Assert.fail("must not complete");
     }
 
@@ -80,10 +92,9 @@ public abstract class AbstractWebDavStoreTest {
     public void createCollectionTest_missing_parent() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("collection/collection");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(COLLECTION_CHILD));
 
-        store.createCollection(path);
+        store.createCollection(COLLECTION_CHILD);
         Assert.fail("must not complete");
     }
 
@@ -99,19 +110,18 @@ public abstract class AbstractWebDavStoreTest {
     public void createItemTest() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("item.txt");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(ITEM));
 
         final String data = "data";
-        store.createItem(path, new ByteArrayInputStream(data.getBytes()));
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
 
-        final WebDavEntity entity = store.getEntity(path);
-        Assert.assertNotNull("must not be null", entity);
+        final WebDavEntity entity = store.getEntity(ITEM);
+        Assert.assertNotNull("entity must not be null", entity);
         Assert.assertEquals("type must match", Type.ITEM, entity.getType());
 
-        final InputStream content = store.getContent(path);
-        Assert.assertNotNull("must not be null", content);
+        final InputStream content = store.getContent(ITEM);
+        Assert.assertNotNull("content must not be null", content);
 
         Assert.assertEquals("content must match", data, IOUtils.toString(content));
     }
@@ -120,13 +130,12 @@ public abstract class AbstractWebDavStoreTest {
     public void createItemTest_collection() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("collection");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
 
-        store.createCollection(path);
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
 
-        store.createItem(path, new ByteArrayInputStream("data".getBytes()));
+        store.createItem(COLLECTION, new ByteArrayInputStream("data".getBytes()));
         Assert.fail("must not complete");
     }
 
@@ -134,17 +143,16 @@ public abstract class AbstractWebDavStoreTest {
     public void createItemTest_item() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("item.txt");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(ITEM));
 
-        store.createItem(path, new ByteArrayInputStream("first".getBytes()));
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createItem(ITEM, new ByteArrayInputStream("first".getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
 
         final String second = "second";
-        store.createItem(path, new ByteArrayInputStream(second.getBytes()));
+        store.createItem(ITEM, new ByteArrayInputStream(second.getBytes()));
 
-        final InputStream content = store.getContent(path);
-        Assert.assertNotNull("must not be null", content);
+        final InputStream content = store.getContent(ITEM);
+        Assert.assertNotNull("content must not be null", content);
         Assert.assertEquals("content must match", second, IOUtils.toString(content));
     }
 
@@ -152,9 +160,8 @@ public abstract class AbstractWebDavStoreTest {
     public void createItemTest_missing_parent() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("collection/item.txt");
-        Assert.assertFalse("must not exist", store.exists(path));
-        store.createItem(path, new ByteArrayInputStream("data".getBytes()));
+        Assert.assertFalse("must not exist", store.exists(ITEM_CHILD));
+        store.createItem(ITEM_CHILD, new ByteArrayInputStream("data".getBytes()));
         Assert.fail("must not complete");
     }
 
@@ -170,26 +177,25 @@ public abstract class AbstractWebDavStoreTest {
     public void createLockBuilderTest() throws Exception {
         final WebDavStore store = getStore();
 
-        Assert.assertNotNull("must not be null", store.createLockBuilder());
+        Assert.assertNotNull("builder must not be null", store.createLockBuilder());
     }
 
     @Test(expected = WebDavException.class)
     public void deleteTest_collection_children() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("collection");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
 
-        store.createCollection(path);
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
 
-        final WebDavPath child = WebDavPath.create("collection/item.txt");
+        final WebDavPath child = ITEM_CHILD;
         Assert.assertFalse("must not exist", store.exists(child));
 
         store.createItem(child, new ByteArrayInputStream("data".getBytes()));
         Assert.assertTrue("must exist", store.exists(child));
 
-        store.delete(path);
+        store.delete(COLLECTION);
         Assert.fail("must not complete");
     }
 
@@ -197,38 +203,35 @@ public abstract class AbstractWebDavStoreTest {
     public void deleteTest_collection_empty() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("collection");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
 
-        store.createCollection(path);
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
 
-        store.delete(path);
-        Assert.assertFalse("must not exist", store.exists(path));
+        store.delete(COLLECTION);
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
     }
 
     @Test
     public void deleteTest_item() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("item.txt");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(ITEM));
 
-        store.createItem(path, new ByteArrayInputStream("data".getBytes()));
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createItem(ITEM, new ByteArrayInputStream("data".getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
 
-        store.delete(path);
-        Assert.assertFalse("must not exist", store.exists(path));
+        store.delete(ITEM);
+        Assert.assertFalse("must not exist", store.exists(ITEM));
     }
 
     @Test(expected = WebDavException.class)
     public void deleteTest_non_existing() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("item.txt");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(ITEM));
 
-        store.delete(path);
+        store.delete(ITEM);
         Assert.fail("must not complete");
     }
 
@@ -244,30 +247,27 @@ public abstract class AbstractWebDavStoreTest {
     public void existsTest_collection() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("collection");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
 
-        store.createCollection(path);
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
     }
 
     @Test
     public void existsTest_item() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("item.txt");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(ITEM));
 
-        store.createItem(path, new ByteArrayInputStream("data".getBytes()));
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createItem(ITEM, new ByteArrayInputStream("data".getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
     }
 
     @Test
     public void existsTest_non_existing() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("item.txt");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(ITEM));
     }
 
     @Test
@@ -280,13 +280,12 @@ public abstract class AbstractWebDavStoreTest {
     public void getContentTest_collection() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("collection");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
 
-        store.createCollection(path);
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
 
-        store.getContent(path);
+        store.getContent(COLLECTION);
         Assert.fail("must not complete");
     }
 
@@ -294,15 +293,14 @@ public abstract class AbstractWebDavStoreTest {
     public void getContentTest_item() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("item.txt");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(ITEM));
 
         final String data = "data";
-        store.createItem(path, new ByteArrayInputStream(data.getBytes()));
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
 
-        final InputStream content = store.getContent(path);
-        Assert.assertNotNull("must not be null", content);
+        final InputStream content = store.getContent(ITEM);
+        Assert.assertNotNull("content must not be null", content);
         Assert.assertEquals("content must match", data, IOUtils.toString(content));
     }
 
@@ -310,10 +308,9 @@ public abstract class AbstractWebDavStoreTest {
     public void getContentTest_non_existing() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("item.txt");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(ITEM));
 
-        store.getContent(path);
+        store.getContent(ITEM);
         Assert.fail("must not complete");
     }
 
@@ -321,14 +318,13 @@ public abstract class AbstractWebDavStoreTest {
     public void getEntityTest_collection() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("collection");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
 
-        store.createCollection(path);
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
 
-        final WebDavEntity entity = store.getEntity(path);
-        Assert.assertNotNull("must not be null", entity);
+        final WebDavEntity entity = store.getEntity(COLLECTION);
+        Assert.assertNotNull("enitiy must not be null", entity);
         Assert.assertEquals("type must match", Type.COLLECTION, entity.getType());
     }
 
@@ -336,15 +332,14 @@ public abstract class AbstractWebDavStoreTest {
     public void getEntityTest_item() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("item.txt");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(ITEM));
 
         final String data = "data";
-        store.createItem(path, new ByteArrayInputStream(data.getBytes()));
-        Assert.assertTrue("must exist", store.exists(path));
+        store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
 
-        final WebDavEntity entity = store.getEntity(path);
-        Assert.assertNotNull("must not be null", entity);
+        final WebDavEntity entity = store.getEntity(ITEM);
+        Assert.assertNotNull("entity must not be null", entity);
         Assert.assertEquals("type must match", Type.ITEM, entity.getType());
     }
 
@@ -352,10 +347,46 @@ public abstract class AbstractWebDavStoreTest {
     public void getEntityTest_non_existing() throws Exception {
         final WebDavStore store = getStore();
 
-        final WebDavPath path = WebDavPath.create("item.txt");
-        Assert.assertFalse("must not exist", store.exists(path));
+        Assert.assertFalse("must not exist", store.exists(ITEM));
 
-        store.getEntity(path);
+        store.getEntity(ITEM);
+        Assert.fail("must not complete");
+    }
+
+    @Test
+    public void getPropertiesTest_collection() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
+
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
+
+        final Collection<WebDavProperty> properties = store.getProperties(COLLECTION);
+        Assert.assertNotNull("properties must not be null", properties);
+    }
+
+    @Test
+    public void getPropertiesTest_item() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        final String data = "data";
+        store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
+
+        final Collection<WebDavProperty> properties = store.getProperties(ITEM);
+        Assert.assertNotNull("properties must not be null", properties);
+    }
+
+    @Test(expected = WebDavException.class)
+    public void getPropertiesTest_non_existing() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        store.getProperties(ITEM);
         Assert.fail("must not complete");
     }
 
@@ -365,13 +396,275 @@ public abstract class AbstractWebDavStoreTest {
     public void getSupportedLocksTest() throws Exception {
         final WebDavStore store = getStore();
 
-        Assert.assertNotNull("locks not be null", store.getSupportedLocks(WebDavPath.ROOT));
+        Assert.assertNotNull("locks must not be null", store.getSupportedLocks(WebDavPath.ROOT));
     }
 
     @Test
     public void grantAccessTest() throws Exception {
         final WebDavStore store = getStore();
 
-        Assert.assertNotNull("access not be null", store.grantAccess(new GetMethod(), WebDavPath.ROOT, Optional.empty()));
+        Assert.assertNotNull("access must not be null", store.grantAccess(new GetMethod(), WebDavPath.ROOT, Optional.empty()));
+    }
+
+    @Test
+    public void listTest_collection() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
+
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
+
+        final List<WebDavPath> list = store.list(COLLECTION);
+        Assert.assertNotNull("list must not be null", list);
+        Assert.assertTrue("list must be empty", list.isEmpty());
+    }
+
+    @Test
+    public void listTest_collection_children() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
+
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
+        store.createCollection(ITEM_CHILD);
+        Assert.assertTrue("must exist", store.exists(ITEM_CHILD));
+        store.createCollection(COLLECTION_CHILD);
+        Assert.assertTrue("must exist", store.exists(COLLECTION_CHILD));
+
+        final List<WebDavPath> list = store.list(COLLECTION);
+        Assert.assertNotNull("list must not be null", list);
+        Assert.assertEquals("list size must match", 2, list.size());
+        Assert.assertTrue("list must contain item", list.contains(ITEM_CHILD));
+        Assert.assertTrue("list must contain collection", list.contains(COLLECTION_CHILD));
+    }
+
+    @Test
+    public void listTest_item() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        final String data = "data";
+        store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
+
+        final List<WebDavPath> list = store.list(ITEM);
+        Assert.assertNotNull("list must not be null", list);
+        Assert.assertTrue("list must be empty", list.isEmpty());
+    }
+
+    @Test(expected = WebDavException.class)
+    public void listTest_non_existing() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        store.list(ITEM);
+        Assert.fail("must not complete");
+    }
+
+    @Test
+    public void lockTest_collection() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
+
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
+
+        WebDavLockBuilder builder = store.createLockBuilder();
+        builder.setRoot(COLLECTION);
+        WebDavLock lock = builder.build();
+
+        final WebDavEntity entity = store.lock(COLLECTION, lock);
+        Assert.assertEquals("lock must match", Optional.of(lock), entity.getLock());
+    }
+
+    @Test
+    public void lockTest_item() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        final String data = "data";
+        store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
+
+        WebDavLockBuilder builder = store.createLockBuilder();
+        builder.setRoot(ITEM);
+        WebDavLock lock = builder.build();
+
+        final WebDavEntity entity = store.lock(ITEM, lock);
+        Assert.assertEquals("lock must match", Optional.of(lock), entity.getLock());
+    }
+
+    @Test(expected = WebDavException.class)
+    public void lockTest_non_existing() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        WebDavLockBuilder builder = store.createLockBuilder();
+        builder.setRoot(ITEM);
+        WebDavLock lock = builder.build();
+
+        store.lock(ITEM, lock);
+        Assert.fail("must not complete");
+    }
+
+    @Test
+    public void setPropertiesTest_collection() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
+
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
+
+        StringWebDavProperty foo = new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo:bar");
+        StringWebDavProperty bar = new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar:foo");
+        List<WebDavProperty> properties = Arrays.asList(foo, bar);
+
+        store.setProperties(COLLECTION, properties);
+        final Collection<WebDavProperty> actual = store.getProperties(COLLECTION);
+        Assert.assertEquals("properties size must match", 2, actual.size());
+        Assert.assertTrue("properties must contain item", actual.contains(foo));
+        Assert.assertTrue("properties must contain collection", actual.contains(bar));
+    }
+
+    @Test
+    public void setPropertiesTest_item() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        final String data = "data";
+        store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
+
+        StringWebDavProperty foo = new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo:bar");
+        StringWebDavProperty bar = new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar:foo");
+        List<WebDavProperty> properties = Arrays.asList(foo, bar);
+
+        store.setProperties(ITEM, properties);
+        final Collection<WebDavProperty> actual = store.getProperties(ITEM);
+        Assert.assertEquals("properties size must match", 2, actual.size());
+        Assert.assertTrue("properties must contain item", actual.contains(foo));
+        Assert.assertTrue("properties must contain collection", actual.contains(bar));
+    }
+
+    @Test(expected = WebDavException.class)
+    public void setPropertiesTest_non_existing() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        store.setProperties(ITEM, Collections.emptyList());
+        Assert.fail("must not complete");
+    }
+
+    @Test
+    public void setPropertiesTest_override() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        final String data = "data";
+        store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
+
+        StringWebDavProperty foo = new StringWebDavProperty(new PropertyIdentifier("foo", "bar"), "foo:bar");
+        StringWebDavProperty bar = new StringWebDavProperty(new PropertyIdentifier("bar", "foo"), "bar:foo");
+        List<WebDavProperty> properties = Arrays.asList(foo, bar);
+
+        store.setProperties(ITEM, properties);
+
+        StringWebDavProperty abc = new StringWebDavProperty(new PropertyIdentifier("abc", "def"), "abc:def");
+        List<WebDavProperty> propertiesOverride = Arrays.asList(abc);
+
+        store.setProperties(ITEM, propertiesOverride);
+        final Collection<WebDavProperty> actual = store.getProperties(ITEM);
+        Assert.assertEquals("properties size must match", 1, actual.size());
+        Assert.assertTrue("properties must contain item", actual.contains(abc));
+    }
+
+    @Test
+    public void unlockTest_collection() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
+
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
+
+        WebDavLockBuilder builder = store.createLockBuilder();
+        builder.setRoot(COLLECTION);
+        WebDavLock lock = builder.build();
+
+        store.lock(COLLECTION, lock);
+        store.unlock(COLLECTION);
+
+        final WebDavEntity entity = store.getEntity(COLLECTION);
+        Assert.assertEquals("lock must match", Optional.empty(), entity.getLock());
+    }
+
+    @Test(expected = WebDavException.class)
+    public void unlockTest_collection_not_locked() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(COLLECTION));
+
+        store.createCollection(COLLECTION);
+        Assert.assertTrue("must exist", store.exists(COLLECTION));
+
+        store.unlock(COLLECTION);
+        Assert.fail("must not complete");
+    }
+
+    @Test
+    public void unlockTest_item() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        final String data = "data";
+        store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
+
+        WebDavLockBuilder builder = store.createLockBuilder();
+        builder.setRoot(ITEM);
+        WebDavLock lock = builder.build();
+
+        store.lock(ITEM, lock);
+        store.unlock(ITEM);
+
+        final WebDavEntity entity = store.getEntity(ITEM);
+        Assert.assertEquals("lock must match", Optional.empty(), entity.getLock());
+    }
+
+    @Test(expected = WebDavException.class)
+    public void unlockTest_item_not_locked() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        final String data = "data";
+        store.createItem(ITEM, new ByteArrayInputStream(data.getBytes()));
+        Assert.assertTrue("must exist", store.exists(ITEM));
+
+        store.unlock(ITEM);
+        Assert.fail("must not complete");
+    }
+
+    @Test(expected = WebDavException.class)
+    public void unlockTest_non_existing() throws Exception {
+        final WebDavStore store = getStore();
+
+        Assert.assertFalse("must not exist", store.exists(ITEM));
+
+        store.unlock(ITEM);
+        Assert.fail("must not complete");
     }
 }

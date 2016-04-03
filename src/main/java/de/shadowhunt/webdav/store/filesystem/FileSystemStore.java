@@ -406,18 +406,13 @@ public class FileSystemStore implements WebDavStore {
         synchronized (monitor) {
             getContentFile(path, true); // ensure collection/item exists
 
-            final File propertiesFile = getPropertiesFile(path);
-            if (propertiesFile.exists() && properties.isEmpty()) {
-                delete(path, propertiesFile);
-                return;
-            }
-
             final Properties store = new Properties();
             for (final WebDavProperty property : properties) {
                 final PropertyIdentifier identifier = property.getIdentifier();
                 store.put(identifier.getNameSpace() + " " + identifier.getName(), property.getValue());
             }
 
+            final File propertiesFile = getPropertiesFile(path);
             try (final OutputStream os = new FileOutputStream(propertiesFile)) {
                 store.storeToXML(os, "", "UTF-8");
             } catch (final Exception e) {
