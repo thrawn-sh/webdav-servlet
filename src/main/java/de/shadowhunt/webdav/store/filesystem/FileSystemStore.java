@@ -125,18 +125,6 @@ public class FileSystemStore implements WebDavStore {
         }
     }
 
-    private long calculateSize(final File file, final WebDavPath path) {
-        if (file.isDirectory()) {
-            return 0L;
-        }
-
-        try {
-            return file.length();
-        } catch (final Exception e) {
-            throw new WebDavException("can not calculate size for " + path, e);
-        }
-    }
-
     @Override
     public void createCollection(final WebDavPath path) throws WebDavException {
         if (WebDavPath.ROOT.equals(path)) {
@@ -206,14 +194,6 @@ public class FileSystemStore implements WebDavStore {
         }
     }
 
-    private Date determineLastModified(final File file, final WebDavPath path) {
-        try {
-            return new Date(file.lastModified());
-        } catch (final Exception e) {
-            throw new WebDavException("can not determine last modified date for " + path, e);
-        }
-    }
-
     private Optional<WebDavLock> determineLock(final WebDavPath path) {
         synchronized (monitor) {
             final File lockFile = getLockFile(path);
@@ -278,11 +258,11 @@ public class FileSystemStore implements WebDavStore {
         synchronized (monitor) {
             final File file = getContentFile(path, true);
 
-            final Date lastModified = determineLastModified(file, path);
+            final Date lastModified = new Date(file.lastModified());
             final Optional<WebDavLock> lock = determineLock(path);
             if (file.isFile()) {
                 final String hash = calculateMd5(file, path);
-                final long size = calculateSize(file, path);
+                final long size = file.length();
                 final String etag = calculateEtag(path);
                 final String mimeType = MIME_TYPES.getContentType(file);
                 return new FileSystemEntity(path, hash, lastModified, size, mimeType, lock, etag);
