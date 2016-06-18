@@ -240,6 +240,7 @@
                         <annotationLine>@de.shadowhunt.annotation.ReturnValuesAreNonnullByDefault</annotationLine>
                         <annotationLine>@javax.annotation.ParametersAreNonnullByDefault</annotationLine>
                     </annotationLines>
+                    <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -254,6 +255,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
                     <treatWarningsAsErrors>true</treatWarningsAsErrors>
                 </configuration>
             </plugin>
