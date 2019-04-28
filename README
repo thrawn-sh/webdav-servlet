@@ -14,8 +14,8 @@ $> mvn install
 # *only* compile project
 $> mvn install -DskipTests=true
 
-litmus tests (http://www.webdav.org/neon/litmus/litmus-0.13.tar.gz)
-===================================================================
+litmus tests (https://gitlab.shadowhunt.de/mirror/litmus)
+=========================================================
 - basic, copy_move and props tests are automated through unit tests
 - lock tests must be run via litmus binary
 - accepted results are located in assets/litmus.txt
